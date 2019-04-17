@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '4.0.4'
+}
+
+group 'io.github.ImpactDevelopment'
+version '1.0'
+targetCompatibility = sourceCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.atlassian.commonmark:commonmark:0.12.1'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'io.github.ImpactDevelopment.installer.Installer'
+        )
+    }
+}
+
+build.dependsOn(shadowJar)

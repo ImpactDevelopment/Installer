@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="io.github.ImpactDevelopment.installer.gui.pages.OptionsPage">
+  <grid id="27dc6" binding="root" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="d12d4" class="javax.swing.JLabel">
+        <constraints/>
+        <properties>
+          <text value="Minecraft directory:"/>
+        </properties>
+      </component>
+      <component id="25065" class="javax.swing.JLabel" binding="mcDir">
+        <constraints/>
+        <properties>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="4e8ee" class="javax.swing.JCheckBox" binding="optifineCheckBox">
+        <constraints/>
+        <properties>
+          <text value="OptiFine version"/>
+          <visible value="true"/>
+        </properties>
+      </component>
+      <component id="19d2a" class="javax.swing.JLabel" binding="noOptiFineLabel">
+        <constraints/>
+        <properties>
+          <text value="No OptiFine version"/>
+          <visible value="true"/>
+        </properties>
+      </component>
+      <component id="ea670" class="javax.swing.JButton" binding="install">
+        <constraints/>
+        <properties>
+          <text value="Install"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
