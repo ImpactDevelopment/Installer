@@ -1,14 +1,15 @@
 package io.github.ImpactDevelopment.installer;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openpgp.*;
+import org.bouncycastle.openpgp.PGPPublicKey;
+import org.bouncycastle.openpgp.PGPSignature;
+import org.bouncycastle.openpgp.PGPSignatureList;
+import org.bouncycastle.openpgp.PGPUtil;
 import org.bouncycastle.openpgp.jcajce.JcaPGPObjectFactory;
 import org.bouncycastle.openpgp.jcajce.JcaPGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.security.Security;
 
 public class GPG {
@@ -18,29 +19,19 @@ public class GPG {
 
     public static boolean verify(byte[] signedData, byte[] signatureData) {
         try {
-
-            InputStream signature = PGPUtil.getDecoderStream(new ByteArrayInputStream(signatureData));
-            JcaPGPObjectFactory pgpFact = new JcaPGPObjectFactory(signature);
+            JcaPGPObjectFactory pgpFact = new JcaPGPObjectFactory(PGPUtil.getDecoderStream(new ByteArrayInputStream(signatureData)));
             PGPSignatureList sigList = ((PGPSignatureList) pgpFact.nextObject()); // neither this (calling nextObject again)
             PGPSignature sig = sigList.get(0); // nor this (get(1)) allow you to get the second of two concatenated signatures. how annoying.
-            long keyId = sig.getKeyID();
-            ByteArrayInputStream in = new ByteArrayInputStream(MyKey.getBytes(Charset.forName("US-ASCII")));
-            InputStream decoded = PGPUtil.getDecoderStream(in);
-            JcaPGPPublicKeyRingCollection collection = new JcaPGPPublicKeyRingCollection(decoded);
-            PGPPublicKey key = null;
-            for (PGPPublicKeyRing tmp : collection) {
-                if (tmp.getPublicKey(keyId) != null) {
-                    key = tmp.getPublicKey(keyId);
-                }
-            }
-            if (key == null) {
-                throw new IllegalStateException();
+            ByteArrayInputStream in = new ByteArrayInputStream(MyKey.getBytes());
+            PGPPublicKey key = new JcaPGPPublicKeyRingCollection(PGPUtil.getDecoderStream(in)).getPublicKey(sig.getKeyID());
+            sig.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), key);
+            sig.update(signedData);
+            if (!sig.verify()) {
+                return false;
             }
             System.out.println("Signed by " + sig.getKeyID());
             System.out.println(key.getUserIDs().next());
-            sig.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), key);
-            sig.update(signedData);
-            return sig.verify();
+            return true;
         } catch (Exception ex) {
             ex.printStackTrace();
             return false;
