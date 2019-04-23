@@ -5,7 +5,7 @@ plugins {
 
 group 'io.github.ImpactDevelopment'
 version '1.0'
-targetCompatibility = sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
