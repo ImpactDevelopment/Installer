@@ -23,13 +23,8 @@ public class GithubReleases {
         public String name;
         public String browser_download_url;
 
-        private String data;
-
         public String fetch() throws IOException {
-            if (data == null) {
-                data = IOUtils.toString(new URL(browser_download_url).openStream(), StandardCharsets.UTF_8);
-            }
-            return data;
+            return IOUtils.toString(new URL(browser_download_url).openStream(), StandardCharsets.UTF_8);
         }
     }
 }
