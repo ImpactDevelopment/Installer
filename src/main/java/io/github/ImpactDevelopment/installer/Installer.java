@@ -28,6 +28,7 @@ public class Installer {
 //            new ImageIcon("icon_64.png").getImage());
 
     public static void main(String... args) throws Throwable {
+        GPG.verify();
         // OSX and Linux systems should set swing.defaultlaf
         // explicitly setting the look and feel may override that
         // So we only do it on windows where it probably isn't set
