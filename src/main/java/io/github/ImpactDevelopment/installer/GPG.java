@@ -3,10 +3,7 @@ package io.github.ImpactDevelopment.installer;
 import io.github.ImpactDevelopment.installer.GithubReleases.GithubRelease;
 import io.github.ImpactDevelopment.installer.GithubReleases.ReleaseAsset;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openpgp.PGPPublicKey;
-import org.bouncycastle.openpgp.PGPSignature;
-import org.bouncycastle.openpgp.PGPSignatureList;
-import org.bouncycastle.openpgp.PGPUtil;
+import org.bouncycastle.openpgp.*;
 import org.bouncycastle.openpgp.jcajce.JcaPGPObjectFactory;
 import org.bouncycastle.openpgp.jcajce.JcaPGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
@@ -26,6 +23,12 @@ public class GPG {
         Security.addProvider(new BouncyCastleProvider());
         try {
             KEYRING = new JcaPGPPublicKeyRingCollection(PGPUtil.getDecoderStream(GPG.class.getResourceAsStream("/keys.asc")));
+            for (PGPPublicKeyRing ring : KEYRING) {
+                System.out.println("Loaded ring " + ring.getPublicKey().getUserIDs().next());
+                for (PGPPublicKey pubkey : ring) {
+                    System.out.println("Loaded key " + pubkey.getKeyID());
+                }
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -33,6 +36,7 @@ public class GPG {
 
     public static final PGPPublicKey leijurv = getMust(4946054532857441386L);
     public static final PGPPublicKey brady = getMust(8333779407862330727L);
+    public static final PGPPublicKey leafhacker = getMust(7411429204550467438L);
 
 
     /**
@@ -85,9 +89,12 @@ public class GPG {
             if (sigs.contains(brady)) {
                 System.out.println("Signed by brady");
             }
+            if (sigs.contains(leafhacker)) {
+                System.out.println("Signed by leafhacker");
+            }
             if (sigs.contains(leijurv)) {
                 System.out.println("Signed by leijurv");
-                return true;
+                return true; // 😉
             }
             return false;
         } catch (Exception ex) {
