@@ -13,6 +13,7 @@ import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -80,23 +81,13 @@ public class GPG {
         }
     }
 
-    public static boolean verifyRelease(GithubRelease release) {
+    public static boolean verifyRelease(GithubRelease release, Predicate<List<PGPPublicKey>> condition) {
         try {
             Map<String, List<ReleaseAsset>> byName = Stream.of(release.assets).collect(Collectors.groupingBy(r -> r.name));
             String checksums = byName.get("checksums.txt").get(0).fetch();
             String checksumsSigned = byName.get("checksums_signed.asc").get(0).fetch();
             List<PGPPublicKey> sigs = findValidSignatures(checksums, checksumsSigned);
-            if (sigs.contains(brady)) {
-                System.out.println("Signed by brady");
-            }
-            if (sigs.contains(leafhacker)) {
-                System.out.println("Signed by leafhacker");
-            }
-            if (sigs.contains(leijurv)) {
-                System.out.println("Signed by leijurv");
-                return true; // 😉
-            }
-            return false;
+            return condition.test(sigs);
         } catch (Exception ex) {
             ex.printStackTrace();
             return false;

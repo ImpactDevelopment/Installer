@@ -32,7 +32,7 @@ public class Installer {
         GithubRelease[] releases = GithubReleases.getReleases("cabaletta/baritone");
         for (GithubRelease release : releases) {
             System.out.println(release.tag_name);
-            if (!GPG.verifyRelease(release)) {
+            if (!GPG.verifyRelease(release, sigs -> sigs.contains(GPG.brady) || sigs.contains(GPG.leijurv))) {
                 throw new IllegalStateException();
             }
         }
