@@ -2,6 +2,7 @@ package io.github.ImpactDevelopment.installer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.github.ImpactDevelopment.installer.GithubReleases.GithubRelease;
 import io.github.ImpactDevelopment.installer.gui.Wizard;
 import io.github.ImpactDevelopment.installer.profiles.VanillaProfiles;
 import io.github.ImpactDevelopment.installer.versions.Vanilla;
@@ -28,6 +29,13 @@ public class Installer {
 //            new ImageIcon("icon_64.png").getImage());
 
     public static void main(String... args) throws Throwable {
+        GithubRelease[] releases = GithubReleases.getReleases("cabaletta/baritone");
+        for (GithubRelease release : releases) {
+            System.out.println(release.tag_name);
+            if (!GPG.verifyRelease(release, sigs -> sigs.contains(GPG.brady) || sigs.contains(GPG.leijurv))) {
+                throw new IllegalStateException();
+            }
+        }
         // OSX and Linux systems should set swing.defaultlaf
         // explicitly setting the look and feel may override that
         // So we only do it on windows where it probably isn't set
