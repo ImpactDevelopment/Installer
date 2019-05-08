@@ -35,9 +35,9 @@ public class GPG {
         }
     }
 
-    public static final PGPPublicKey leijurv = getMust(4946054532857441386L);
-    public static final PGPPublicKey brady = getMust(8333779407862330727L);
-    public static final PGPPublicKey leafhacker = getMust(7411429204550467438L);
+    public static final PGPPublicKey leijurv = getMust(0x44A3EA646EADAC6AL);
+    public static final PGPPublicKey brady = getMust(0x73A788379A197567L);
+    public static final PGPPublicKey leafhacker = getMust(0x66DAAF98172FBF6EL);
 
 
     /**
