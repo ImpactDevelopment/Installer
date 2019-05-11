@@ -2,40 +2,33 @@ package io.github.ImpactDevelopment.installer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.github.ImpactDevelopment.installer.GithubReleases.GithubRelease;
 import io.github.ImpactDevelopment.installer.gui.Wizard;
+import io.github.ImpactDevelopment.installer.impact.ImpactJsonVersion;
 import io.github.ImpactDevelopment.installer.profiles.VanillaProfiles;
+import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
+import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
+import io.github.ImpactDevelopment.installer.setting.settings.MinecraftVersionSetting;
+import io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting;
 import io.github.ImpactDevelopment.installer.versions.Vanilla;
 
 import javax.swing.*;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
 import static io.github.ImpactDevelopment.installer.OperatingSystem.WINDOWS;
 import static io.github.ImpactDevelopment.installer.OperatingSystem.getOS;
 
 public class Installer {
+    public static final String project = "Impact";
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
-    //Temp debugging data
-    private static final String project = "Impact";
 
 //    private static final List<Image> ICONS = Arrays.asList(
 //            new ImageIcon("icon_16.png").getImage(),
 //            new ImageIcon("icon_32.png").getImage(),
 //            new ImageIcon("icon_64.png").getImage());
-
     public static void main(String... args) throws Throwable {
-        GithubRelease[] releases = GithubReleases.getReleases("cabaletta/baritone");
-        for (GithubRelease release : releases) {
-            System.out.println(release.tag_name);
-            if (!GPG.verifyRelease(release, sigs -> sigs.contains(GPG.brady) || sigs.contains(GPG.leijurv))) {
-                throw new IllegalStateException();
-            }
-        }
+
         // OSX and Linux systems should set swing.defaultlaf
         // explicitly setting the look and feel may override that
         // So we only do it on windows where it probably isn't set
@@ -43,39 +36,42 @@ public class Installer {
         if (getOS() == WINDOWS)
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
+        InstallationConfig test = new InstallationConfig();
+        test.setSettingValue(MinecraftVersionSetting.INSTANCE, "1.13.2");
+        System.out.println(Arrays.asList(OptiFineSetting.INSTANCE.getPossibleValues(test)));
+        //install(test);
+        test.setSettingValue(MinecraftVersionSetting.INSTANCE, "1.12.2");
+        System.out.println(Arrays.asList(OptiFineSetting.INSTANCE.getPossibleValues(test)));
+        //install(test);
+
+
         Wizard wizard = new Wizard();
         wizard.setTitle("Impact Installer");
+        wizard.setSize(690, 420);
 //        wizard.setIconImages(ICONS);
-        wizard.setSize(600, 420);
         wizard.setResizable(false);
         wizard.setVisible(true);
 
         System.exit(0);
     }
 
-    public static void install(String optifine) throws IOException {
-        String id = getId();
-        System.out.println("Installing impact " + id);
-
+    public static void install(InstallationConfig config) throws Exception { // really anything can happen lol
+        ImpactJsonVersion version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
+        Vanilla vanilla = new Vanilla(config);
+        System.out.println("Installing impact " + vanilla.getId());
+        System.out.println("Info:");
+        version.printInfo();
 
         System.out.println("Creating vanilla version");
-        Vanilla vanilla = new Vanilla(id, new String(Files.readAllBytes(Paths.get(id, id + ".json"))));
-        vanilla.saveToDisk();
+
+        vanilla.apply();
 
         System.out.println("Loading existing vanilla profiles");
-        VanillaProfiles profiles = new VanillaProfiles();
+        VanillaProfiles profiles = new VanillaProfiles(config);
         System.out.println("Injecting impact version...");
-        profiles.addOrMutate(vanilla.getId().split("-")[1].replace("_", " "), vanilla.getId());
+
+        profiles.addOrMutate(version.name + " " + version.mcVersion, vanilla.getId());
         System.out.println("Saving vanilla profiles");
         profiles.saveToDisk();
-    }
-
-    public static String getId() {
-        for (File file : new File(".").listFiles()) {
-            if (file.getName().toLowerCase().contains(project.toLowerCase())) {
-                return file.getName();
-            }
-        }
-        throw new IllegalStateException();
     }
 }

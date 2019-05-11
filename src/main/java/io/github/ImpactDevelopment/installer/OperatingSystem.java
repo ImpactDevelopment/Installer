@@ -1,8 +1,5 @@
 package io.github.ImpactDevelopment.installer;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import static java.util.Locale.ROOT;
 
 /**
@@ -28,13 +25,5 @@ public enum OperatingSystem {
             return LINUX;
         }
         return UNKNOWN;
-    }
-
-    public static Path getMinecraftDirectory() {
-        switch (getOS()) {
-            case WINDOWS: return Paths.get(System.getenv("APPDATA")).resolve(".minecraft");
-            case OSX:     return Paths.get(System.getProperty("user.home")).resolve("Library").resolve("Application Support").resolve("minecraft");
-            default:      return Paths.get(System.getProperty("user.home")).resolve(".minecraft");
-        }
     }
 }

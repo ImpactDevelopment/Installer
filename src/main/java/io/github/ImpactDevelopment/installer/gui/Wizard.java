@@ -76,8 +76,8 @@ public class Wizard extends JDialog {
         // TODO: consider having a separate cancel and finish button? Maybe there are times it makes sense to finish early?
         cancelButton.setText(
                 currentPage < pages.size() - 1
-                ? "Cancel"
-                : "Finish");
+                        ? "Cancel"
+                        : "Finish");
 
         // Update enabled state of buttons
         backButton.setEnabled(!isFirstPage() && getCurrentPage().canGoBackward());
@@ -95,4 +95,5 @@ public class Wizard extends JDialog {
     public WizardPage getCurrentPage() {
         return pages.get(currentPage);
     }
+
 }

@@ -33,4 +33,5 @@ public class WelcomePage extends WizardPage {
         // The form builder only supports setting the rgb, not alpha
         textPane.setBackground(new Color(0, 0, 0, 0));
     }
+
 }

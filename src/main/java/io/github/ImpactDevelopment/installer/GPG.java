@@ -1,35 +1,28 @@
 package io.github.ImpactDevelopment.installer;
 
-import io.github.ImpactDevelopment.installer.GithubReleases.GithubRelease;
-import io.github.ImpactDevelopment.installer.GithubReleases.ReleaseAsset;
+import io.github.ImpactDevelopment.installer.github.GithubRelease;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openpgp.*;
+import org.bouncycastle.openpgp.PGPPublicKey;
+import org.bouncycastle.openpgp.PGPSignature;
+import org.bouncycastle.openpgp.PGPSignatureList;
+import org.bouncycastle.openpgp.PGPUtil;
 import org.bouncycastle.openpgp.jcajce.JcaPGPObjectFactory;
 import org.bouncycastle.openpgp.jcajce.JcaPGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 
 import java.io.ByteArrayInputStream;
 import java.security.Security;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class GPG {
-    public static final JcaPGPPublicKeyRingCollection KEYRING;
+    private static final JcaPGPPublicKeyRingCollection KEYRING;
 
     static {
         Security.addProvider(new BouncyCastleProvider());
         try {
             KEYRING = new JcaPGPPublicKeyRingCollection(PGPUtil.getDecoderStream(GPG.class.getResourceAsStream("/keys.asc")));
-            for (PGPPublicKeyRing ring : KEYRING) {
-                System.out.println("Loaded ring " + ring.getPublicKey().getUserIDs().next());
-                for (PGPPublicKey pubkey : ring) {
-                    System.out.println("Loaded key " + pubkey.getKeyID());
-                }
-            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -47,11 +40,10 @@ public class GPG {
      * @param signatureData
      * @return the PGPPublicKey that created this signature, if it's valid.  null if not valid, or unknown public key.
      */
-    public static PGPPublicKey verify(byte[] signedData, byte[] signatureData) {
+    private static PGPPublicKey verify(byte[] signedData, byte[] signatureData) {
         try {
             JcaPGPObjectFactory pgpFact = new JcaPGPObjectFactory(PGPUtil.getDecoderStream(new ByteArrayInputStream(signatureData)));
-            PGPSignatureList sigList = ((PGPSignatureList) pgpFact.nextObject()); // neither this (calling nextObject again)
-            PGPSignature sig = sigList.get(0); // nor this (get(1)) allow you to get the second of two concatenated signatures. how annoying.
+            PGPSignature sig = ((PGPSignatureList) pgpFact.nextObject()).get(0);
             PGPPublicKey key = KEYRING.getPublicKey(sig.getKeyID());
             if (key == null) {
                 System.out.println("WARNING: signature from unknown public key " + sig.getKeyID());
@@ -69,7 +61,7 @@ public class GPG {
         }
     }
 
-    public static PGPPublicKey getMust(long keyID) {
+    private static PGPPublicKey getMust(long keyID) {
         try {
             PGPPublicKey key = KEYRING.getPublicKey(keyID);
             if (key == null) {
@@ -81,12 +73,11 @@ public class GPG {
         }
     }
 
-    public static boolean verifyRelease(GithubRelease release, Predicate<List<PGPPublicKey>> condition) {
+    public static boolean verifyRelease(GithubRelease release, String fileToSign, String fileWithSignatures, Predicate<Set<PGPPublicKey>> condition) {
         try {
-            Map<String, List<ReleaseAsset>> byName = Stream.of(release.assets).collect(Collectors.groupingBy(r -> r.name));
-            String checksums = byName.get("checksums.txt").get(0).fetch();
-            String checksumsSigned = byName.get("checksums_signed.asc").get(0).fetch();
-            List<PGPPublicKey> sigs = findValidSignatures(checksums, checksumsSigned);
+            String checksums = release.byName(fileToSign).get().fetch();
+            String checksumsSigned = release.byName(fileWithSignatures).get().fetch();
+            Set<PGPPublicKey> sigs = findValidSignatures(checksums, checksumsSigned);
             return condition.test(sigs);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -94,8 +85,8 @@ public class GPG {
         }
     }
 
-    public static List<PGPPublicKey> findValidSignatures(String checksums, String signatures) {
-        List<PGPPublicKey> sigs = new ArrayList<>();
+    private static Set<PGPPublicKey> findValidSignatures(String checksums, String signatures) {
+        Set<PGPPublicKey> sigs = new HashSet<>();
         for (String sig : signatures.split("-----END PGP SIGNATURE-----")) {
             if (sig.trim().isEmpty()) {
                 continue;

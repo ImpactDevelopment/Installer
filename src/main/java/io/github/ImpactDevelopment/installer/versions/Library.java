@@ -1,35 +1,31 @@
 package io.github.ImpactDevelopment.installer.versions;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import io.github.ImpactDevelopment.installer.libraries.ILibrary;
+import io.github.ImpactDevelopment.installer.libraries.MavenResolver;
 
-import javax.annotation.Nullable;
-
+/**
+ * A library entry in the final MC launcher version json
+ */
 public class Library {
 
-    @Expose public final String name;
-    @Expose @Nullable public final String url;
-
-    public Library(String name) {
-        this(name, null);
-    }
-
-    public Library(String name, @Nullable String url) {
-        this.name = name;
-        this.url = url;
-    }
-
-    public class MultiMCLibrary extends Library {
-
-        @Expose public final String insert = "append";
-        @Expose @SerializedName("MMC-depend") public final String MMCdepend = "hard";
-
-        public MultiMCLibrary(String name) {
-            super(name);
-        }
-
-        public MultiMCLibrary(String name, @Nullable String url) {
-            super(name, url);
+    public static void populate(ILibrary lib, JsonArray libraries) {
+        // too much nesting for
+        JsonObject library = new JsonObject();
+        library.addProperty("name", lib.getName());
+        libraries.add(library);
+        downloads: {
+            JsonObject downloads = new JsonObject();
+            library.add("downloads", downloads);
+            artifact: {
+                JsonObject artifact = new JsonObject();
+                downloads.add("artifact", artifact);
+                artifact.addProperty("path", MavenResolver.partsToPath(lib.getName().split(":")));
+                artifact.addProperty("sha1", lib.getSHA1());
+                artifact.addProperty("size", lib.getSize());
+                artifact.addProperty("url", lib.getURL());
+            }
         }
     }
 }

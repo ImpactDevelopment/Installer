@@ -4,6 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.ImpactDevelopment.installer.Installer;
+import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
+import io.github.ImpactDevelopment.installer.setting.settings.MinecraftDirectorySetting;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -14,15 +16,15 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 import static io.github.ImpactDevelopment.installer.Installer.dateFormat;
-import static io.github.ImpactDevelopment.installer.OperatingSystem.getMinecraftDirectory;
 
 public class VanillaProfiles {
 
-    private static final Path LAUNCHER_PROFILES = getMinecraftDirectory().resolve("launcher_profiles.json");
+    private final Path launcherProfiles;
 
     private final JsonObject json;
 
-    public VanillaProfiles() throws IOException {
+    public VanillaProfiles(InstallationConfig config) throws IOException {
+        this.launcherProfiles = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("launcher_profiles.json");
         this.json = loadFileToJson();
     }
 
@@ -36,10 +38,11 @@ public class VanillaProfiles {
 
             profiles.add(name, profile = new JsonObject());
             profile.addProperty("name", name);
-            profile.addProperty("lastUsed", dateFormat.format(new Date())); //TODO consider always bumping?
         } else { // Mutate mode
             profile = profiles.get(id.get()).getAsJsonObject();
         }
+        if (profile.has("lastUsed")) profile.remove("lastUsed");
+        profile.addProperty("lastUsed", dateFormat.format(new Date())); // always bump.
 
         if (profile.has("lastVersionId")) profile.remove("lastVersionId");
         profile.addProperty("lastVersionId", version);
@@ -69,19 +72,20 @@ public class VanillaProfiles {
         if (!json.has("profiles"))
             json.add("profiles", new JsonObject());
         if (!json.get("profiles").isJsonObject())
-            throw new RuntimeException(String.format("\"profiles\" is not an object in \"%s\"", LAUNCHER_PROFILES.toAbsolutePath().toString()));
+            throw new RuntimeException(String.format("\"profiles\" is not an object in \"%s\"", launcherProfiles.toAbsolutePath().toString()));
 
         return json.get("profiles").getAsJsonObject();
     }
 
     private JsonObject loadFileToJson() throws IOException {
-        byte[] bytes = Files.readAllBytes(LAUNCHER_PROFILES);
+        byte[] bytes = Files.readAllBytes(launcherProfiles);
         String json = new String(bytes, StandardCharsets.UTF_8);
         return new JsonParser().parse(json).getAsJsonObject();
     }
 
     public void saveToDisk() throws IOException {
+        System.out.println("Saving modified profiles to " + launcherProfiles);
         byte[] bytes = Installer.gson.toJson(json).getBytes(StandardCharsets.UTF_8);
-        Files.write(LAUNCHER_PROFILES, bytes);
+        Files.write(launcherProfiles, bytes);
     }
 }
