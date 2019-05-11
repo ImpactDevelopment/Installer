@@ -31,7 +31,7 @@ public class VanillaProfiles {
         JsonObject profile;
 
         Optional<String> id = findProfileIdFromName(name);
-        if (id.isEmpty()) { // Create mode
+        if (!id.isPresent()) { // Create mode
             if (profiles.has(name)) profiles.remove(name); // just in case (shouldn't happen)
 
             profiles.add(name, profile = new JsonObject());
