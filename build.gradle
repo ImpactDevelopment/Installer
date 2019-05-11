@@ -13,10 +13,10 @@ repositories {
 }
 
 dependencies {
-    compile 'org.bouncycastle:bcprov-jdk15on:1.60'
-    compile 'org.bouncycastle:bcpg-jdk15on:1.60'
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.60'
+    implementation 'org.bouncycastle:bcpg-jdk15on:1.60'
 
-    compile 'commons-io:commons-io:2.6'
+    implementation 'commons-io:commons-io:2.6'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.atlassian.commonmark:commonmark:0.12.1'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
