@@ -6,11 +6,13 @@ import com.google.gson.JsonParser;
 import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.settings.MinecraftDirectorySetting;
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -19,9 +21,20 @@ import static io.github.ImpactDevelopment.installer.Installer.dateFormat;
 
 public class VanillaProfiles {
 
+    private static final String ICON;
+
     private final Path launcherProfiles;
 
     private final JsonObject json;
+
+    static {
+        try {
+            //noinspection ConstantConditions
+            ICON = "data:image/png;base64," + Base64.getEncoder().encodeToString(IOUtils.toByteArray(ClassLoader.getSystemResourceAsStream("icons/128.png")));
+        } catch (IOException e) {
+            throw new RuntimeException("getting icon", e);
+        }
+    }
 
     public VanillaProfiles(InstallationConfig config) throws IOException {
         this.launcherProfiles = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("launcher_profiles.json");
@@ -46,6 +59,9 @@ public class VanillaProfiles {
 
         if (profile.has("lastVersionId")) profile.remove("lastVersionId");
         profile.addProperty("lastVersionId", version);
+
+        if (profile.has("icon")) profile.remove("icon");
+        profile.addProperty("icon", ICON);
     }
 
     /**

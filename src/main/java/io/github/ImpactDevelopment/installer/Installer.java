@@ -2,6 +2,7 @@ package io.github.ImpactDevelopment.installer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.github.ImpactDevelopment.installer.gui.AppIcon;
 import io.github.ImpactDevelopment.installer.gui.Wizard;
 import io.github.ImpactDevelopment.installer.impact.ImpactJsonVersion;
 import io.github.ImpactDevelopment.installer.profiles.VanillaProfiles;
@@ -15,18 +16,13 @@ import javax.swing.*;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
-import static io.github.ImpactDevelopment.installer.OperatingSystem.WINDOWS;
-import static io.github.ImpactDevelopment.installer.OperatingSystem.getOS;
+import static io.github.ImpactDevelopment.installer.OperatingSystem.*;
 
 public class Installer {
     public static final String project = "Impact";
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 
-//    private static final List<Image> ICONS = Arrays.asList(
-//            new ImageIcon("icon_16.png").getImage(),
-//            new ImageIcon("icon_32.png").getImage(),
-//            new ImageIcon("icon_64.png").getImage());
     public static void main(String... args) throws Throwable {
 
         // OSX and Linux systems should set swing.defaultlaf
@@ -46,9 +42,11 @@ public class Installer {
 
 
         Wizard wizard = new Wizard();
-        wizard.setTitle("Impact Installer");
+        wizard.setTitle(getTitle());
+        if (getOS() == OSX) // window.setTitle() isn't good enough on OSX
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", getTitle());
+        AppIcon.setAppIcon(wizard);
         wizard.setSize(690, 420);
-//        wizard.setIconImages(ICONS);
         wizard.setResizable(false);
         wizard.setVisible(true);
 
@@ -73,5 +71,9 @@ public class Installer {
         profiles.addOrMutate(version.name + " " + version.mcVersion, vanilla.getId());
         System.out.println("Saving vanilla profiles");
         profiles.saveToDisk();
+    }
+
+    public static String getTitle() {
+        return project + " Installer";
     }
 }
