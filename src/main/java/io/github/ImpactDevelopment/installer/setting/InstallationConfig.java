@@ -1,11 +1,17 @@
 package io.github.ImpactDevelopment.installer.setting;
 
+import io.github.ImpactDevelopment.installer.Installer;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class InstallationConfig {
     private final Map<Setting, Object> settingValues = new HashMap<>();
+
+    public InstallationConfig() {
+        Installer.args.apply(this);
+    }
 
     public <T> T getSettingValue(Setting<T> setting) {
         return (T) settingValues.computeIfAbsent(setting, s -> s.getDefaultValue(this));
