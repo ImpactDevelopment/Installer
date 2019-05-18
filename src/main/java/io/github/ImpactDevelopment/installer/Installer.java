@@ -3,20 +3,19 @@ package io.github.ImpactDevelopment.installer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.ImpactDevelopment.installer.gui.AppIcon;
-import io.github.ImpactDevelopment.installer.gui.Wizard;
+import io.github.ImpactDevelopment.installer.gui.AppWindow;
 import io.github.ImpactDevelopment.installer.impact.ImpactJsonVersion;
 import io.github.ImpactDevelopment.installer.profiles.VanillaProfiles;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
-import io.github.ImpactDevelopment.installer.setting.settings.MinecraftVersionSetting;
-import io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting;
 import io.github.ImpactDevelopment.installer.versions.Vanilla;
+import org.apache.commons.io.IOUtils;
 
 import javax.swing.*;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 
 import static io.github.ImpactDevelopment.installer.OperatingSystem.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Installer {
     public static final String project = "Impact";
@@ -25,32 +24,25 @@ public class Installer {
 
     public static void main(String... args) throws Throwable {
 
-        // OSX and Linux systems should set swing.defaultlaf
+        // OSX systems should set swing.defaultlaf
         // explicitly setting the look and feel may override that
-        // So we only do it on windows where it probably isn't set
+        // So we only do it on windows and linux where it probably isn't set
         // They can still override us with swing.crossplatformlaf
-        if (getOS() == WINDOWS)
+        if (getOS() != OSX)
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
-        InstallationConfig test = new InstallationConfig();
-        test.setSettingValue(MinecraftVersionSetting.INSTANCE, "1.13.2");
-        System.out.println(Arrays.asList(OptiFineSetting.INSTANCE.getPossibleValues(test)));
-        //install(test);
-        test.setSettingValue(MinecraftVersionSetting.INSTANCE, "1.12.2");
-        System.out.println(Arrays.asList(OptiFineSetting.INSTANCE.getPossibleValues(test)));
-        //install(test);
+        // Windows fucks OptionPane icons if DPI scaling is used
+        // TODO consider rolling our own message solution
+        if (getOS() == WINDOWS) {
+            for (String key : new String[]{"OptionPane.warningIcon", "OptionPane.questionIcon", "OptionPane.errorIcon", "OptionPane.informationIcon"}) {
+                UIManager.put(key, AppIcon.getLargestIcon(64));
+            }
+        }
 
+        if (getOS() == OSX)
+            System.setProperty("apple.awt.fileDialogForDirectories", "true");
 
-        Wizard wizard = new Wizard();
-        wizard.setTitle(getTitle());
-        if (getOS() == OSX) // window.setTitle() isn't good enough on OSX
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", getTitle());
-        AppIcon.setAppIcon(wizard);
-        wizard.setSize(690, 420);
-        wizard.setResizable(false);
-        wizard.setVisible(true);
-
-        System.exit(0);
+        SwingUtilities.invokeLater(AppWindow::new);
     }
 
     public static void install(InstallationConfig config) throws Exception { // really anything can happen lol
@@ -68,12 +60,23 @@ public class Installer {
         VanillaProfiles profiles = new VanillaProfiles(config);
         System.out.println("Injecting impact version...");
 
-        profiles.addOrMutate(version.name + " " + version.mcVersion, vanilla.getId());
+        profiles.addOrMutate(version.name + " " + version.version + " for " + version.mcVersion, vanilla.getId());
         System.out.println("Saving vanilla profiles");
         profiles.saveToDisk();
     }
 
     public static String getTitle() {
         return project + " Installer";
+    }
+
+    public static boolean isMinecraftLauncherOpen() {
+        try {
+            if (getOS() == WINDOWS)
+                return IOUtils.toString(new ProcessBuilder("tasklist", "/fi", "WINDOWTITLE eq Minecraft Launcher").start().getInputStream(), UTF_8).contains("MinecraftLauncher.exe");
+
+            return IOUtils.toString(new ProcessBuilder("ps", "-ef").start().getInputStream(), UTF_8).contains("Minecraft Launcher");
+        } catch (Throwable e) {
+            return false;
+        }
     }
 }

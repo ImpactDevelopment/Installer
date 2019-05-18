@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.impact.ImpactJsonVersion;
 import io.github.ImpactDevelopment.installer.libraries.ILibrary;
+import io.github.ImpactDevelopment.installer.libraries.MavenResolver;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
 import io.github.ImpactDevelopment.installer.setting.settings.MinecraftDirectorySetting;
@@ -15,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class Vanilla {
+public class Vanilla implements InstallationMode {
 
     private final String id;
     private final ImpactJsonVersion version;
@@ -65,7 +66,7 @@ public class Vanilla {
     private void populateLibraries(JsonObject object) {
         JsonArray libraries = new JsonArray();
         for (ILibrary lib : version.resolveLibraries(config)) {
-            Library.populate(lib, libraries);
+            populateLib(lib, libraries);
         }
         object.add("libraries", libraries);
 
@@ -74,13 +75,35 @@ public class Vanilla {
 
     private void populateOptifine(JsonArray libraries) {
         String optifine = config.getSettingValue(OptiFineSetting.INSTANCE);
-        if (optifine != null) {
+        if (optifine != null && !optifine.equals(OptiFineSetting.NONE)) {
             JsonObject opti = new JsonObject();
             opti.addProperty("name", "optifine:OptiFine:" + optifine);
             libraries.add(opti);
         }
     }
 
+    public static void populateLib(ILibrary lib, JsonArray libraries) {
+        // too much nesting for
+        JsonObject library = new JsonObject();
+        library.addProperty("name", lib.getName());
+        libraries.add(library);
+        downloads:
+        {
+            JsonObject downloads = new JsonObject();
+            library.add("downloads", downloads);
+            artifact:
+            {
+                JsonObject artifact = new JsonObject();
+                downloads.add("artifact", artifact);
+                artifact.addProperty("path", MavenResolver.partsToPath(lib.getName().split(":")));
+                artifact.addProperty("sha1", lib.getSHA1());
+                artifact.addProperty("size", lib.getSize());
+                artifact.addProperty("url", lib.getURL());
+            }
+        }
+    }
+
+    @Override
     public void apply() throws IOException {
         Path directory = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("versions").resolve(id);
         if (!Files.exists(directory)) {
@@ -97,5 +120,4 @@ public class Vanilla {
     public String getId() {
         return id;
     }
-
 }

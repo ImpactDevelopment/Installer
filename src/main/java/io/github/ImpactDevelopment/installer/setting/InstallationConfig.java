@@ -1,11 +1,11 @@
 package io.github.ImpactDevelopment.installer.setting;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class InstallationConfig {
-    private final Map<Setting, Object> settingValues = new HashMap<>();
+    private final Map<Setting, Object> settingValues = new LinkedHashMap<>();
 
     public <T> T getSettingValue(Setting<T> setting) {
         return (T) settingValues.computeIfAbsent(setting, s -> s.getDefaultValue(this));
@@ -21,7 +21,7 @@ public class InstallationConfig {
                 if (!type.validSetting(this, settingValues.get(type))) {
                     System.out.println(type.getClass().getSimpleName() + " was invalidated by changing " + setting.getClass().getSimpleName() + " to " + value);
                     // uh oh!
-                    settingValues.remove(type);
+                    settingValues.put(type, type.getDefaultValue(this)); // reset to default
                     continue outer; // recheck from the beginning sadly
                 }
             }

@@ -16,6 +16,9 @@ public class LibraryBaritone implements ILibrary {
     public static List<LibraryBaritone> getVersionsMatching(String versionFilter) {
         List<LibraryBaritone> releases = new ArrayList<>();
         for (GithubRelease release : Github.getReleases("cabaletta/baritone")) {
+            if (!release.byName("checksums_signed.asc").isPresent()) {
+                continue;
+            }
             if (!release.tagName.startsWith("v")) {
                 throw new IllegalArgumentException(release.tagName);
             }
@@ -73,6 +76,10 @@ public class LibraryBaritone implements ILibrary {
     @Override
     public String toString() {
         return getName();
+    }
+
+    public String getVersion() {
+        return release.tagName;
     }
 
     public boolean equals(Object o) {

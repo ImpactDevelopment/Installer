@@ -1,28 +1,29 @@
 package io.github.ImpactDevelopment.installer.setting;
 
+import java.util.List;
+
 public interface ChoiceSetting<T> extends Setting<T> {
-    T[] getPossibleValues(InstallationConfig config);
+    List<T> getPossibleValues(InstallationConfig config);
+
+    default String displayName(InstallationConfig config, T option) {
+        return option.toString();
+    }
 
     @Override
     default T getDefaultValue(InstallationConfig config) {
-        T[] values = getPossibleValues(config);
-        if (values.length == 0) {
+        List<T> values = getPossibleValues(config);
+        if (values.isEmpty()) {
             return null;
         }
-        return values[0];
+        return values.get(0);
     }
 
     @Override
     default boolean validSetting(InstallationConfig config, T value) {
-        T[] values = getPossibleValues(config);
+        List<T> values = getPossibleValues(config);
         if (value == null) {
-            return values.length == 0;
+            return values.isEmpty();
         }
-        for (T option : values) {
-            if (option.equals(value)) {
-                return true;
-            }
-        }
-        return false;
+        return values.contains(value);
     }
 }

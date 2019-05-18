@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 public class ImpactVersions {
     private static final List<ImpactVersion> VERSIONS = Stream.of(Github.getReleases("ImpactDevelopment/ImpactReleases"))
             .map(ImpactVersion::new)
+            .filter(ImpactVersion::possiblySigned)
             .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
 
     public static List<ImpactVersion> getAllVersions() {

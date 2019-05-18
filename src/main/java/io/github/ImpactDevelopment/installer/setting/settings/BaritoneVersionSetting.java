@@ -5,19 +5,29 @@ import io.github.ImpactDevelopment.installer.libraries.LibraryBaritone;
 import io.github.ImpactDevelopment.installer.setting.ChoiceSetting;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public enum BaritoneVersionSetting implements ChoiceSetting<LibraryBaritone> {
     INSTANCE;
 
     @Override
-    public LibraryBaritone[] getPossibleValues(InstallationConfig config) {
+    public List<LibraryBaritone> getPossibleValues(InstallationConfig config) {
         ImpactJsonVersion impact = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
         Optional<String> versionFilter = impact.baritoneVersionFilter();
-        // this impact version is before baritone
-        LibraryBaritone[] empty = new LibraryBaritone[0];
-        return versionFilter
-                .map(vf -> LibraryBaritone.getVersionsMatching(vf).toArray(empty))
-                .orElse(empty);
+        if (versionFilter.isPresent()) {
+            return LibraryBaritone.getVersionsMatching(versionFilter.get());
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public String displayName(InstallationConfig config, LibraryBaritone option) {
+        String ret = option.getVersion();
+        if (getPossibleValues(config).indexOf(option) == 0) { // hitting nae nae on the O(n^2)
+            ret += " (latest)";
+        }
+        return ret;
     }
 }

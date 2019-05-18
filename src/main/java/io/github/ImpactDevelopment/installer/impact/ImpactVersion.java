@@ -20,17 +20,24 @@ public class ImpactVersion {
         this.release = release;
     }
 
+    private String jsonFileName() {
+        return "Impact-" + impactVersion + "-" + mcVersion + ".json";
+    }
+
     public ImpactJsonVersion fetchContents() {
         if (fetchedContents == null) {
-            String jsonFile = "Impact-" + impactVersion + "-" + mcVersion + ".json";
             System.out.println("Verifying GPG signatures on Impact release " + release.tagName);
-            if (!GPG.verifyRelease(release, jsonFile, jsonFile + ".asc", sigs -> sigs.size() >= 2)) {
+            if (!GPG.verifyRelease(release, jsonFileName(), jsonFileName() + ".asc", sigs -> sigs.size() >= 2 || sigs.contains(GPG.leijurv))) {
                 throw new RuntimeException("Invalid signature on Impact release " + release.tagName);
             }
-            fetchedContents = Installer.gson.fromJson(release.byName(jsonFile).get().fetch(), ImpactJsonVersion.class);
+            fetchedContents = Installer.gson.fromJson(release.byName(jsonFileName()).get().fetch(), ImpactJsonVersion.class);
         }
         sanityCheck();
         return fetchedContents;
+    }
+
+    public boolean possiblySigned() {
+        return release.byName(jsonFileName() + ".asc").isPresent();
     }
 
     private void sanityCheck() {

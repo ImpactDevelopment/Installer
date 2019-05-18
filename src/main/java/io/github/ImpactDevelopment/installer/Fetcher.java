@@ -11,11 +11,15 @@ import java.nio.charset.StandardCharsets;
  */
 public class Fetcher {
     public static String fetch(String url) {
+        return new String(fetchBytes(url), StandardCharsets.UTF_8);
+    }
+
+    public static byte[] fetchBytes(String url) {
         System.out.println("DOWNLOADING " + url);
         try {
-            return IOUtils.toString(new URL(url).openStream(), StandardCharsets.UTF_8);
+            return IOUtils.toByteArray(new URL(url).openStream());
         } catch (IOException e) {
-            throw new RuntimeException("Fetching " + url, e);
+            throw new RuntimeException("Unable to fetch " + url, e);
         }
     }
 }
