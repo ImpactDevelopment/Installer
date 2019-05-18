@@ -17,8 +17,9 @@ public class AppWindow extends JFrame {
     public AppWindow() {
         setTitle(Installer.getTitle());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        if (getOS() == OSX) // window.setTitle() isn't good enough on OSX
+        if (getOS() == OSX) { // window.setTitle() isn't good enough on OSX
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", getTitle());
+        }
         wrapper = new JPanel();
         wrapper.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setContentPane(wrapper);

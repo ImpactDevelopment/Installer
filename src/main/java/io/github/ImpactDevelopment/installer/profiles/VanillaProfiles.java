@@ -47,20 +47,29 @@ public class VanillaProfiles {
 
         Optional<String> id = findProfileIdFromName(name);
         if (!id.isPresent()) { // Create mode
-            if (profiles.has(name)) profiles.remove(name); // just in case (shouldn't happen)
+            if (profiles.has(name)) {
+                profiles.remove(name); // just in case (shouldn't happen)
+
+            }
 
             profiles.add(name, profile = new JsonObject());
             profile.addProperty("name", name);
         } else { // Mutate mode
             profile = profiles.get(id.get()).getAsJsonObject();
         }
-        if (profile.has("lastUsed")) profile.remove("lastUsed");
+        if (profile.has("lastUsed")) {
+            profile.remove("lastUsed");
+        }
         profile.addProperty("lastUsed", dateFormat.format(new Date())); // always bump.
 
-        if (profile.has("lastVersionId")) profile.remove("lastVersionId");
+        if (profile.has("lastVersionId")) {
+            profile.remove("lastVersionId");
+        }
         profile.addProperty("lastVersionId", version);
 
-        if (profile.has("icon")) profile.remove("icon");
+        if (profile.has("icon")) {
+            profile.remove("icon");
+        }
         profile.addProperty("icon", ICON);
     }
 
@@ -73,22 +82,30 @@ public class VanillaProfiles {
     private Optional<String> findProfileIdFromName(String name) {
         JsonObject profiles = getProfilesList();
         for (Entry<String, JsonElement> entry : profiles.entrySet()) {
-            if (!entry.getValue().isJsonObject()) continue;
+            if (!entry.getValue().isJsonObject()) {
+                continue;
+            }
             JsonObject profile = entry.getValue().getAsJsonObject();
 
-            if (!profile.has("name") || !profile.get("name").isJsonPrimitive()) continue;
+            if (!profile.has("name") || !profile.get("name").isJsonPrimitive()) {
+                continue;
+            }
             String profileName = profile.get("name").getAsString();
 
-            if (name.equals(profileName)) return Optional.of(entry.getKey());
+            if (name.equals(profileName)) {
+                return Optional.of(entry.getKey());
+            }
         }
         return Optional.empty();
     }
 
     private JsonObject getProfilesList() {
-        if (!json.has("profiles"))
+        if (!json.has("profiles")) {
             json.add("profiles", new JsonObject());
-        if (!json.get("profiles").isJsonObject())
+        }
+        if (!json.get("profiles").isJsonObject()) {
             throw new RuntimeException(String.format("\"profiles\" is not an object in \"%s\"", launcherProfiles.toAbsolutePath().toString()));
+        }
 
         return json.get("profiles").getAsJsonObject();
     }

@@ -28,8 +28,9 @@ public class Installer {
         // explicitly setting the look and feel may override that
         // So we only do it on windows and linux where it probably isn't set
         // They can still override us with swing.crossplatformlaf
-        if (getOS() != OSX)
+        if (getOS() != OSX) {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        }
 
         // Windows fucks OptionPane icons if DPI scaling is used
         // TODO consider rolling our own message solution
@@ -39,8 +40,9 @@ public class Installer {
             }
         }
 
-        if (getOS() == OSX)
+        if (getOS() == OSX) {
             System.setProperty("apple.awt.fileDialogForDirectories", "true");
+        }
 
         SwingUtilities.invokeLater(AppWindow::new);
     }
@@ -71,9 +73,9 @@ public class Installer {
 
     public static boolean isMinecraftLauncherOpen() {
         try {
-            if (getOS() == WINDOWS)
+            if (getOS() == WINDOWS) {
                 return IOUtils.toString(new ProcessBuilder("tasklist", "/fi", "WINDOWTITLE eq Minecraft Launcher").start().getInputStream(), UTF_8).contains("MinecraftLauncher.exe");
-
+            }
             return IOUtils.toString(new ProcessBuilder("ps", "-ef").start().getInputStream(), UTF_8).contains("Minecraft Launcher");
         } catch (Throwable e) {
             return false;

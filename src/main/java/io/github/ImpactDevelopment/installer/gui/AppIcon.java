@@ -9,8 +9,8 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -25,7 +25,9 @@ public class AppIcon {
     private static List<ImageIcon> icons;
 
     public static List<ImageIcon> getIcons() {
-        if (icons == null) icons = loadIcons();
+        if (icons == null) {
+            icons = loadIcons();
+        }
         return icons;
     }
 
@@ -78,10 +80,11 @@ public class AppIcon {
         if (!list.isEmpty()) {
             // icons are sorted on load so we can assume the last icon is the biggest
             int i = list.size();
-            while (i --> 0) {
+            while (i-- > 0) {
                 ImageIcon icon = list.get(i);
-                if (icon.getIconHeight() <= max)
+                if (icon.getIconHeight() <= max) {
                     return icon;
+                }
             }
         }
         return null;
@@ -98,8 +101,9 @@ public class AppIcon {
         if (!list.isEmpty()) {
             // icons are sorted on load so we can assume the first icon is the smallest
             for (ImageIcon icon : list) {
-                if (icon.getIconHeight() >= min)
+                if (icon.getIconHeight() >= min) {
                     return icon;
+                }
             }
         }
         return null;
@@ -125,9 +129,10 @@ public class AppIcon {
             // Find the largest icon (but no bigger than 512)
             Image icon = getLargestImage(512);
             // Try the java 10 icon method first
-            if (!reflect("java.awt.Taskbar", "getTaskbar", "setIconImage", icon))
+            if (!reflect("java.awt.Taskbar", "getTaskbar", "setIconImage", icon)) {
                 // If that fails, fall back to the java 6 method (deprecated in 11)
                 reflect("com.apple.eawt.Application", "getApplication", "setDockIconImage", icon);
+            }
         }
     }
 
@@ -156,8 +161,9 @@ public class AppIcon {
                 }});
                 dir = Paths.get(uri);
             }
-            if (!Files.isDirectory(dir))
+            if (!Files.isDirectory(dir)) {
                 throw new RuntimeException("icons/ should be a directory");
+            }
 
             return StreamSupport.stream(Files.newDirectoryStream(dir).spliterator(), true)
                     .map(path -> {
