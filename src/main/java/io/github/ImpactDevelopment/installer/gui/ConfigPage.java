@@ -1,4 +1,4 @@
-package io.github.ImpactDevelopment.installer.gui.pages;
+package io.github.ImpactDevelopment.installer.gui;
 
 import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.gui.AppWindow;
@@ -12,8 +12,8 @@ import java.awt.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class MainPage extends JPanel {
-    public MainPage(AppWindow app) {
+public class ConfigPage extends JPanel {
+    public ConfigPage(AppWindow app) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         addPathSetting(MinecraftDirectorySetting.INSTANCE, "Minecraft directory", app);
         addSetting(InstallationModeSetting.INSTANCE, "Install for", app);

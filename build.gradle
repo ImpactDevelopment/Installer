@@ -19,7 +19,6 @@ dependencies {
     implementation 'commons-io:commons-io:2.6'
     implementation 'org.apache.commons:commons-compress:1.18'
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'com.atlassian.commonmark:commonmark:0.12.1'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
 }
 

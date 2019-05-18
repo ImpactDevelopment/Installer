@@ -1,7 +1,6 @@
 package io.github.ImpactDevelopment.installer.gui;
 
 import io.github.ImpactDevelopment.installer.Installer;
-import io.github.ImpactDevelopment.installer.gui.pages.MainPage;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 
 import javax.swing.*;
@@ -36,7 +35,7 @@ public class AppWindow extends JFrame {
     public void recreate() {
         SwingUtilities.invokeLater(() -> {
             try {
-                setContent(new MainPage(this));
+                setContent(new ConfigPage(this));
                 validate();
                 repaint();
             } catch (Throwable e) {
