@@ -22,6 +22,7 @@ public class AppWindow extends JFrame {
         }
         wrapper = new JPanel();
         wrapper.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
         setContentPane(wrapper);
         setContent(loadingScreen());
         setSize(690, 420);
