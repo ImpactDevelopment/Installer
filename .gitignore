@@ -5,3 +5,7 @@ out/
 *.iml
 
 .DS_Store
+
+# Copyright Files
+!/.idea/copyright/Installer.xml
+!/.idea/copyright/profiles_settings.xml
