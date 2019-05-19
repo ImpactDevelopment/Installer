@@ -15,32 +15,20 @@
  * along with Impact Installer.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.ImpactDevelopment.installer;
+package io.github.ImpactDevelopment.installer.setting.settings;
 
-import static java.util.Locale.ROOT;
+import io.github.ImpactDevelopment.installer.setting.ChoiceSetting;
+import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
+import io.github.ImpactDevelopment.installer.versions.InstallationModeOptions;
 
-/**
- * @author Brady
- * @since 3/7/2019
- */
-public enum OperatingSystem {
+import java.util.Arrays;
+import java.util.List;
 
-    WINDOWS,
-    OSX,
-    LINUX,
-    UNKNOWN;
+public enum InstallationModeSetting implements ChoiceSetting<InstallationModeOptions> {
+    INSTANCE;
 
-    public static OperatingSystem getOS() {
-        String name = System.getProperty("os.name").toLowerCase(ROOT);
-        if (name.contains("windows")) {
-            return WINDOWS;
-        }
-        if (name.contains("mac")) {
-            return OSX;
-        }
-        if (name.contains("linux") || name.contains("solaris") || name.contains("sunos") || name.contains("unix")) {
-            return LINUX;
-        }
-        return UNKNOWN;
+    @Override
+    public List<InstallationModeOptions> getPossibleValues(InstallationConfig config) {
+        return Arrays.asList(InstallationModeOptions.values());
     }
 }

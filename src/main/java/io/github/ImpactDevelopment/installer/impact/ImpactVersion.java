@@ -1,3 +1,20 @@
+/*
+ * This file is part of Impact Installer.
+ *
+ * Impact Installer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Impact Installer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Impact Installer.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package io.github.ImpactDevelopment.installer.impact;
 
 import io.github.ImpactDevelopment.installer.GPG;
@@ -20,17 +37,24 @@ public class ImpactVersion {
         this.release = release;
     }
 
+    private String jsonFileName() {
+        return "Impact-" + impactVersion + "-" + mcVersion + ".json";
+    }
+
     public ImpactJsonVersion fetchContents() {
         if (fetchedContents == null) {
-            String jsonFile = "Impact-" + impactVersion + "-" + mcVersion + ".json";
             System.out.println("Verifying GPG signatures on Impact release " + release.tagName);
-            if (!GPG.verifyRelease(release, jsonFile, jsonFile + ".asc", sigs -> sigs.size() >= 2)) {
+            if (!GPG.verifyRelease(release, jsonFileName(), jsonFileName() + ".asc", sigs -> sigs.size() >= 2 || sigs.contains(GPG.leijurv))) {
                 throw new RuntimeException("Invalid signature on Impact release " + release.tagName);
             }
-            fetchedContents = Installer.gson.fromJson(release.byName(jsonFile).get().fetch(), ImpactJsonVersion.class);
+            fetchedContents = Installer.gson.fromJson(release.byName(jsonFileName()).get().fetch(), ImpactJsonVersion.class);
         }
         sanityCheck();
         return fetchedContents;
+    }
+
+    public boolean possiblySigned() {
+        return release.byName(jsonFileName() + ".asc").isPresent();
     }
 
     private void sanityCheck() {

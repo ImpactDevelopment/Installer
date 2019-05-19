@@ -1,13 +1,30 @@
+/*
+ * This file is part of Impact Installer.
+ *
+ * Impact Installer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Impact Installer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Impact Installer.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package io.github.ImpactDevelopment.installer.setting;
 
 import io.github.ImpactDevelopment.installer.Args;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class InstallationConfig {
-    private final Map<Setting, Object> settingValues = new HashMap<>();
+    private final Map<Setting, Object> settingValues = new LinkedHashMap<>();
 
     public InstallationConfig(Args args) {
         args.apply(this);
@@ -29,7 +46,7 @@ public class InstallationConfig {
                 if (!type.validSetting(this, settingValues.get(type))) {
                     System.out.println(type.getClass().getSimpleName() + " was invalidated by changing " + setting.getClass().getSimpleName() + " to " + value);
                     // uh oh!
-                    settingValues.remove(type);
+                    settingValues.put(type, type.getDefaultValue(this)); // reset to default
                     continue outer; // recheck from the beginning sadly
                 }
             }

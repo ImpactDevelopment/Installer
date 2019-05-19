@@ -1,3 +1,20 @@
+/*
+ * This file is part of Impact Installer.
+ *
+ * Impact Installer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Impact Installer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Impact Installer.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package io.github.ImpactDevelopment.installer.profiles;
 
 import com.google.gson.JsonElement;
@@ -47,20 +64,29 @@ public class VanillaProfiles {
 
         Optional<String> id = findProfileIdFromName(name);
         if (!id.isPresent()) { // Create mode
-            if (profiles.has(name)) profiles.remove(name); // just in case (shouldn't happen)
+            if (profiles.has(name)) {
+                profiles.remove(name); // just in case (shouldn't happen)
+
+            }
 
             profiles.add(name, profile = new JsonObject());
             profile.addProperty("name", name);
         } else { // Mutate mode
             profile = profiles.get(id.get()).getAsJsonObject();
         }
-        if (profile.has("lastUsed")) profile.remove("lastUsed");
+        if (profile.has("lastUsed")) {
+            profile.remove("lastUsed");
+        }
         profile.addProperty("lastUsed", dateFormat.format(new Date())); // always bump.
 
-        if (profile.has("lastVersionId")) profile.remove("lastVersionId");
+        if (profile.has("lastVersionId")) {
+            profile.remove("lastVersionId");
+        }
         profile.addProperty("lastVersionId", version);
 
-        if (profile.has("icon")) profile.remove("icon");
+        if (profile.has("icon")) {
+            profile.remove("icon");
+        }
         profile.addProperty("icon", ICON);
     }
 
@@ -73,22 +99,30 @@ public class VanillaProfiles {
     private Optional<String> findProfileIdFromName(String name) {
         JsonObject profiles = getProfilesList();
         for (Entry<String, JsonElement> entry : profiles.entrySet()) {
-            if (!entry.getValue().isJsonObject()) continue;
+            if (!entry.getValue().isJsonObject()) {
+                continue;
+            }
             JsonObject profile = entry.getValue().getAsJsonObject();
 
-            if (!profile.has("name") || !profile.get("name").isJsonPrimitive()) continue;
+            if (!profile.has("name") || !profile.get("name").isJsonPrimitive()) {
+                continue;
+            }
             String profileName = profile.get("name").getAsString();
 
-            if (name.equals(profileName)) return Optional.of(entry.getKey());
+            if (name.equals(profileName)) {
+                return Optional.of(entry.getKey());
+            }
         }
         return Optional.empty();
     }
 
     private JsonObject getProfilesList() {
-        if (!json.has("profiles"))
+        if (!json.has("profiles")) {
             json.add("profiles", new JsonObject());
-        if (!json.get("profiles").isJsonObject())
+        }
+        if (!json.get("profiles").isJsonObject()) {
             throw new RuntimeException(String.format("\"profiles\" is not an object in \"%s\"", launcherProfiles.toAbsolutePath().toString()));
+        }
 
         return json.get("profiles").getAsJsonObject();
     }

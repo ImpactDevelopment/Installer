@@ -15,32 +15,10 @@
  * along with Impact Installer.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.ImpactDevelopment.installer;
+package io.github.ImpactDevelopment.installer.versions;
 
-import static java.util.Locale.ROOT;
+import java.io.IOException;
 
-/**
- * @author Brady
- * @since 3/7/2019
- */
-public enum OperatingSystem {
-
-    WINDOWS,
-    OSX,
-    LINUX,
-    UNKNOWN;
-
-    public static OperatingSystem getOS() {
-        String name = System.getProperty("os.name").toLowerCase(ROOT);
-        if (name.contains("windows")) {
-            return WINDOWS;
-        }
-        if (name.contains("mac")) {
-            return OSX;
-        }
-        if (name.contains("linux") || name.contains("solaris") || name.contains("sunos") || name.contains("unix")) {
-            return LINUX;
-        }
-        return UNKNOWN;
-    }
+public interface InstallationMode {
+    void apply() throws IOException;  // not gonna lie this is me when i enter sicko mode
 }
