@@ -19,6 +19,8 @@ package io.github.ImpactDevelopment.installer;
 
 import com.beust.jcommander.Parameter;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
+import io.github.ImpactDevelopment.installer.setting.Setting;
+import io.github.ImpactDevelopment.installer.setting.settings.MinecraftVersionSetting;
 
 public class Args {
 
@@ -39,5 +41,23 @@ public class Args {
     public void apply(InstallationConfig config) {
         // TODO Apply args defined here to the config
         // Alternatively we could try and replace the InstallationConfig system with this class
+        if (!minecraftVersion.isEmpty() && !setSetting(config, MinecraftVersionSetting.INSTANCE, minecraftVersion))
+            error("Invalid Minecraft Version " + minecraftVersion);
+
+//        if (!impactVersion.isEmpty() && !setSetting(config, ImpactVersionSetting.INSTANCE, impactVersion))
+//            error("Invalid Minecraft Version " + impactVersion);
+    }
+
+    private static <T> boolean setSetting(InstallationConfig config, Setting<T> setting, T value) {
+        if (setting.validSetting(config, value)) {
+            config.setSettingValue(setting, value);
+            return true;
+        }
+        return false;
+    }
+
+    private static void error(String message) {
+        System.err.println(message);
+        System.exit(1);
     }
 }
