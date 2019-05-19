@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static io.github.ImpactDevelopment.installer.OperatingSystem.OSX;
-import static io.github.ImpactDevelopment.installer.OperatingSystem.getOS;
+import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.OSX;
+import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.getOS;
 
 public class AppIcon {
 

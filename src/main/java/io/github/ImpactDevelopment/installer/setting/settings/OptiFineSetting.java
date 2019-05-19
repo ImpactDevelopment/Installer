@@ -19,7 +19,7 @@ package io.github.ImpactDevelopment.installer.setting.settings;
 
 import io.github.ImpactDevelopment.installer.setting.ChoiceSetting;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
-import io.github.ImpactDevelopment.installer.versions.InstallationModeOptions;
+import io.github.ImpactDevelopment.installer.target.InstallationModeOptions;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -15,7 +15,7 @@
  * along with Impact Installer.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.ImpactDevelopment.installer;
+package io.github.ImpactDevelopment.installer.utils;
 
 import io.github.ImpactDevelopment.installer.github.GithubRelease;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;

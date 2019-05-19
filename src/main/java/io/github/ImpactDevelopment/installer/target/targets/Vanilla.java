@@ -15,7 +15,7 @@
  * along with Impact Installer.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.ImpactDevelopment.installer.versions;
+package io.github.ImpactDevelopment.installer.target.targets;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -23,11 +23,11 @@ import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.impact.ImpactJsonVersion;
 import io.github.ImpactDevelopment.installer.libraries.ILibrary;
 import io.github.ImpactDevelopment.installer.libraries.MavenResolver;
-import io.github.ImpactDevelopment.installer.profiles.VanillaProfiles;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
 import io.github.ImpactDevelopment.installer.setting.settings.MinecraftDirectorySetting;
 import io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting;
+import io.github.ImpactDevelopment.installer.target.InstallationMode;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

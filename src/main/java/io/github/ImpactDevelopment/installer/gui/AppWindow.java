@@ -23,8 +23,8 @@ import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 
 import javax.swing.*;
 
-import static io.github.ImpactDevelopment.installer.OperatingSystem.OSX;
-import static io.github.ImpactDevelopment.installer.OperatingSystem.getOS;
+import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.OSX;
+import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.getOS;
 
 public class AppWindow extends JFrame {
 

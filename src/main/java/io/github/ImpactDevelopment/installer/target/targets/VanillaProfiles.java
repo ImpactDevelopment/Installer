@@ -15,7 +15,7 @@
  * along with Impact Installer.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.ImpactDevelopment.installer.profiles;
+package io.github.ImpactDevelopment.installer.target.targets;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

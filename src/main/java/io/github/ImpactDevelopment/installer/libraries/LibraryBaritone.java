@@ -17,7 +17,7 @@
 
 package io.github.ImpactDevelopment.installer.libraries;
 
-import io.github.ImpactDevelopment.installer.GPG;
+import io.github.ImpactDevelopment.installer.utils.GPG;
 import io.github.ImpactDevelopment.installer.github.Github;
 import io.github.ImpactDevelopment.installer.github.GithubRelease;
 

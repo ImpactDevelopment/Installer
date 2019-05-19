@@ -18,7 +18,7 @@
 package io.github.ImpactDevelopment.installer.github;
 
 import com.google.gson.annotations.SerializedName;
-import io.github.ImpactDevelopment.installer.Fetcher;
+import io.github.ImpactDevelopment.installer.utils.Fetcher;
 
 public class ReleaseAsset {
 

@@ -18,7 +18,7 @@
 package io.github.ImpactDevelopment.installer.libraries;
 
 import com.google.gson.reflect.TypeToken;
-import io.github.ImpactDevelopment.installer.Fetcher;
+import io.github.ImpactDevelopment.installer.utils.Fetcher;
 import io.github.ImpactDevelopment.installer.Installer;
 
 import java.util.Map;

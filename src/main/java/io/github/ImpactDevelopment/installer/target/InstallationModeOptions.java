@@ -15,10 +15,12 @@
  * along with Impact Installer.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.ImpactDevelopment.installer.versions;
+package io.github.ImpactDevelopment.installer.target;
 
 import io.github.ImpactDevelopment.installer.impact.ImpactVersion;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
+import io.github.ImpactDevelopment.installer.target.targets.Forge;
+import io.github.ImpactDevelopment.installer.target.targets.Vanilla;
 
 import java.util.function.Function;
 

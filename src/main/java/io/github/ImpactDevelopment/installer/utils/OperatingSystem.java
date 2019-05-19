@@ -15,28 +15,32 @@
  * along with Impact Installer.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.ImpactDevelopment.installer;
+package io.github.ImpactDevelopment.installer.utils;
 
-import org.apache.commons.io.IOUtils;
-
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import static java.util.Locale.ROOT;
 
 /**
- * Put all the URL fetching in one place so that it can be logged
+ * @author Brady
+ * @since 3/7/2019
  */
-public class Fetcher {
-    public static String fetch(String url) {
-        return new String(fetchBytes(url), StandardCharsets.UTF_8);
-    }
+public enum OperatingSystem {
 
-    public static byte[] fetchBytes(String url) {
-        System.out.println("DOWNLOADING " + url);
-        try {
-            return IOUtils.toByteArray(new URL(url).openStream());
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to fetch " + url, e);
+    WINDOWS,
+    OSX,
+    LINUX,
+    UNKNOWN;
+
+    public static OperatingSystem getOS() {
+        String name = System.getProperty("os.name").toLowerCase(ROOT);
+        if (name.contains("windows")) {
+            return WINDOWS;
         }
+        if (name.contains("mac")) {
+            return OSX;
+        }
+        if (name.contains("linux") || name.contains("solaris") || name.contains("sunos") || name.contains("unix")) {
+            return LINUX;
+        }
+        return UNKNOWN;
     }
 }

@@ -17,7 +17,7 @@
 
 package io.github.ImpactDevelopment.installer.setting.settings;
 
-import io.github.ImpactDevelopment.installer.OperatingSystem;
+import io.github.ImpactDevelopment.installer.utils.OperatingSystem;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.Setting;
 

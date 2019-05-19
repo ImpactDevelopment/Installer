@@ -18,7 +18,7 @@
 package io.github.ImpactDevelopment.installer.github;
 
 
-import io.github.ImpactDevelopment.installer.Fetcher;
+import io.github.ImpactDevelopment.installer.utils.Fetcher;
 import io.github.ImpactDevelopment.installer.Installer;
 
 import java.util.HashMap;

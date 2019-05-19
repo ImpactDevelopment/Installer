@@ -26,7 +26,7 @@ import org.apache.commons.io.IOUtils;
 import javax.swing.*;
 import java.text.SimpleDateFormat;
 
-import static io.github.ImpactDevelopment.installer.OperatingSystem.*;
+import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Installer {
