@@ -21,7 +21,7 @@ plugins {
 }
 
 group 'io.github.ImpactDevelopment'
-version '0.1.0'
+version '0.1.1'
 targetCompatibility = sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
