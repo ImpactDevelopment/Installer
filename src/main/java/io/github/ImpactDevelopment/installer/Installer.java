@@ -21,11 +21,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.ImpactDevelopment.installer.gui.AppIcon;
 import io.github.ImpactDevelopment.installer.gui.AppWindow;
-import io.github.ImpactDevelopment.installer.impact.ImpactJsonVersion;
-import io.github.ImpactDevelopment.installer.profiles.VanillaProfiles;
-import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
-import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
-import io.github.ImpactDevelopment.installer.versions.Vanilla;
 import org.apache.commons.io.IOUtils;
 
 import javax.swing.*;
@@ -62,26 +57,6 @@ public class Installer {
         }
 
         SwingUtilities.invokeLater(AppWindow::new);
-    }
-
-    public static void install(InstallationConfig config) throws Exception { // really anything can happen lol
-        ImpactJsonVersion version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
-        Vanilla vanilla = new Vanilla(config);
-        System.out.println("Installing impact " + vanilla.getId());
-        System.out.println("Info:");
-        version.printInfo();
-
-        System.out.println("Creating vanilla version");
-
-        vanilla.apply();
-
-        System.out.println("Loading existing vanilla profiles");
-        VanillaProfiles profiles = new VanillaProfiles(config);
-        System.out.println("Injecting impact version...");
-
-        profiles.addOrMutate(version.name + " " + version.version + " for " + version.mcVersion, vanilla.getId());
-        System.out.println("Saving vanilla profiles");
-        profiles.saveToDisk();
     }
 
     public static String getTitle() {

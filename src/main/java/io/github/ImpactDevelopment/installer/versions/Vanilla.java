@@ -23,6 +23,7 @@ import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.impact.ImpactJsonVersion;
 import io.github.ImpactDevelopment.installer.libraries.ILibrary;
 import io.github.ImpactDevelopment.installer.libraries.MavenResolver;
+import io.github.ImpactDevelopment.installer.profiles.VanillaProfiles;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
 import io.github.ImpactDevelopment.installer.setting.settings.MinecraftDirectorySetting;
@@ -122,6 +123,15 @@ public class Vanilla implements InstallationMode {
 
     @Override
     public void apply() throws IOException {
+        System.out.println("Installing impact " + getId());
+        System.out.println("Info:");
+        version.printInfo();
+        installVersionJson();
+        installProfiles();
+    }
+
+    private void installVersionJson() throws IOException {
+        System.out.println("Creating vanilla version");
         Path directory = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("versions").resolve(id);
         if (!Files.exists(directory)) {
             try {
@@ -132,6 +142,16 @@ public class Vanilla implements InstallationMode {
         }
         System.out.println("Writing to " + directory.resolve(id + ".json"));
         Files.write(directory.resolve(id + ".json"), Installer.gson.toJson(populate()).getBytes(StandardCharsets.UTF_8));
+    }
+
+    private void installProfiles() throws IOException {
+        System.out.println("Loading existing vanilla profiles");
+        VanillaProfiles profiles = new VanillaProfiles(config);
+        System.out.println("Injecting impact version...");
+
+        profiles.addOrMutate(version.name + " " + version.version + " for " + version.mcVersion, getId());
+        System.out.println("Saving vanilla profiles");
+        profiles.saveToDisk();
     }
 
     public String getId() {
