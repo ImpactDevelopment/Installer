@@ -90,6 +90,7 @@ public class MainPage extends JPanel {
         JPanel container = new JPanel();
         container.setLayout(new FlowLayout());
         JTextField field = new JTextField(current.toString());
+        field.setColumns(15);
         JButton button = new JButton("Browse");
         JFileChooser dialog = new JFileChooser(current.toFile());
         dialog.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
