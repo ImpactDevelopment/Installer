@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Added
+- An EXE version of the installer to simplify running on Windows
+
 ### Changed
 - Make text field in the directory choosing widget always 15 characters wide
 

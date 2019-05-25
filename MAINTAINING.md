@@ -20,10 +20,10 @@ Finally, if you are unconcerned about maintaining the user's signature, you have
 
 ## Releasing
 Before releasing the version number should be bumped in-line with semantic versioning.
-The changelog will also need to be updated as described below. These changes should then be committed locally and the artifacts should be built by running `./gradlew build`.
+The changelog will also need to be updated as described below. These changes should then be committed locally and the artifacts should be built by running `./gradlew build createExe`.
 
 Due to branch protection, you will have to push your release commit to a branch, have another maintainer review the changes before merging into `master`.
-At this point you can tag the release commit with the matching version number (`git tag 1.0.1 && git push origin 1.0.1` for example). Once the tag is pushed you can create the release using [GitHub's process](https://help.github.com/en/articles/creating-releases) being sure to upload the build artifacts you built earlier.
+At this point you can tag the release commit with the matching version number (`git tag 1.0.1 && git push origin 1.0.1` for example). Once the tag is pushed you can create the release using [GitHub's process](https://help.github.com/en/articles/creating-releases) being sure to upload the build artifacts you built earlier (from `build/lib` and `build/launch4j`).
 
 Once happy, choose `Publish release`.
 
