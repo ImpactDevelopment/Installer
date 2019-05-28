@@ -17,9 +17,9 @@
 
 package io.github.ImpactDevelopment.installer.libraries;
 
-import io.github.ImpactDevelopment.installer.utils.GPG;
 import io.github.ImpactDevelopment.installer.github.Github;
 import io.github.ImpactDevelopment.installer.github.GithubRelease;
+import io.github.ImpactDevelopment.installer.utils.GPG;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +75,7 @@ public class LibraryBaritone implements ILibrary {
             String ourLine = Stream.of(checksums.split("\n")).filter(line -> line.endsWith(getReleasedJarName())).findFirst().get();
             return ourLine.substring(0, 40);
         } catch (Exception e) {
-            throw new RuntimeException(strippedVersion, e);
+            throw new RuntimeException("Error fetching " + strippedVersion, e);
         }
     }
 

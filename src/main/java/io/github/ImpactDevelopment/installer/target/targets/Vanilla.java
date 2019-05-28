@@ -28,11 +28,17 @@ import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetti
 import io.github.ImpactDevelopment.installer.setting.settings.MinecraftDirectorySetting;
 import io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting;
 import io.github.ImpactDevelopment.installer.target.InstallationMode;
+import org.apache.commons.io.IOUtils;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.WINDOWS;
+import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.getOS;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Vanilla implements InstallationMode {
 
@@ -126,8 +132,27 @@ public class Vanilla implements InstallationMode {
         System.out.println("Installing impact " + getId());
         System.out.println("Info:");
         version.printInfo();
+        checkDirectory();
+        checkVersionInstalled();
+        if (isMinecraftLauncherOpen()) {
+            throw new RuntimeException("Please close Minecraft and its launcher before continuing");
+        }
         installVersionJson();
         installProfiles();
+    }
+
+    private void checkDirectory() {
+        Path path = config.getSettingValue(MinecraftDirectorySetting.INSTANCE);
+        if (!VanillaProfiles.checkDirectory(path)) {
+            throw new RuntimeException("Vanilla Minecraft not detected at " + path + ", have you opened the Minecraft launcher before?");
+        }
+    }
+
+    private void checkVersionInstalled() {
+        Path path = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("versions").resolve(version.mcVersion).resolve(version.mcVersion + ".jar");
+        if (!Files.exists(path)) {
+            throw new RuntimeException("Please install and run Vanilla " + version.mcVersion + " as normal before continuing.", new FileNotFoundException(path.toString()));
+        }
     }
 
     private void installVersionJson() throws IOException {
@@ -152,6 +177,17 @@ public class Vanilla implements InstallationMode {
         profiles.addOrMutate(version.name + " " + version.version + " for " + version.mcVersion, getId());
         System.out.println("Saving vanilla profiles");
         profiles.saveToDisk();
+    }
+
+    private static boolean isMinecraftLauncherOpen() {
+        try {
+            if (getOS() == WINDOWS) {
+                return IOUtils.toString(new ProcessBuilder("tasklist", "/fi", "WINDOWTITLE eq Minecraft Launcher").start().getInputStream(), UTF_8).contains("MinecraftLauncher.exe");
+            }
+            return IOUtils.toString(new ProcessBuilder("ps", "-ef").start().getInputStream(), UTF_8).contains("Minecraft Launcher");
+        } catch (Throwable e) {
+            return false;
+        }
     }
 
     public String getId() {

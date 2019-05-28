@@ -17,7 +17,6 @@
 
 package io.github.ImpactDevelopment.installer.gui.pages;
 
-import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.gui.AppWindow;
 import io.github.ImpactDevelopment.installer.setting.ChoiceSetting;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
@@ -42,16 +41,6 @@ public class MainPage extends JPanel {
         JButton install = new JButton("Install");
         install.addActionListener((ActionEvent) -> {
             try {
-                if (Installer.isMinecraftLauncherOpen()) {
-                    int ret = JOptionPane.showOptionDialog(app, "Please close Minecraft and its launcher before continuing", "\uD83D\uDE09", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
-                    if (ret == JOptionPane.CLOSED_OPTION) {
-                        JOptionPane.showMessageDialog(app, "ok i wont install it then", "\uD83D\uDE1B", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    if (Installer.isMinecraftLauncherOpen()) {
-                        return; // click the button again lol
-                    }
-                }
                 app.config.getSettingValue(InstallationModeSetting.INSTANCE).mode.apply(app.config).apply();
                 JOptionPane.showMessageDialog(app, "Impact has been successfully installed", "\uD83D\uDE0E", JOptionPane.INFORMATION_MESSAGE);
             } catch (Throwable e) {

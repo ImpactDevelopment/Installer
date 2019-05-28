@@ -21,13 +21,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.ImpactDevelopment.installer.gui.AppIcon;
 import io.github.ImpactDevelopment.installer.gui.AppWindow;
-import org.apache.commons.io.IOUtils;
 
 import javax.swing.*;
 import java.text.SimpleDateFormat;
 
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.*;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Installer {
     public static final String project = "Impact";
@@ -61,16 +59,5 @@ public class Installer {
 
     public static String getTitle() {
         return project + " Installer";
-    }
-
-    public static boolean isMinecraftLauncherOpen() {
-        try {
-            if (getOS() == WINDOWS) {
-                return IOUtils.toString(new ProcessBuilder("tasklist", "/fi", "WINDOWTITLE eq Minecraft Launcher").start().getInputStream(), UTF_8).contains("MinecraftLauncher.exe");
-            }
-            return IOUtils.toString(new ProcessBuilder("ps", "-ef").start().getInputStream(), UTF_8).contains("Minecraft Launcher");
-        } catch (Throwable e) {
-            return false;
-        }
     }
 }

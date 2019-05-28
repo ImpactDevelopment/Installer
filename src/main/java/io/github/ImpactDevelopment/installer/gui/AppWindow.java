@@ -62,15 +62,13 @@ public class AppWindow extends JFrame {
         });
     }
 
-    public void exception(Throwable e) {
-        try {
-            throw e;
-        } catch (ExceptionInInitializerError ex) {
-            exception(ex.getCause());
-        } catch (Throwable th) {
-            th.printStackTrace();
-            JOptionPane.showMessageDialog(this, th + "\n" + th.getCause(), "Error", JOptionPane.ERROR_MESSAGE);
+    public void exception(Throwable th) {
+        th.printStackTrace();
+        String msg = th.getMessage() + "\n";
+        if (th.getCause() != null) {
+            msg += th.getCause();
         }
+        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     private void setContent(JPanel content) {

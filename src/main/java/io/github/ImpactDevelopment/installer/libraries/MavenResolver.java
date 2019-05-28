@@ -18,19 +18,23 @@
 package io.github.ImpactDevelopment.installer.libraries;
 
 import com.google.gson.reflect.TypeToken;
-import io.github.ImpactDevelopment.installer.utils.Fetcher;
 import io.github.ImpactDevelopment.installer.Installer;
+import io.github.ImpactDevelopment.installer.utils.Fetcher;
 
 import java.util.Map;
 
 public class MavenResolver {
-    private static final Map<String, String> MAVEN_MAP = getMavenMap();
+    private static Map<String, String> MAVEN_MAP = null;
 
     private static Map<String, String> getMavenMap() {
         return Installer.gson.fromJson(Fetcher.fetch("https://impactdevelopment.github.io/Resources/data/maven.refmap.json"), new TypeToken<Map<String, String>>() {}.getType());
     }
 
     public static String getURLBase(String mavenGroup) {
+        if (MAVEN_MAP == null) {
+            // don't do this in the class initializer, so that if it fails we don't have a broken class that can't be referenced in the future
+            MAVEN_MAP = getMavenMap();
+        }
         String ret = MAVEN_MAP.get(mavenGroup);
         if (ret == null) {
             throw new IllegalArgumentException("Can't get URL for maven group " + mavenGroup);

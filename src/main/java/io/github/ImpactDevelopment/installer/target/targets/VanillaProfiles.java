@@ -138,4 +138,8 @@ public class VanillaProfiles {
         byte[] bytes = Installer.gson.toJson(json).getBytes(StandardCharsets.UTF_8);
         Files.write(launcherProfiles, bytes);
     }
+
+    public static boolean checkDirectory(Path path) {
+        return Files.exists(path.resolve("launcher_profiles.json"));
+    }
 }
