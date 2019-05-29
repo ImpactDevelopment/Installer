@@ -30,10 +30,14 @@ plugins {
     id 'edu.sc.seis.launch4j' version '2.4.6'
 }
 
-group 'io.github.ImpactDevelopment'
-version '0.1.1'
-ext.mainClassName = 'io.github.ImpactDevelopment.installer.Installer'
-targetCompatibility = sourceCompatibility = JavaVersion.VERSION_1_8
+ext {
+    id = 'ImpactInstaller'
+    group 'io.github.ImpactDevelopment'
+    version '0.1.1'
+    description = 'Impact Installer'
+    mainClassName = 'io.github.ImpactDevelopment.installer.Installer'
+    targetCompatibility = sourceCompatibility = JavaVersion.VERSION_1_8
+}
 
 repositories {
     mavenCentral()
@@ -102,9 +106,12 @@ createExe {
     copyConfigurable = project.tasks.optimize.outputs.files
     jar = "lib/${project.tasks.jar.archiveName}"
     outfile = tasks.jar.archiveName - ".jar" + ".exe"
-    icon = "${projectDir}/Icon.ico"
+    icon = "${projectDir}/exe/Icon.ico"
+    manifest = "${projectDir}/exe/manifest.xml"
     companyName = 'ImpactDevelopment'
     copyright = 'Copyright (C) Impact Developers'
+    fileDescription = project.description
+    version = textVersion = project.version
 }
 
 build.finalizedBy(createExe)
