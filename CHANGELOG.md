@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Make text field in the directory choosing widget always 15 characters wide
+- Significantly reduce the size of the jar
 
 ## [0.1.1] - 2019-05-23
 

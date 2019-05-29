@@ -15,6 +15,15 @@
  * along with Impact Installer.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import proguard.gradle.ProGuardTask
+
+buildscript {
+    dependencies {
+        classpath 'net.sf.proguard:proguard-gradle:6.1.0'
+        classpath 'net.sf.proguard:proguard-base:6.1.0'
+    }
+}
+
 plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '4.0.4'
@@ -54,18 +63,48 @@ jar {
 }
 
 shadowJar {
-    classifier = ''
+    classifier = 'unoptimised'
+}
+
+task('optimize', type: ProGuardTask, dependsOn: shadowJar) {
+    injars tasks.shadowJar.outputs.files
+    outjars "${buildDir}/libs/${project.tasks.jar.archiveName}"
+    libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
+    configuration "${projectDir}/proguard.conf"
+
+    verbose()
+    dontwarn()
+
+    keepattributes 'Signature'
+    keepattributes '*Annotation*'
+    optimizationpasses 9
+    dontusemixedcaseclassnames()
+    
+    keepdirectories 'icons'
+    
+    keep 'class io.github.ImpactDevelopment.installer.** { *; }'
+    
+    [
+            // keep only the RSA stuff from bouncycastle
+            'org.bouncycastle.jcajce.provider.asymmetric.rsa.PSSSignatureSpi$SHA512withRSA',
+            'org.bouncycastle.jcajce.provider.asymmetric.rsa.DigestSignatureSpi$SHA512',
+            'org.bouncycastle.jcajce.provider.asymmetric.rsa.DigestSignatureSpi$SHA256',
+            'org.bouncycastle.jcajce.provider.asymmetric.rsa.KeyFactorySpi',
+            'org.bouncycastle.jcajce.provider.asymmetric.RSA$Mappings'
+    ].each {
+        keep "class ${it}"
+    }
 }
 
 createExe {
-    dependsOn 'build'
+    dependsOn 'optimize'
     mainClassName = project.mainClassName
-    copyConfigurable = project.tasks.shadowJar.outputs.files
-    jar = "lib/${project.tasks.shadowJar.archiveName}"
-    outfile = tasks.shadowJar.archiveName - ".jar" + ".exe"
+    copyConfigurable = project.tasks.optimize.outputs.files
+    jar = "lib/${project.tasks.jar.archiveName}"
+    outfile = tasks.jar.archiveName - ".jar" + ".exe"
     icon = "${projectDir}/Icon.ico"
     companyName = 'ImpactDevelopment'
     copyright = 'Copyright (C) Impact Developers'
 }
 
-build.dependsOn(shadowJar)
+build.finalizedBy(createExe)
