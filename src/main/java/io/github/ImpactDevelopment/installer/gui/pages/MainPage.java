@@ -25,6 +25,7 @@ import io.github.ImpactDevelopment.installer.setting.settings.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -57,6 +58,25 @@ public class MainPage extends JPanel {
         }
         InstallationConfig config = app.config;
         JPanel container = new JPanel(new FlowLayout());
+        if (val.equals(OptiFineSetting.MISSING)) {
+            container.add(new JLabel("No OptiFine installation is detected for Minecraft " + config.getSettingValue(MinecraftVersionSetting.INSTANCE)));
+            JButton button = new JButton();
+            button.setText("<html>If you want OptiFine, it must be installed separately beforehand. <font color=\"#0000CC\"><u>https://optifine.net/downloads</u></font></html>");
+            button.setBackground(Color.WHITE);
+            button.setBorderPainted(false);
+            button.setHorizontalAlignment(SwingConstants.LEFT);
+            button.setOpaque(false);
+            button.addActionListener((ActionEvent) -> {
+                try {
+                    Desktop.getDesktop().browse(new URI("https://optifine.net/downloads"));
+                } catch (Exception ex) {
+                    app.exception(ex);
+                }
+            });
+            container.add(button);
+            add(container);
+            return;
+        }
         container.add(new JLabel(text + ": "));
         JComboBox<String> comboBox = new JComboBox<>(setting.getPossibleValues(config).stream().map(v -> setting.displayName(config, v)).toArray(String[]::new));
         comboBox.setSelectedIndex(setting.getPossibleValues(config).indexOf(val));

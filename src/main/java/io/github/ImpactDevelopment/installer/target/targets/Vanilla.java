@@ -99,7 +99,7 @@ public class Vanilla implements InstallationMode {
 
     private void populateOptifine(JsonArray libraries) {
         String optifine = config.getSettingValue(OptiFineSetting.INSTANCE);
-        if (optifine != null && !optifine.equals(OptiFineSetting.NONE)) {
+        if (optifine != null && !optifine.equals(OptiFineSetting.NONE) && !optifine.equals(OptiFineSetting.MISSING)) {
             JsonObject opti = new JsonObject();
             opti.addProperty("name", "optifine:OptiFine:" + optifine);
             libraries.add(opti);

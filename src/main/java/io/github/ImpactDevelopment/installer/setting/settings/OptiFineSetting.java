@@ -35,6 +35,7 @@ public enum OptiFineSetting implements ChoiceSetting<String> {
     INSTANCE;
 
     public static final String NONE = "None";
+    public static final String MISSING = "Missing";
 
     @Override
     public List<String> getPossibleValues(InstallationConfig config) {
@@ -55,7 +56,11 @@ public enum OptiFineSetting implements ChoiceSetting<String> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        result.add(NONE);
+        if (result.isEmpty()) {
+            result.add(MISSING);
+        } else {
+            result.add(NONE);
+        }
         return result;
     }
 }
