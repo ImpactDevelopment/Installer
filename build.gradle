@@ -33,7 +33,7 @@ plugins {
 ext {
     id = 'ImpactInstaller'
     group 'io.github.ImpactDevelopment'
-    version '0.1.1'
+    version '0.2.0'
     description = 'Impact Installer'
     mainClassName = 'io.github.ImpactDevelopment.installer.Installer'
     targetCompatibility = sourceCompatibility = JavaVersion.VERSION_1_8
@@ -83,11 +83,11 @@ task('optimize', type: ProGuardTask, dependsOn: shadowJar) {
     keepattributes '*Annotation*'
     optimizationpasses 9
     dontusemixedcaseclassnames()
-    
+
     keepdirectories 'icons'
-    
+
     keep 'class io.github.ImpactDevelopment.installer.** { *; }'
-    
+
     [
             // keep only the RSA stuff from bouncycastle
             'org.bouncycastle.jcajce.provider.asymmetric.rsa.PSSSignatureSpi$SHA512withRSA',
