@@ -59,7 +59,7 @@ public enum OptiFineSetting implements ChoiceSetting<String> {
         if (result.isEmpty()) {
             result.add(MISSING);
         } else {
-            result.add(NONE);
+            result.add(0, NONE);
         }
         return result;
     }
