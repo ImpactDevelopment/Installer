@@ -151,7 +151,7 @@ public class Vanilla implements InstallationMode {
     private void checkVersionInstalled() {
         Path path = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("versions").resolve(version.mcVersion).resolve(version.mcVersion + ".jar");
         if (!Files.exists(path)) {
-            throw new RuntimeException("Please install and run Vanilla " + version.mcVersion + " as normal before continuing.", new FileNotFoundException(path.toString()));
+            throw new RuntimeException("Please install and run Vanilla " + version.mcVersion + " once as normal before continuing.", new FileNotFoundException(path.toString()));
         }
     }
 
