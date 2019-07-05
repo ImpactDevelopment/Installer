@@ -17,13 +17,13 @@
 
 package io.github.ImpactDevelopment.installer.target.targets;
 
-import io.github.ImpactDevelopment.installer.target.InstallationMode;
-import io.github.ImpactDevelopment.installer.utils.Fetcher;
 import io.github.ImpactDevelopment.installer.impact.ImpactJsonVersion;
 import io.github.ImpactDevelopment.installer.libraries.ILibrary;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
 import io.github.ImpactDevelopment.installer.setting.settings.MinecraftDirectorySetting;
+import io.github.ImpactDevelopment.installer.target.InstallationMode;
+import io.github.ImpactDevelopment.installer.utils.Fetcher;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
@@ -49,11 +49,12 @@ public class Forge implements InstallationMode {
     }
 
     @Override
-    public void apply() {
+    public String apply() {
         File outputFolder = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("mods").toFile();
         outputFolder.mkdir();
+        File outputFile = new File(outputFolder, version.name + "-" + version.version + "-" + version.mcVersion + ".jar");
         try (
-                FileOutputStream fileOut = new FileOutputStream(new File(outputFolder, version.name + "-" + version.version + "-" + version.mcVersion + ".jar"));
+                FileOutputStream fileOut = new FileOutputStream(outputFile);
                 JarOutputStream jarOut = new JarOutputStream(fileOut);
         ) {
             jarOut.putNextEntry(new JarEntry("META-INF/MANIFEST.MF"));
@@ -82,6 +83,7 @@ public class Forge implements InstallationMode {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return "Impact Forge has been successfully installed at " + outputFile;
     }
 
     private static String sha1hex(byte[] data) {

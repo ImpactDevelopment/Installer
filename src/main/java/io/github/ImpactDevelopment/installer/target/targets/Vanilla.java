@@ -128,7 +128,7 @@ public class Vanilla implements InstallationMode {
     }
 
     @Override
-    public void apply() throws IOException {
+    public String apply() throws IOException {
         System.out.println("Installing impact " + getId());
         System.out.println("Info:");
         version.printInfo();
@@ -139,6 +139,7 @@ public class Vanilla implements InstallationMode {
         }
         installVersionJson();
         installProfiles();
+        return "Impact has been successfully installed";
     }
 
     private void checkDirectory() {

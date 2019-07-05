@@ -42,8 +42,8 @@ public class MainPage extends JPanel {
         JButton install = new JButton("Install");
         install.addActionListener((ActionEvent) -> {
             try {
-                app.config.getSettingValue(InstallationModeSetting.INSTANCE).mode.apply(app.config).apply();
-                JOptionPane.showMessageDialog(app, "Impact has been successfully installed", "\uD83D\uDE0E", JOptionPane.INFORMATION_MESSAGE);
+                String msg = app.config.getSettingValue(InstallationModeSetting.INSTANCE).mode.apply(app.config).apply();
+                JOptionPane.showMessageDialog(app, msg, "\uD83D\uDE0E", JOptionPane.INFORMATION_MESSAGE);
             } catch (Throwable e) {
                 app.exception(e);
             }
