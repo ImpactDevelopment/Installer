@@ -61,7 +61,7 @@ public class MainPage extends JPanel {
         if (val.equals(OptiFineSetting.MISSING)) {
             container.add(new JLabel("No OptiFine installation is detected for Minecraft " + config.getSettingValue(MinecraftVersionSetting.INSTANCE)));
             JButton button = new JButton();
-            button.setText("<html>If you want OptiFine, it must be installed separately beforehand. <font color=\"#0000CC\"><u>https://optifine.net/downloads</u></font></html>");
+            button.setText("<html>If you need OptiFine, install it separately beforehand. <font color=\"#0000CC\"><u>https://optifine.net/downloads</u></font></html>");
             button.setBackground(Color.WHITE);
             button.setBorderPainted(false);
             button.setHorizontalAlignment(SwingConstants.LEFT);
@@ -90,6 +90,9 @@ public class MainPage extends JPanel {
             app.recreate();
         });
         container.add(comboBox);
+        if (!val.equals(OptiFineSetting.NONE) && setting instanceof OptiFineSetting) {
+            container.add(new JLabel("OptiFine can sometimes cause visual glitches in Impact; only include it if you need it."));
+        }
         add(container);
     }
 
