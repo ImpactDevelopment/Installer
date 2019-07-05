@@ -26,6 +26,8 @@ import java.util.stream.Stream;
 public class GithubRelease {
     @SerializedName("tag_name")
     public String tagName;
+    public boolean draft;
+    public boolean prerelease;
     public ReleaseAsset[] assets;
 
     public Optional<ReleaseAsset> byName(String fileName) {

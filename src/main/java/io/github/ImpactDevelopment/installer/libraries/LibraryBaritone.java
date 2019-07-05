@@ -36,6 +36,9 @@ public class LibraryBaritone implements ILibrary {
             if (!release.byName("checksums_signed.asc").isPresent()) {
                 continue;
             }
+            if (release.prerelease || release.draft) {
+                continue;
+            }
             if (!release.tagName.startsWith("v")) {
                 throw new IllegalArgumentException(release.tagName);
             }
