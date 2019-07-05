@@ -142,10 +142,7 @@ public class Vanilla implements InstallationMode {
     }
 
     private void checkDirectory() {
-        Path path = config.getSettingValue(MinecraftDirectorySetting.INSTANCE);
-        if (!VanillaProfiles.checkDirectory(path)) {
-            throw new RuntimeException("Vanilla Minecraft not detected at " + path + ", have you opened the Minecraft launcher before?");
-        }
+        VanillaProfiles.checkDirectory(config.getSettingValue(MinecraftDirectorySetting.INSTANCE));
     }
 
     private void checkVersionInstalled() {

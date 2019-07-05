@@ -139,7 +139,13 @@ public class VanillaProfiles {
         Files.write(launcherProfiles, bytes);
     }
 
-    public static boolean checkDirectory(Path path) {
-        return Files.exists(path.resolve("launcher_profiles.json"));
+    public static void checkDirectory(Path path) {
+        if (Files.exists(path.resolve("launcher_profiles.json"))) {
+            return;
+        }
+        if (Files.exists(path.getParent().resolve("launcher_profiles.json"))) {
+            throw new RuntimeException("Invalid Minecraft path. Did you mean " + path.getParent() + "?");
+        }
+        throw new RuntimeException("Vanilla Minecraft not detected at " + path + ", have you opened the Minecraft launcher before?");
     }
 }
