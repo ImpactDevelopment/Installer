@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Have the message on successfully installing Forge tell you where the jar was placed
 - Improve error message displayed when the wrong directory is selected for Minecraft
 - Filter out releases marked as a draft or prerelease on GitHub
+- Slightly different wording in the error when vanilla has not yet been downloaded
 
 ## [0.2.0] - 2019-05-31
 
