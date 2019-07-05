@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.WINDOWS;
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.getOS;
@@ -48,8 +49,8 @@ public class Vanilla implements InstallationMode {
 
     public Vanilla(InstallationConfig config) {
         this.version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
-        this.id = version.mcVersion + "-" + version.name + "_" + version.version;
         this.config = config;
+        this.id = version.mcVersion + "-" + version.name + "_" + version.version + prettifiedOptifineVersion().orElse("");
     }
 
     private JsonObject populate() {
@@ -98,12 +99,24 @@ public class Vanilla implements InstallationMode {
     }
 
     private void populateOptifine(JsonArray libraries) {
-        String optifine = config.getSettingValue(OptiFineSetting.INSTANCE);
-        if (optifine != null && !optifine.equals(OptiFineSetting.NONE) && !optifine.equals(OptiFineSetting.MISSING)) {
+        optifineVersion().ifPresent(optifine -> {
             JsonObject opti = new JsonObject();
             opti.addProperty("name", "optifine:OptiFine:" + optifine);
             libraries.add(opti);
-        }
+        });
+    }
+
+    private Optional<String> optifineVersion() {
+        return Optional.ofNullable(config.getSettingValue(OptiFineSetting.INSTANCE)).filter(optifine -> !optifine.equals(OptiFineSetting.NONE)).filter(optifine -> !optifine.equals(OptiFineSetting.MISSING));
+    }
+
+    private Optional<String> prettifiedOptifineVersion() {
+        return optifineVersion().map(str -> {
+            if (!str.startsWith(version.mcVersion + "_")) {
+                throw new IllegalStateException(str + " " + version.mcVersion);
+            }
+            return "-OptiFine" + str.substring(version.mcVersion.length());
+        });
     }
 
     public static void populateLib(ILibrary lib, JsonArray libraries) {
