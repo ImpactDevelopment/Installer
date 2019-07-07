@@ -43,7 +43,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.2.0...HEAD
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.3.0...HEAD
+[0.2.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.3.0
 [0.2.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.2.0
 [0.1.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.1.1
 [0.1.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.1.0
