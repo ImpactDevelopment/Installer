@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Upcoming
 
+## [0.3.0] whats this - 2019-07-06
+
 ### Changed
 - Make OptiFine option default to None due to visual glitches
 - Have the message on successfully installing Forge tell you where the jar was placed
