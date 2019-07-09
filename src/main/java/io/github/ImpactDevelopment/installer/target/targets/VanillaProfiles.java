@@ -88,6 +88,11 @@ public class VanillaProfiles {
             profile.remove("icon");
         }
         profile.addProperty("icon", ICON);
+
+        if (profile.has("type")) {
+            profile.remove("type");
+        }
+        profile.addProperty("type", "custom");
     }
 
     /**
