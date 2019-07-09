@@ -17,9 +17,9 @@
 
 package io.github.ImpactDevelopment.installer.impact;
 
-import io.github.ImpactDevelopment.installer.utils.GPG;
 import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.github.GithubRelease;
+import io.github.ImpactDevelopment.installer.utils.GPG;
 
 /**
  * A version of Impact that we know about but might not have fetched the actual JSON for yet
@@ -44,7 +44,7 @@ public class ImpactVersion {
     public ImpactJsonVersion fetchContents() {
         if (fetchedContents == null) {
             System.out.println("Verifying GPG signatures on Impact release " + release.tagName);
-            if (!GPG.verifyRelease(release, jsonFileName(), jsonFileName() + ".asc", sigs -> sigs.size() >= 2 || sigs.contains(GPG.leijurv))) {
+            if (!GPG.verifyRelease(release, jsonFileName(), jsonFileName() + ".asc", sigs -> sigs.size() >= 2)) {
                 throw new RuntimeException("Invalid signature on Impact release " + release.tagName);
             }
             fetchedContents = Installer.gson.fromJson(release.byName(jsonFileName()).get().fetch(), ImpactJsonVersion.class);
