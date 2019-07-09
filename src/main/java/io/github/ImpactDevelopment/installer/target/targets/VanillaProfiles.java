@@ -64,34 +64,14 @@ public class VanillaProfiles {
 
         Optional<String> id = findProfileIdFromName(name);
         if (!id.isPresent()) { // Create mode
-            if (profiles.has(name)) {
-                profiles.remove(name); // just in case (shouldn't happen)
-
-            }
-
             profiles.add(name, profile = new JsonObject());
             profile.addProperty("name", name);
         } else { // Mutate mode
             profile = profiles.get(id.get()).getAsJsonObject();
         }
-        if (profile.has("lastUsed")) {
-            profile.remove("lastUsed");
-        }
         profile.addProperty("lastUsed", dateFormat.format(new Date())); // always bump.
-
-        if (profile.has("lastVersionId")) {
-            profile.remove("lastVersionId");
-        }
         profile.addProperty("lastVersionId", version);
-
-        if (profile.has("icon")) {
-            profile.remove("icon");
-        }
         profile.addProperty("icon", ICON);
-
-        if (profile.has("type")) {
-            profile.remove("type");
-        }
         profile.addProperty("type", "custom");
     }
 
