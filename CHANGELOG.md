@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Upcoming
 
 ## [0.3.1] - 2019-07-10
+
+### Fixed
 - Fixed the installer not setting a required property in the launcher profile that made it impossible to delete
 
 ## [0.3.0] whats this - 2019-07-06
