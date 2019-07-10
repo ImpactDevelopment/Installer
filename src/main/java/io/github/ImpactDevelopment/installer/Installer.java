@@ -17,6 +17,7 @@
 
 package io.github.ImpactDevelopment.installer;
 
+import com.beust.jcommander.JCommander;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.ImpactDevelopment.installer.gui.AppIcon;
@@ -31,8 +32,14 @@ public class Installer {
     public static final String project = "Impact";
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+    public static final Args args = new Args();
 
-    public static void main(String... args) throws Throwable {
+    public static void main(String... argv) throws Throwable {
+        // Parse CLI arguments
+        JCommander.newBuilder()
+                .addObject(args)
+                .build()
+                .parse(argv);
 
         // OSX systems should set swing.defaultlaf
         // explicitly setting the look and feel may override that

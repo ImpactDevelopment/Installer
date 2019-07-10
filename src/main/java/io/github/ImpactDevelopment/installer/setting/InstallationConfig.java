@@ -17,12 +17,20 @@
 
 package io.github.ImpactDevelopment.installer.setting;
 
+import io.github.ImpactDevelopment.installer.Args;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class InstallationConfig {
     private final Map<Setting, Object> settingValues = new LinkedHashMap<>();
+
+    public InstallationConfig(Args args) {
+        args.apply(this);
+    }
+
+    public InstallationConfig() {}
 
     public <T> T getSettingValue(Setting<T> setting) {
         return (T) settingValues.computeIfAbsent(setting, s -> s.getDefaultValue(this));
