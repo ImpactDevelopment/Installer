@@ -1,0 +1,17 @@
+language: java
+script:
+- ./gradlew build --info
+- rm build/libs/*unoptimised* # get outta here! we dont want the big useless jar on github releases lol
+deploy:
+  provider: releases
+  api_key:
+    secure: deLR80SPtj8Y2rPexzdleAgbNf9Ob8domcU2tpXp7iW1HB8w2amxiEBTfOsXpHSywI5vqiMmqd5d8c2/X8WFTS3AlWn3W6j4cqYhFkS2IROm1l7rhmE22iWiVrgKodmbyLE6IwqQfS/MyfMNdCOHR6F2opO9PWr5GRaJ5ym0Cko/RxuUkmBQAo5Y1Kf7Fu/jLOzlK35le37sW23hjt9JCkSyZLEA7oTZaJxc8qkc4BFdTXLEw4GIooTFokBSei0YKHdvIsGtZzmbCorj8LMfVZHSPp/Jhy7hy3T0Y39j55X+xrdPL5bP+SL1RF5+Fn6y3rExwzRDrpv751ijykD9B1OIqjB5MwOvoJ6U3vw6mWF07CBfcvVApHbY7+YL95X0KVT3xztzcQa482/I0cEAyFCmA/owS0ScCqcu+PK6N1H0iTm7a/zAA/ZF8+K/SsR78iYwzlYTwHZTk/L8ec8QWWoxgTMADSg/l4G07LrGE/uQ50Q2A/GiUgT1xwBg5E90olNztWtV/U1mhYFiZn3ueTQ5cSe2NxDVigVOpN4eMz6z1OgZqBADvaluK0ntl94RoC083eMCkH3sgc4dCqdJexkBrFQwOOJhP0dPZ+BqSnw2A6bXTzwZyQvSFD5vrxR5COJaMQ1rdk4PG98VFJmy/slFgDNKDHJPV+h4r9LvsvQ=
+  all_branches: true
+  file_glob: true
+  file:
+  - build/libs/*
+  - build/launch4j/*
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: ImpactDevelopment/Installer
