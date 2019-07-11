@@ -33,7 +33,7 @@ plugins {
 ext {
     id = 'ImpactInstaller'
     group 'io.github.ImpactDevelopment'
-    version '0.3.1'
+    version '0.4.0'
     description = 'Impact Installer'
     mainClassName = 'io.github.ImpactDevelopment.installer.Installer'
     targetCompatibility = sourceCompatibility = JavaVersion.VERSION_1_8
@@ -87,6 +87,8 @@ task('optimize', type: ProGuardTask, dependsOn: shadowJar) {
     keepdirectories 'icons'
 
     keep 'class io.github.ImpactDevelopment.installer.** { *; }'
+
+    keep 'class com.beust.jcommander.** { *; }'
 
     [
             // keep only the RSA stuff from bouncycastle

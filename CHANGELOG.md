@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Upcoming
 
+## [0.4.0] - 2019-07-10
+
+### Added
+- Added a command line interface
+- Added the ability to install a local .json
+- Added a way to validate a release and all its dependencies without installing it
+
 ## [0.3.1] - 2019-07-10
 
 ### Fixed
@@ -48,8 +55,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.3.1...HEAD
-[0.3.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.3.1
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.4.0...HEAD
+[0.4.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.4.0
+[0.3.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.3.1
 [0.3.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.3.0
 [0.2.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.2.0
 [0.1.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.1.1
