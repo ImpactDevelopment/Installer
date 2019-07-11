@@ -66,7 +66,6 @@ public class ImpactVersionDisk extends ImpactVersion {
     @Override
     public ILibrary resolveSelf(ImpactJsonLibrary entry) {
         sanityCheck(entry);
-        Path path = pathToFile.getParent().resolve(pathToFile.getFileName().toString().replace(".json", ".jar"));
-        return new LibraryCustomURL(entry, path.toUri().toString());
+        return new LibraryCustomURL(entry, pathToFile.toUri().toString().replace(".json", ".jar"));
     }
 }
