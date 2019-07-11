@@ -17,10 +17,9 @@
 
 package io.github.ImpactDevelopment.installer.impact;
 
-import io.github.ImpactDevelopment.installer.github.GithubRelease;
 import io.github.ImpactDevelopment.installer.libraries.ILibrary;
-import io.github.ImpactDevelopment.installer.libraries.LibraryBaritone;
-import io.github.ImpactDevelopment.installer.libraries.LibraryImpact;
+import io.github.ImpactDevelopment.installer.libraries.LibraryBaritoneReleased;
+import io.github.ImpactDevelopment.installer.libraries.LibraryBaritoneSpecific;
 import io.github.ImpactDevelopment.installer.libraries.LibraryMaven;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.settings.BaritoneVersionSetting;
@@ -61,15 +60,19 @@ public class ImpactJsonVersion {
                 throw new IllegalStateException("malformed " + lib.name);
             }
             String name = parts[1];
-            if (name.equals(LibraryBaritone.VARIANT)) {
-                return config.getSettingValue(BaritoneVersionSetting.INSTANCE);
+            if (name.equals(LibraryBaritoneReleased.VARIANT)) {
+                LibraryBaritoneReleased configured = config.getSettingValue(BaritoneVersionSetting.INSTANCE);
+                boolean filtered = parts[2].contains("*");
+                if (filtered ^ configured != null) {
+                    throw new IllegalStateException(parts[2] + " " + configured + " " + baritoneVersionFilter());
+                }
+                if (configured != null) {
+                    return configured;
+                }
+                return new LibraryBaritoneSpecific(lib);
             }
             if (name.equals(this.name)) {
-                GithubRelease release = config.getSettingValue(ImpactVersionSetting.INSTANCE).release;
-                if (!release.tagName.equals(version + "-" + mcVersion)) {
-                    throw new RuntimeException(release.tagName + " " + version + " " + mcVersion);
-                }
-                return new LibraryImpact(release, lib);
+                return config.getSettingValue(ImpactVersionSetting.INSTANCE).resolveSelf(lib);
             }
             return new LibraryMaven(lib);
         }).collect(Collectors.toList());
@@ -80,8 +83,9 @@ public class ImpactJsonVersion {
                 .of(libraries)
                 .map(lib -> lib.name)
                 .map(name -> name.split(":"))
-                .filter(parts -> parts[1].equals(LibraryBaritone.VARIANT))
+                .filter(parts -> parts[1].equals(LibraryBaritoneReleased.VARIANT))
                 .map(parts -> parts[2])
+                .filter(filter -> filter.contains("*")) // if there is a *, that means it's a valid filter, if not it's a specific version
                 .findFirst();
     }
 }

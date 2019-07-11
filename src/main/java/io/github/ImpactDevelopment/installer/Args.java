@@ -18,46 +18,59 @@
 package io.github.ImpactDevelopment.installer;
 
 import com.beust.jcommander.Parameter;
+import io.github.ImpactDevelopment.installer.impact.ImpactVersion;
+import io.github.ImpactDevelopment.installer.impact.ImpactVersionDisk;
+import io.github.ImpactDevelopment.installer.impact.ImpactVersions;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
-import io.github.ImpactDevelopment.installer.setting.Setting;
+import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
+import io.github.ImpactDevelopment.installer.setting.settings.InstallationModeSetting;
 import io.github.ImpactDevelopment.installer.setting.settings.MinecraftVersionSetting;
+import io.github.ImpactDevelopment.installer.target.InstallationModeOptions;
+
+import java.nio.file.Paths;
 
 public class Args {
 
-    @Parameter(names = { "--no-gpg", "--disable-gpg" }, description = "Disable checking the release signature for testing purposes")
-    public boolean gpg = true;
+    @Parameter(names = {"--no-gpg", "--disable-gpg"}, description = "Disable checking the release signature for testing purposes")
+    public boolean noGPG = false;
 
-    @Parameter(names = { "-i", "--impact-version" }, description = "The Impact version to default to")
+    @Parameter(names = {"-i", "--impact-version"}, description = "The fully qualified Impact version (e.g. 4.6-1.12.2)")
     public String impactVersion;
 
-    @Parameter(names = { "-m", "--minecraft-version" }, description = "The Minecraft version to default to")
-    public String minecraftVersion;
+    @Parameter(names = {"-f", "--json-file", "--file"}, description = "A json file to install from. Overrides impactVersion.")
+    public String file;
 
-    public Args() {
-        // TODO populate somme default values from gh releases
-        // This happens _before_ JCommander parses argv and overrides our defaults.
-    }
+    @Parameter(names = {"-m", "--mode"}, description = "The mode of installation to execute")
+    public String mode;
+
+    @Parameter(names = {"--no-gui", "--disable-gui"}, description = "Disable the GUI and execute the specifcied mode")
+    public boolean noGUI = false;
+
+    @Parameter(names = {"--pre", "--include-pre", "--prerelease", "--prereleases", "--include-prereleases"}, description = "Include releases marked as prerelease on GitHub")
+    public boolean prereleases = false;
 
     public void apply(InstallationConfig config) {
-        // TODO Apply args defined here to the config
-        // Alternatively we could try and replace the InstallationConfig system with this class
-        if (!minecraftVersion.isEmpty() && !setSetting(config, MinecraftVersionSetting.INSTANCE, minecraftVersion))
-            error("Invalid Minecraft Version " + minecraftVersion);
-
-//        if (!impactVersion.isEmpty() && !setSetting(config, ImpactVersionSetting.INSTANCE, impactVersion))
-//            error("Invalid Minecraft Version " + impactVersion);
-    }
-
-    private static <T> boolean setSetting(InstallationConfig config, Setting<T> setting, T value) {
-        if (setting.validSetting(config, value)) {
-            config.setSettingValue(setting, value);
-            return true;
+        if (mode != null) {
+            config.setSettingValue(InstallationModeSetting.INSTANCE, InstallationModeOptions.valueOf(mode.toUpperCase()));
         }
-        return false;
+        if (impactVersion != null) {
+            setImpactVersion(config, true,
+                    ImpactVersions.getAllVersions().stream()
+                            .filter(version -> version.getCombinedVersion().equals(impactVersion))
+                            .findAny()
+                            .orElseThrow(() -> new IllegalArgumentException("No impact version matches " + impactVersion))
+            );
+        }
+        if (file != null) {
+            setImpactVersion(config, false, new ImpactVersionDisk(Paths.get(file)));
+        }
     }
 
-    private static void error(String message) {
-        System.err.println(message);
-        System.exit(1);
+    private void setImpactVersion(InstallationConfig config, boolean checkMcVersionValidityAgainstReleases, ImpactVersion version) {
+        config.setSettingValue(MinecraftVersionSetting.INSTANCE, version.mcVersion);
+        if (checkMcVersionValidityAgainstReleases && !ImpactVersionSetting.INSTANCE.validSetting(config, version)) {
+            throw new IllegalStateException(impactVersion + " is not a valid selection in the current configuration. Perhaps try a different mode or version");
+        }
+        config.setSettingValue(ImpactVersionSetting.INSTANCE, version);
     }
 }

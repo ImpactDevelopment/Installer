@@ -28,10 +28,11 @@ import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.getOS;
 
 public class AppWindow extends JFrame {
 
-    public final InstallationConfig config = new InstallationConfig();
+    public final InstallationConfig config;
     private final JPanel wrapper;
 
-    public AppWindow() {
+    public AppWindow(InstallationConfig config) {
+        this.config = config;
         setTitle(Installer.getTitle());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         if (getOS() == OSX) { // window.setTitle() isn't good enough on OSX

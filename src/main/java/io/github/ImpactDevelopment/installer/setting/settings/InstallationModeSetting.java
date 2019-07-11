@@ -21,6 +21,7 @@ import io.github.ImpactDevelopment.installer.setting.ChoiceSetting;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.target.InstallationModeOptions;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,6 +30,10 @@ public enum InstallationModeSetting implements ChoiceSetting<InstallationModeOpt
 
     @Override
     public List<InstallationModeOptions> getPossibleValues(InstallationConfig config) {
-        return Arrays.asList(InstallationModeOptions.values());
+        List<InstallationModeOptions> options = new ArrayList<>(Arrays.asList(InstallationModeOptions.values()));
+        if (!config.hasSettingValue(this) || config.getSettingValue(this).showInGUI) {
+            options.removeIf(opt -> !opt.showInGUI);
+        }
+        return options;
     }
 }

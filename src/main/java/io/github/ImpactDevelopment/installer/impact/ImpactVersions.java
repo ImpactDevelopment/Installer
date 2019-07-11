@@ -17,6 +17,7 @@
 
 package io.github.ImpactDevelopment.installer.impact;
 
+import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.github.Github;
 
 import java.util.Collections;
@@ -25,13 +26,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ImpactVersions {
-    private static final List<ImpactVersion> VERSIONS = Stream.of(Github.getReleases("ImpactDevelopment/ImpactReleases"))
-            .filter(rel -> !rel.draft && !rel.prerelease)
-            .map(ImpactVersion::new)
-            .filter(ImpactVersion::possiblySigned)
+    private static final List<ImpactVersionReleased> VERSIONS = Stream.of(Github.getReleases("ImpactDevelopment/ImpactReleases"))
+            .filter(rel -> !rel.draft && (!rel.prerelease || Installer.args.prereleases))
+            .map(ImpactVersionReleased::new)
+            .filter(ver -> ver.possiblySigned() || Installer.args.noGPG)
             .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
 
-    public static List<ImpactVersion> getAllVersions() {
+    public static List<ImpactVersionReleased> getAllVersions() {
         return VERSIONS;
     }
 }

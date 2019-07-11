@@ -22,6 +22,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.ImpactDevelopment.installer.gui.AppIcon;
 import io.github.ImpactDevelopment.installer.gui.AppWindow;
+import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
+import io.github.ImpactDevelopment.installer.setting.settings.InstallationModeSetting;
 
 import javax.swing.*;
 import java.text.SimpleDateFormat;
@@ -41,6 +43,19 @@ public class Installer {
                 .build()
                 .parse(argv);
 
+
+        InstallationConfig config = new InstallationConfig();
+        args.apply(config);
+        if (args.noGUI) {
+            // run it now
+            String ret = config.getSettingValue(InstallationModeSetting.INSTANCE).mode.apply(config).apply();
+            System.out.println("Message: " + ret);
+        } else {
+            setupGUI(config);
+        }
+    }
+
+    private static void setupGUI(InstallationConfig config) throws Throwable {
         // OSX systems should set swing.defaultlaf
         // explicitly setting the look and feel may override that
         // So we only do it on windows and linux where it probably isn't set
@@ -61,7 +76,7 @@ public class Installer {
             System.setProperty("apple.awt.fileDialogForDirectories", "true");
         }
 
-        SwingUtilities.invokeLater(AppWindow::new);
+        SwingUtilities.invokeLater(() -> new AppWindow(config));
     }
 
     public static String getTitle() {

@@ -15,29 +15,20 @@
  * along with Impact Installer.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.ImpactDevelopment.installer.utils;
+package io.github.ImpactDevelopment.installer.libraries;
 
-import org.apache.commons.io.IOUtils;
+import io.github.ImpactDevelopment.installer.impact.ImpactJsonLibrary;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
+public class LibraryBaritoneSpecific extends LibraryCustomURL {
 
-/**
- * Put all the URL fetching in one place so that it can be logged
- */
-public class Fetcher {
-    public static String fetch(String url) {
-        return new String(fetchBytes(url), StandardCharsets.UTF_8);
+    public LibraryBaritoneSpecific(ImpactJsonLibrary lib) {
+        super(lib, urlFromVersion(lib.name.split(":")[2]));
+        if (lib.name.contains("*") || !lib.name.startsWith("cabaletta:" + LibraryBaritoneReleased.VARIANT + ":")) {
+            throw new IllegalStateException(lib.name);
+        }
     }
 
-    public static byte[] fetchBytes(String url) {
-        System.out.println("DOWNLOADING " + url);
-        try {
-            return IOUtils.toByteArray(new URI(url));
-        } catch (IOException | URISyntaxException e) {
-            throw new RuntimeException("Unable to fetch " + url, e);
-        }
+    private static String urlFromVersion(String version) {
+        return "https://github.com/cabaletta/baritone/releases/download/v" + version + "/" + LibraryBaritoneReleased.VARIANT + "-" + version + ".jar";
     }
 }

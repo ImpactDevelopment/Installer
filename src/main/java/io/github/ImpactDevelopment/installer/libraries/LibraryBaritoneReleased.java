@@ -17,6 +17,7 @@
 
 package io.github.ImpactDevelopment.installer.libraries;
 
+import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.github.Github;
 import io.github.ImpactDevelopment.installer.github.GithubRelease;
 import io.github.ImpactDevelopment.installer.utils.GPG;
@@ -25,13 +26,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class LibraryBaritone implements ILibrary {
+public class LibraryBaritoneReleased implements ILibrary {
     public static final String VARIANT = "baritone-api";
     private final GithubRelease release;
     private final String strippedVersion;
 
-    public static List<LibraryBaritone> getVersionsMatching(String versionFilter) {
-        List<LibraryBaritone> releases = new ArrayList<>();
+    public static List<LibraryBaritoneReleased> getVersionsMatching(String versionFilter) {
+        List<LibraryBaritoneReleased> releases = new ArrayList<>();
         for (GithubRelease release : Github.getReleases("cabaletta/baritone")) {
             if (!release.byName("checksums_signed.asc").isPresent()) {
                 continue;
@@ -44,18 +45,22 @@ public class LibraryBaritone implements ILibrary {
             }
             String strippedVersion = release.tagName.substring(1);
             if (versionFilter.equals(strippedVersion) || (versionFilter.endsWith("*") && strippedVersion.startsWith(versionFilter.replace("*", "")))) {
-                releases.add(new LibraryBaritone(release));
+                releases.add(new LibraryBaritoneReleased(release));
             }
         }
         return releases;
     }
 
-    private LibraryBaritone(GithubRelease release) {
+    private LibraryBaritoneReleased(GithubRelease release) {
         this.release = release;
         this.strippedVersion = release.tagName.substring(1);
     }
 
     public void verify() {
+        if (Installer.args.noGPG) {
+            System.out.println("SKIPPING SIGNATURE VERIFICATION DUE TO COMMAND LINE OPTION I HOPE YOU KNOW WHAT YOURE DOING");
+            return;
+        }
         System.out.println("Verifying GPG signatures on Baritone release " + strippedVersion);
         if (!GPG.verifyRelease(release, "checksums.txt", "checksums_signed.asc", sigs -> sigs.contains(GPG.brady) || sigs.contains(GPG.leijurv))) {
             throw new IllegalStateException("Invalid signature on Baritone release " + release.tagName);
@@ -103,6 +108,6 @@ public class LibraryBaritone implements ILibrary {
     }
 
     public boolean equals(Object o) {
-        return o instanceof LibraryBaritone && ((LibraryBaritone) o).release.equals(release);
+        return o instanceof LibraryBaritoneReleased && ((LibraryBaritoneReleased) o).release.equals(release);
     }
 }

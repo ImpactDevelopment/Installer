@@ -18,46 +18,34 @@
 package io.github.ImpactDevelopment.installer.impact;
 
 import io.github.ImpactDevelopment.installer.Installer;
-import io.github.ImpactDevelopment.installer.github.GithubRelease;
-import io.github.ImpactDevelopment.installer.utils.GPG;
+import io.github.ImpactDevelopment.installer.libraries.ILibrary;
 
-/**
- * A version of Impact that we know about but might not have fetched the actual JSON for yet
- */
-public class ImpactVersion {
+public abstract class ImpactVersion {
+
     public final String impactVersion;
     public final String mcVersion;
-    public final GithubRelease release;
 
     protected ImpactJsonVersion fetchedContents;
 
-    public ImpactVersion(GithubRelease release) {
-        this.impactVersion = release.tagName.split("-")[0];
-        this.mcVersion = release.tagName.split("-")[1];
-        this.release = release;
+    public ImpactVersion(String combinedName) {
+        this.impactVersion = splitReleaseName(combinedName)[0];
+        this.mcVersion = splitReleaseName(combinedName)[1];
     }
 
-    private String jsonFileName() {
-        return "Impact-" + impactVersion + "-" + mcVersion + ".json";
+    public String getCombinedVersion() {
+        return impactVersion + "-" + mcVersion;
     }
 
-    public ImpactJsonVersion fetchContents() {
-        if (fetchedContents == null) {
-            System.out.println("Verifying GPG signatures on Impact release " + release.tagName);
-            if (!GPG.verifyRelease(release, jsonFileName(), jsonFileName() + ".asc", sigs -> sigs.size() >= 2)) {
-                throw new RuntimeException("Invalid signature on Impact release " + release.tagName);
-            }
-            fetchedContents = Installer.gson.fromJson(release.byName(jsonFileName()).get().fetch(), ImpactJsonVersion.class);
-        }
-        sanityCheck();
-        return fetchedContents;
+    private static String[] splitReleaseName(String combined) {
+        int pos = combined.lastIndexOf('-');
+        return new String[]{combined.substring(0, pos), combined.substring(pos + 1)};
     }
 
-    public boolean possiblySigned() {
-        return release.byName(jsonFileName() + ".asc").isPresent();
-    }
+    public abstract ImpactJsonVersion fetchContents();
 
-    private void sanityCheck() {
+    public abstract ILibrary resolveSelf(ImpactJsonLibrary entry);
+
+    protected void sanityCheck() {
         // make sure that the json is what it should be
         if (!fetchedContents.mcVersion.equals(mcVersion)) {
             throw new IllegalStateException(fetchedContents.mcVersion + " " + mcVersion);
@@ -68,5 +56,15 @@ public class ImpactVersion {
         if (!fetchedContents.name.equals(Installer.project)) {
             throw new IllegalStateException(fetchedContents.name);
         }
+    }
+
+    protected void sanityCheck(ImpactJsonLibrary self) {
+        if (!self.name.equals("com.github.ImpactDevelopment:Impact:" + getCombinedVersion())) {
+            throw new IllegalStateException(self.name + " " + getCombinedVersion());
+        }
+    }
+
+    protected String jsonFileName() {
+        return Installer.project + "-" + getCombinedVersion() + ".json";
     }
 }

@@ -18,6 +18,8 @@
 package io.github.ImpactDevelopment.installer.setting.settings;
 
 import io.github.ImpactDevelopment.installer.impact.ImpactVersion;
+import io.github.ImpactDevelopment.installer.impact.ImpactVersionDisk;
+import io.github.ImpactDevelopment.installer.impact.ImpactVersionReleased;
 import io.github.ImpactDevelopment.installer.impact.ImpactVersions;
 import io.github.ImpactDevelopment.installer.setting.ChoiceSetting;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
@@ -35,8 +37,16 @@ public enum ImpactVersionSetting implements ChoiceSetting<ImpactVersion> {
         return ImpactVersions.getAllVersions().stream()
                 .filter(config.getSettingValue(InstallationModeSetting.INSTANCE)::supports)
                 .filter(version -> mcVersion.equals(version.mcVersion))
-                .sorted(Comparator.comparing((ImpactVersion version) -> version.impactVersion).reversed())
+                .sorted(Comparator.comparing((ImpactVersionReleased version) -> version.impactVersion).reversed())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean validSetting(InstallationConfig config, ImpactVersion value) {
+        if (ChoiceSetting.super.validSetting(config, value)) {
+            return true;
+        }
+        return value != null && value instanceof ImpactVersionDisk;
     }
 
     @Override

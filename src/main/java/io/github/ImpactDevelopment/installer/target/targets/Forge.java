@@ -86,7 +86,7 @@ public class Forge implements InstallationMode {
         return "Impact Forge has been successfully installed at " + outputFile;
     }
 
-    private static String sha1hex(byte[] data) {
+    public static String sha1hex(byte[] data) {
         // dont use the javax.xml meme because we want to support java 8 through 11
         try {
             byte[] digest = MessageDigest.getInstance("SHA-1").digest(data);

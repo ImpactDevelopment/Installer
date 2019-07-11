@@ -20,24 +20,26 @@ package io.github.ImpactDevelopment.installer.target;
 import io.github.ImpactDevelopment.installer.impact.ImpactVersion;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.target.targets.Forge;
+import io.github.ImpactDevelopment.installer.target.targets.Validate;
 import io.github.ImpactDevelopment.installer.target.targets.Vanilla;
 
 import java.util.function.Function;
 
 public enum InstallationModeOptions {
-    VANILLA(Vanilla::new), FORGE(Forge::new);
+    VANILLA(Vanilla::new, true), FORGE(Forge::new, true), VALIDATE(Validate::new, false);
 
-    InstallationModeOptions(Function<InstallationConfig, InstallationMode> mode) {
+    InstallationModeOptions(Function<InstallationConfig, InstallationMode> mode, boolean showInGUI) {
         this.mode = mode;
+        this.showInGUI = showInGUI;
     }
 
     public final Function<InstallationConfig, InstallationMode> mode;
+    public final boolean showInGUI;
 
     public boolean supports(ImpactVersion impact) {
         switch (this) {
             case FORGE:
-                return impact.mcVersion.equals("1.12.2") && impact.impactVersion.equals("4.6");
-            case VANILLA:
+                return impact.mcVersion.equals("1.12.2") && impact.impactVersion.compareTo("4.6") >= 0;
             default:
                 return true;
         }

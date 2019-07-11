@@ -36,6 +36,10 @@ public class InstallationConfig {
         return (T) settingValues.computeIfAbsent(setting, s -> s.getDefaultValue(this));
     }
 
+    public <T> boolean hasSettingValue(Setting<T> setting) {
+        return settingValues.containsKey(setting);
+    }
+
     public <T> void setSettingValue(Setting<T> setting, T value) {
         settingValues.put(setting, value);
         // iteratively remove now invalid setting values
@@ -46,6 +50,7 @@ public class InstallationConfig {
                 if (!type.validSetting(this, settingValues.get(type))) {
                     System.out.println(type.getClass().getSimpleName() + " was invalidated by changing " + setting.getClass().getSimpleName() + " to " + value);
                     // uh oh!
+                    settingValues.remove(type);
                     settingValues.put(type, type.getDefaultValue(this)); // reset to default
                     continue outer; // recheck from the beginning sadly
                 }
