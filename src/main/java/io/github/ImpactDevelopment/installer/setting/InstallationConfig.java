@@ -18,7 +18,9 @@
 package io.github.ImpactDevelopment.installer.setting;
 
 import io.github.ImpactDevelopment.installer.Args;
+import io.github.ImpactDevelopment.installer.setting.settings.InstallationModeSetting;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -59,5 +61,9 @@ public class InstallationConfig {
             break;
         }
         System.out.println(settingValues);
+    }
+
+    public String execute() throws IOException {
+        return getSettingValue(InstallationModeSetting.INSTANCE).mode.apply(this).apply();
     }
 }

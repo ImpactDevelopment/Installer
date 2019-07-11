@@ -42,7 +42,7 @@ public class MainPage extends JPanel {
         JButton install = new JButton("Install");
         install.addActionListener((ActionEvent) -> {
             try {
-                String msg = app.config.getSettingValue(InstallationModeSetting.INSTANCE).mode.apply(app.config).apply();
+                String msg = app.config.execute();
                 JOptionPane.showMessageDialog(app, msg, "\uD83D\uDE0E", JOptionPane.INFORMATION_MESSAGE);
             } catch (Throwable e) {
                 app.exception(e);

@@ -74,7 +74,7 @@ public class Args {
             for (ImpactVersionReleased version : ImpactVersions.getAllVersions()) {
                 setImpactVersion(config, true, version);
                 try {
-                    InstallationModeOptions.VALIDATE.mode.apply(config).apply();
+                    System.out.println(config.execute());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

@@ -23,7 +23,6 @@ import com.google.gson.GsonBuilder;
 import io.github.ImpactDevelopment.installer.gui.AppIcon;
 import io.github.ImpactDevelopment.installer.gui.AppWindow;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
-import io.github.ImpactDevelopment.installer.setting.settings.InstallationModeSetting;
 
 import javax.swing.*;
 import java.text.SimpleDateFormat;
@@ -48,7 +47,7 @@ public class Installer {
         args.apply(config);
         if (args.noGUI) {
             // run it now
-            String ret = config.getSettingValue(InstallationModeSetting.INSTANCE).mode.apply(config).apply();
+            String ret = config.execute();
             System.out.println("Message: " + ret);
         } else {
             setupGUI(config);
