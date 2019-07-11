@@ -36,4 +36,9 @@ public enum InstallationModeSetting implements ChoiceSetting<InstallationModeOpt
         }
         return options;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

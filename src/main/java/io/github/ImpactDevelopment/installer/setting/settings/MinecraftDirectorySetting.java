@@ -17,9 +17,9 @@
 
 package io.github.ImpactDevelopment.installer.setting.settings;
 
-import io.github.ImpactDevelopment.installer.utils.OperatingSystem;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.Setting;
+import io.github.ImpactDevelopment.installer.utils.OperatingSystem;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,5 +43,10 @@ public enum MinecraftDirectorySetting implements Setting<Path> {
     public boolean validSetting(InstallationConfig config, Path value) {
         // we are ALL minecraft paths on this blessed day
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 }

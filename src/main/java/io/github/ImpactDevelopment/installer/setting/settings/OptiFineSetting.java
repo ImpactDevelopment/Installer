@@ -63,4 +63,9 @@ public enum OptiFineSetting implements ChoiceSetting<String> {
         }
         return result;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

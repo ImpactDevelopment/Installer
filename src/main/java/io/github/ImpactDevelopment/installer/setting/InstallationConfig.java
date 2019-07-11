@@ -48,7 +48,7 @@ public class InstallationConfig {
         while (true) {
             for (Setting type : new ArrayList<>(settingValues.keySet())) {
                 if (!type.validSetting(this, settingValues.get(type))) {
-                    System.out.println(type.getClass().getSimpleName() + " was invalidated by changing " + setting.getClass().getSimpleName() + " to " + value);
+                    System.out.println(type + " was invalidated by changing " + setting + " to " + value);
                     // uh oh!
                     settingValues.remove(type);
                     settingValues.put(type, type.getDefaultValue(this)); // reset to default

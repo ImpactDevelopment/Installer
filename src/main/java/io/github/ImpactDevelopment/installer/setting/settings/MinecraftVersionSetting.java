@@ -37,4 +37,9 @@ public enum MinecraftVersionSetting implements ChoiceSetting<String> {
                 .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

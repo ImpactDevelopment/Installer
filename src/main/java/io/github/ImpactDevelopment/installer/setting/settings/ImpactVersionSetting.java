@@ -57,4 +57,9 @@ public enum ImpactVersionSetting implements ChoiceSetting<ImpactVersion> {
         }
         return ret;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

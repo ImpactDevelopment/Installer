@@ -47,4 +47,9 @@ public enum BaritoneVersionSetting implements ChoiceSetting<LibraryBaritoneRelea
         }
         return ret;
     }
+
+    @Override
+    public String toString(){
+        return getClass().getSimpleName();
+    }
 }
