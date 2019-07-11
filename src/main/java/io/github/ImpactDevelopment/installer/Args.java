@@ -20,6 +20,7 @@ package io.github.ImpactDevelopment.installer;
 import com.beust.jcommander.Parameter;
 import io.github.ImpactDevelopment.installer.impact.ImpactVersion;
 import io.github.ImpactDevelopment.installer.impact.ImpactVersionDisk;
+import io.github.ImpactDevelopment.installer.impact.ImpactVersionReleased;
 import io.github.ImpactDevelopment.installer.impact.ImpactVersions;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
@@ -27,6 +28,7 @@ import io.github.ImpactDevelopment.installer.setting.settings.InstallationModeSe
 import io.github.ImpactDevelopment.installer.setting.settings.MinecraftVersionSetting;
 import io.github.ImpactDevelopment.installer.target.InstallationModeOptions;
 
+import java.io.IOException;
 import java.nio.file.Paths;
 
 public class Args {
@@ -49,6 +51,9 @@ public class Args {
     @Parameter(names = {"--pre", "--include-pre", "--prerelease", "--prereleases", "--include-prereleases"}, description = "Include releases marked as prerelease on GitHub")
     public boolean prereleases = false;
 
+    @Parameter(names = {"--validate-all"}, description = "Validate all Impact releases")
+    public boolean validateAll = false;
+
     public void apply(InstallationConfig config) {
         if (mode != null) {
             config.setSettingValue(InstallationModeSetting.INSTANCE, InstallationModeOptions.valueOf(mode.toUpperCase()));
@@ -63,6 +68,17 @@ public class Args {
         }
         if (file != null) {
             setImpactVersion(config, false, new ImpactVersionDisk(Paths.get(file)));
+        }
+        if (validateAll) {
+            config.setSettingValue(InstallationModeSetting.INSTANCE, InstallationModeOptions.VALIDATE);
+            for (ImpactVersionReleased version : ImpactVersions.getAllVersions()) {
+                setImpactVersion(config, true, version);
+                try {
+                    InstallationModeOptions.VALIDATE.mode.apply(config).apply();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 
