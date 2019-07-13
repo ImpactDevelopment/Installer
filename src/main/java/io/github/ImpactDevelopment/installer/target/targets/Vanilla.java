@@ -53,7 +53,7 @@ public class Vanilla implements InstallationMode {
         this.id = version.mcVersion + "-" + version.name + "_" + version.version + prettifiedOptifineVersion().orElse("");
     }
 
-    private JsonObject populate() {
+    public JsonObject generateJsonVersion() {
         JsonObject object = new JsonObject();
         object.addProperty("id", id);
         object.addProperty("type", "release");
@@ -142,17 +142,25 @@ public class Vanilla implements InstallationMode {
 
     @Override
     public String apply() throws IOException {
+        install(false);
+        return "Impact has been successfully installed";
+    }
+
+    public void sanityCheck(boolean allowMinecraftToBeOpen) {
+        checkDirectory();
+        checkVersionInstalled();
+        if (!allowMinecraftToBeOpen && isMinecraftLauncherOpen()) {
+            throw new RuntimeException("Please close Minecraft and its launcher before continuing");
+        }
+    }
+
+    public void install(boolean allowMinecraftToBeOpen) throws IOException {
         System.out.println("Installing impact " + getId());
         System.out.println("Info:");
         version.printInfo();
-        checkDirectory();
-        checkVersionInstalled();
-        if (isMinecraftLauncherOpen()) {
-            throw new RuntimeException("Please close Minecraft and its launcher before continuing");
-        }
+        sanityCheck(allowMinecraftToBeOpen);
         installVersionJson();
         installProfiles();
-        return "Impact has been successfully installed";
     }
 
     private void checkDirectory() {
@@ -177,7 +185,7 @@ public class Vanilla implements InstallationMode {
             }
         }
         System.out.println("Writing to " + directory.resolve(id + ".json"));
-        Files.write(directory.resolve(id + ".json"), Installer.gson.toJson(populate()).getBytes(StandardCharsets.UTF_8));
+        Files.write(directory.resolve(id + ".json"), Installer.gson.toJson(generateJsonVersion()).getBytes(StandardCharsets.UTF_8));
     }
 
     private void installProfiles() throws IOException {

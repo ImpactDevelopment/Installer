@@ -29,6 +29,7 @@ import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.io.IOUtils;
 
+import javax.swing.*;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -82,6 +83,12 @@ public class Forge implements InstallationMode {
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+        for (File f : outputFolder.listFiles()) {
+            if (f.getName().startsWith("Impact-") && !f.getName().equals(outputFile.getName())) {
+                JOptionPane.showMessageDialog(null, "Replacing older version of Impact " + f, "\uD83D\uDE0E", JOptionPane.INFORMATION_MESSAGE);
+                f.delete();
+            }
         }
         return "Impact Forge has been successfully installed at " + outputFile;
     }

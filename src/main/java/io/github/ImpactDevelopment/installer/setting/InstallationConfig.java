@@ -42,15 +42,19 @@ public class InstallationConfig {
         return settingValues.containsKey(setting);
     }
 
-    public <T> void setSettingValue(Setting<T> setting, T value) {
+    public <T> boolean setSettingValue(Setting<T> setting, T value) {
         settingValues.put(setting, value);
         // iteratively remove now invalid setting values
         // e.g. if you change the minecraft version from 1.12 to 1.13 that makes your selection of Impact version now invalid, which makes your selection of Baritone version now invalid
+        boolean thisSettingReverted = false;
         outer:
         while (true) {
             for (Setting type : new ArrayList<>(settingValues.keySet())) {
                 if (!type.validSetting(this, settingValues.get(type))) {
                     System.out.println(type + " was invalidated by changing " + setting + " to " + value);
+                    if (type == setting) {
+                        thisSettingReverted = true;
+                    }
                     // uh oh!
                     settingValues.remove(type);
                     settingValues.put(type, type.getDefaultValue(this)); // reset to default
@@ -61,6 +65,7 @@ public class InstallationConfig {
             break;
         }
         System.out.println(settingValues);
+        return !thisSettingReverted;
     }
 
     public String execute() throws IOException {

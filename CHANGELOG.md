@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Upcoming
 
+## [0.5.0] - 2019-07-13
+
+### Added
+- Added command line options to specify OptiFine and minecraft directory
+- Added mode "Show JSON" that, uh, shows you the version json
+- Added warning to Forge when a previous version of Impact is detected in mods
+
 ## [0.4.0] - 2019-07-10
 
 ### Added
@@ -55,7 +62,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.4.0...HEAD
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.5.0...HEAD
+[0.5.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.0
 [0.4.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.4.0
 [0.3.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.3.1
 [0.3.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.3.0

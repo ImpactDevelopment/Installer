@@ -23,12 +23,12 @@ import io.github.ImpactDevelopment.installer.impact.ImpactVersionDisk;
 import io.github.ImpactDevelopment.installer.impact.ImpactVersionReleased;
 import io.github.ImpactDevelopment.installer.impact.ImpactVersions;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
-import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
-import io.github.ImpactDevelopment.installer.setting.settings.InstallationModeSetting;
-import io.github.ImpactDevelopment.installer.setting.settings.MinecraftVersionSetting;
+import io.github.ImpactDevelopment.installer.setting.settings.*;
 import io.github.ImpactDevelopment.installer.target.InstallationModeOptions;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Args {
@@ -54,7 +54,31 @@ public class Args {
     @Parameter(names = {"--validate-all"}, description = "Validate all Impact releases")
     public boolean validateAll = false;
 
+    @Parameter(names = {"--mc-dir", "--minecraft-dir", "--minecraft-directory", "--mc-path"}, description = "Path to the Minecraft directory")
+    public String mcPath;
+
+    @Parameter(names = {"--optifine", "--of"}, description = "OptiFine, in the format like 1.12.2_HD_U_E2")
+    public String optifine;
+
     public void apply(InstallationConfig config) {
+        if (mcPath != null) {
+            Path path = Paths.get(mcPath);
+            if (!Files.isDirectory(path)) {
+                throw new IllegalStateException(path + " is not a directory");
+            }
+            config.setSettingValue(MinecraftDirectorySetting.INSTANCE, path);
+        }
+        if (validateAll) {
+            config.setSettingValue(InstallationModeSetting.INSTANCE, InstallationModeOptions.VALIDATE);
+            for (ImpactVersionReleased version : ImpactVersions.getAllVersions()) {
+                setImpactVersion(config, true, version);
+                try {
+                    System.out.println(config.execute());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
         if (mode != null) {
             config.setSettingValue(InstallationModeSetting.INSTANCE, InstallationModeOptions.valueOf(mode.toUpperCase()));
         }
@@ -69,15 +93,9 @@ public class Args {
         if (file != null) {
             setImpactVersion(config, false, new ImpactVersionDisk(Paths.get(file)));
         }
-        if (validateAll) {
-            config.setSettingValue(InstallationModeSetting.INSTANCE, InstallationModeOptions.VALIDATE);
-            for (ImpactVersionReleased version : ImpactVersions.getAllVersions()) {
-                setImpactVersion(config, true, version);
-                try {
-                    System.out.println(config.execute());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+        if (optifine != null) {
+            if (!config.setSettingValue(OptiFineSetting.INSTANCE, optifine)) {
+                throw new IllegalArgumentException(optifine + " is not found");
             }
         }
     }

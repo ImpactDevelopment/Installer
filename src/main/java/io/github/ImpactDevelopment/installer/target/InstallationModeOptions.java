@@ -20,13 +20,19 @@ package io.github.ImpactDevelopment.installer.target;
 import io.github.ImpactDevelopment.installer.impact.ImpactVersion;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.target.targets.Forge;
+import io.github.ImpactDevelopment.installer.target.targets.ShowJSON;
 import io.github.ImpactDevelopment.installer.target.targets.Validate;
 import io.github.ImpactDevelopment.installer.target.targets.Vanilla;
 
 import java.util.function.Function;
 
 public enum InstallationModeOptions {
-    VANILLA(Vanilla::new, true), FORGE(Forge::new, true), VALIDATE(Validate::new, false);
+    VANILLA(Vanilla::new, true), FORGE(Forge::new, true), VALIDATE(Validate::new, false), SHOWJSON(ShowJSON::new, true) {
+        @Override
+        public String toString() {
+            return "Show JSON";
+        }
+    };
 
     InstallationModeOptions(Function<InstallationConfig, InstallationMode> mode, boolean showInGUI) {
         this.mode = mode;
