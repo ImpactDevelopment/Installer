@@ -51,8 +51,8 @@ public class Args {
     @Parameter(names = {"--pre", "--include-pre", "--prerelease", "--prereleases", "--include-prereleases"}, description = "Include releases marked as prerelease on GitHub")
     public boolean prereleases = false;
 
-    @Parameter(names = {"--validate-all"}, description = "Validate all Impact releases")
-    public boolean validateAll = false;
+    @Parameter(names = {"--all"}, description = "Run on all Impact releases")
+    public boolean all = false;
 
     @Parameter(names = {"--mc-dir", "--minecraft-dir", "--minecraft-directory", "--mc-path"}, description = "Path to the Minecraft directory")
     public String mcPath;
@@ -68,8 +68,10 @@ public class Args {
             }
             config.setSettingValue(MinecraftDirectorySetting.INSTANCE, path);
         }
-        if (validateAll) {
-            config.setSettingValue(InstallationModeSetting.INSTANCE, InstallationModeOptions.VALIDATE);
+        if (mode != null) {
+            config.setSettingValue(InstallationModeSetting.INSTANCE, InstallationModeOptions.valueOf(mode.toUpperCase()));
+        }
+        if (all) {
             for (ImpactVersionReleased version : ImpactVersions.getAllVersions()) {
                 setImpactVersion(config, true, version);
                 try {
@@ -78,9 +80,6 @@ public class Args {
                     throw new RuntimeException(e);
                 }
             }
-        }
-        if (mode != null) {
-            config.setSettingValue(InstallationModeSetting.INSTANCE, InstallationModeOptions.valueOf(mode.toUpperCase()));
         }
         if (impactVersion != null) {
             setImpactVersion(config, true,
