@@ -68,6 +68,9 @@ public class AppWindow extends JFrame {
         String msg = th.getMessage() + "\n";
         if (th.getCause() != null) {
             msg += th.getCause();
+            if (th.getCause().getCause() != null) {
+                msg += "\n" + th.getCause().getCause();
+            }
         }
         JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
     }
