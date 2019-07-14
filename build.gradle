@@ -114,6 +114,11 @@ createExe {
     copyright = 'Copyright (C) Impact Developers'
     fileDescription = project.description
     version = textVersion = project.version
+
+    // Default to Mojang's JRE and fallback to JRE version search
+    bundledJrePath = '%PROGRAMFILES(X86)%/Minecraft Launcher/runtime/jre-x64'
+    bundledJreAsFallback = false
+    jreMinVersion = project.targetCompatibility
 }
 
 build.finalizedBy(createExe)
