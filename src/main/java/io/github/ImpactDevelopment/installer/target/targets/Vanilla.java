@@ -193,7 +193,16 @@ public class Vanilla implements InstallationMode {
         VanillaProfiles profiles = new VanillaProfiles(config);
         System.out.println("Injecting impact version...");
 
-        profiles.addOrMutate(version.name + " " + version.version + " for " + version.mcVersion, getId());
+        // go from 4.7.0-beta to 4.7-beta
+        String strippedVersion = version.version.split("-")[0];
+        if (strippedVersion.indexOf('.') != strippedVersion.lastIndexOf('.')) {
+            strippedVersion = strippedVersion.substring(0, strippedVersion.lastIndexOf('.'));
+        }
+        if (version.version.contains("-")) {
+            strippedVersion += version.version.substring(version.version.indexOf("-"));
+        }
+
+        profiles.addOrMutate(version.name + " " + strippedVersion + " for " + version.mcVersion, getId());
         System.out.println("Saving vanilla profiles");
         profiles.saveToDisk();
     }
