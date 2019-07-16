@@ -33,7 +33,7 @@ plugins {
 ext {
     id = 'ImpactInstaller'
     group 'io.github.ImpactDevelopment'
-    version '0.5.1'
+    version '0.5.2'
     description = 'Impact Installer'
     mainClassName = 'io.github.ImpactDevelopment.installer.Installer'
     targetCompatibility = sourceCompatibility = JavaVersion.VERSION_1_8
