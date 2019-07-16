@@ -6,7 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.5.1] - 2019-07-19
+## [0.5.2] - 2019-07-16
+
+### Changed
+- The version profile added to the launcher no longer has the patch included in the name
+
+## [0.5.1] - 2019-07-14
 
 ### Changed
 - The EXE now uses Mojang's JRE if installed (on 64bit Windows) before falling back to "normally" installed JREs and JDKs.
@@ -67,7 +72,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.5.1...HEAD
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.5.2...HEAD
+[0.5.2]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.2
 [0.5.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.1
 [0.5.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.0
 [0.4.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.4.0
