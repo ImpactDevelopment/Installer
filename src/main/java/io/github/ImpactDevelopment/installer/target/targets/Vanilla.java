@@ -199,7 +199,7 @@ public class Vanilla implements InstallationMode {
             strippedVersion = strippedVersion.substring(0, strippedVersion.lastIndexOf('.'));
         }
         if (version.version.contains("-")) {
-            strippedVersion += version.version.substring(version.version.indexOf("-"));
+            strippedVersion += version.version.substring(version.version.lastIndexOf("-"));
         }
 
         profiles.addOrMutate(version.name + " " + strippedVersion + " for " + version.mcVersion, getId());
