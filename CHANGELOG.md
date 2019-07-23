@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.4] - 2019-07-23
+
+### Fixed
+- Fixed failure to launch when self-installed in a Forge jar
+
 ## [0.5.3] - 2019-07-16
 
 ### Fixed
@@ -77,7 +82,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.5.3...HEAD
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.5.4...HEAD
+[0.5.4]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.4
 [0.5.3]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.3
 [0.5.2]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.2
 [0.5.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.1
