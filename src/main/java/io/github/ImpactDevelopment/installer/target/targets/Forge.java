@@ -74,7 +74,7 @@ public class Forge implements InstallationMode {
                         continue;
                     }
                     String name = entry.getName();
-                    if (name.equals("META-INF/MANIFEST.MF") || name.endsWith("/") || name.startsWith("META-INF/MUMFREY")) {
+                    if (name.equals("META-INF/MANIFEST.MF") || (!name.equals("icons/") && name.endsWith("/")) || name.startsWith("META-INF/MUMFREY")) {
                         continue;
                     }
                     jarOut.putNextEntry(new JarEntry(name));
