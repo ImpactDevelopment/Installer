@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fixed pagination on GitHub releases API response
+
 ## [0.5.4] - 2019-07-23
 
 ### Fixed

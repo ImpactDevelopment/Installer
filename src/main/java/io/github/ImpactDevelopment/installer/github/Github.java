@@ -18,15 +18,15 @@
 package io.github.ImpactDevelopment.installer.github;
 
 
-import io.github.ImpactDevelopment.installer.utils.Fetcher;
 import io.github.ImpactDevelopment.installer.Installer;
+import io.github.ImpactDevelopment.installer.utils.Fetcher;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Github {
 
     private static Map<String, GithubRelease[]> CACHE = new HashMap<>();
+    private static final int PER_PAGE = 30;
 
     public static synchronized GithubRelease[] getReleases(String repo) {
         return CACHE.computeIfAbsent(repo, Github::fetchReleases);
@@ -34,6 +34,13 @@ public class Github {
 
     private static GithubRelease[] fetchReleases(String repo) {
         System.out.println("Fetching releases from " + repo);
-        return Installer.gson.fromJson(Fetcher.fetch("https://api.github.com/repos/" + repo + "/releases"), GithubRelease[].class);
+        List<GithubRelease> releases = new ArrayList<>();
+        for (int page = 1; ; page++) {
+            GithubRelease[] onThisPage = Installer.gson.fromJson(Fetcher.fetch("https://api.github.com/repos/" + repo + "/releases?per_page=" + PER_PAGE + "&page=" + page), GithubRelease[].class);
+            releases.addAll(Arrays.asList(onThisPage));
+            if (onThisPage.length < PER_PAGE) {
+                return releases.toArray(new GithubRelease[0]);
+            }
+        }
     }
 }
