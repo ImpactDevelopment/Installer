@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed pagination on GitHub releases API response
 
+### Removed
+- Removed the option to select a baritone version, as no version of Impact uses it anymore
+
 ## [0.5.4] - 2019-07-23
 
 ### Fixed

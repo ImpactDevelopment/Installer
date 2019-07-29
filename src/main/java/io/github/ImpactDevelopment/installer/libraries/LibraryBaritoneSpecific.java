@@ -21,14 +21,16 @@ import io.github.ImpactDevelopment.installer.impact.ImpactJsonLibrary;
 
 public class LibraryBaritoneSpecific extends LibraryCustomURL {
 
+    public static final String VARIANT = "baritone-api";
+
     public LibraryBaritoneSpecific(ImpactJsonLibrary lib) {
         super(lib, urlFromVersion(lib.name.split(":")[2]));
-        if (lib.name.contains("*") || !lib.name.startsWith("cabaletta:" + LibraryBaritoneReleased.VARIANT + ":")) {
+        if (lib.name.contains("*") || !lib.name.startsWith("cabaletta:" + VARIANT + ":")) {
             throw new IllegalStateException(lib.name);
         }
     }
 
     private static String urlFromVersion(String version) {
-        return "https://github.com/cabaletta/baritone/releases/download/v" + version + "/" + LibraryBaritoneReleased.VARIANT + "-" + version + ".jar";
+        return "https://github.com/cabaletta/baritone/releases/download/v" + version + "/" + VARIANT + "-" + version + ".jar";
     }
 }

@@ -36,7 +36,6 @@ public class MainPage extends JPanel {
         addSetting(InstallationModeSetting.INSTANCE, "Install for", app);
         addSetting(MinecraftVersionSetting.INSTANCE, "Minecraft version", app);
         addSetting(ImpactVersionSetting.INSTANCE, "Impact version", app);
-        addSetting(BaritoneVersionSetting.INSTANCE, "Baritone version", app);
         addSetting(OptiFineSetting.INSTANCE, "OptiFine version", app);
 
         JButton install = new JButton("Install");
