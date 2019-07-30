@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed pagination on GitHub releases API response
 
+### Changed
+- Changed the primary GitHub releases URL to [here](http://impactclient.net/releases.json) (http is safe because gpg). Cloudflare proxy is 4 to 7 times faster (because cached) than GitHub's actual API. Fallback to GitHub's API (as previously) if this fails for any reason.
+
 ### Removed
 - Removed the option to select a baritone version, as no version of Impact uses it anymore
 
