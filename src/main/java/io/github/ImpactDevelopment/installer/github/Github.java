@@ -21,12 +21,12 @@ package io.github.ImpactDevelopment.installer.github;
 import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.utils.Fetcher;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Github {
 
     private static Map<String, GithubRelease[]> CACHE = new HashMap<>();
-    private static final int PER_PAGE = 30;
 
     public static synchronized GithubRelease[] getReleases(String repo) {
         return CACHE.computeIfAbsent(repo, Github::fetchReleases);
@@ -34,13 +34,22 @@ public class Github {
 
     private static GithubRelease[] fetchReleases(String repo) {
         System.out.println("Fetching releases from " + repo);
-        List<GithubRelease> releases = new ArrayList<>();
-        for (int page = 1; ; page++) {
-            GithubRelease[] onThisPage = Installer.gson.fromJson(Fetcher.fetch("https://api.github.com/repos/" + repo + "/releases?per_page=" + PER_PAGE + "&page=" + page), GithubRelease[].class);
-            releases.addAll(Arrays.asList(onThisPage));
-            if (onThisPage.length < PER_PAGE) {
-                return releases.toArray(new GithubRelease[0]);
+        if (repo.equals("ImpactDevelopment/ImpactReleases")) {
+            try {
+                return getFromURL("http://impactclient.net/releases.json");
+            } catch (Throwable th) {
+                System.out.println("Unable to fetch from epic site");
+                th.printStackTrace();
             }
         }
+        return getFromURL("https://api.github.com/repos/" + repo + "/releases?per_page=100");
+    }
+
+    private static GithubRelease[] getFromURL(String url) {
+        GithubRelease[] response = Installer.gson.fromJson(Fetcher.fetch(url), GithubRelease[].class);
+        if (response.length == 0) {
+            throw new RuntimeException("Empty response");
+        }
+        return response;
     }
 }
