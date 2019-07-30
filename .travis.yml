@@ -1,6 +1,6 @@
 language: java
 script:
-- ./gradlew build --info
+- ./gradlew build --info --stacktrace
 - rm build/libs/*unoptimised* # get outta here! we dont want the big useless jar on github releases lol
 deploy:
   provider: releases
