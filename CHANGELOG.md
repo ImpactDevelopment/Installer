@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Fixed
+- Don't completely overwrite Impact's `META-INF/MANIFEST.MF` when building a Forge jar
+
 ## [0.5.6] - 2019-08-17
 
 ### Fixed
@@ -99,8 +102,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.5.6...HEAD
-[0.5.6]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.6
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.5.5...HEAD
 [0.5.5]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.5
 [0.5.4]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.4
 [0.5.3]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.3

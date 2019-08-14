@@ -30,14 +30,13 @@ import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.io.IOUtils;
 
 import javax.swing.*;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Forge implements InstallationMode {
 
@@ -58,10 +57,6 @@ public class Forge implements InstallationMode {
                 FileOutputStream fileOut = new FileOutputStream(outputFile);
                 JarOutputStream jarOut = new JarOutputStream(fileOut);
         ) {
-            jarOut.putNextEntry(new JarEntry("META-INF/MANIFEST.MF"));
-            jarOut.write(("Manifest-Version: 1.0\n" +
-                    "MixinConfigs: mixins.capi.json, mixins.impact.json, mixins.baritone.json\n" +
-                    "TweakClass: org.spongepowered.asm.launch.MixinTweaker\n\n").getBytes(StandardCharsets.UTF_8));
             for (ILibrary library : version.resolveLibraries(config)) {
                 byte[] b = Fetcher.fetchBytes(library.getURL());
                 if (b.length != library.getSize() || !sha1hex(b).equals(library.getSHA1())) {
@@ -74,7 +69,15 @@ public class Forge implements InstallationMode {
                         continue;
                     }
                     String name = entry.getName();
-                    if (name.equals("META-INF/MANIFEST.MF") || (!name.equals("icons/") && name.endsWith("/")) || name.startsWith("META-INF/MUMFREY")) {
+                    if (name.equals("META-INF/MANIFEST.MF")) {
+                        // Process the MANIFEST from the main jar
+                        if (library.getName().startsWith("com.github.ImpactDevelopment:Impact:")) {
+                            jarOut.putNextEntry(new JarEntry(name));
+                            mutateManifest(input, jarOut);
+                        }
+                        continue;
+                    }
+                    if (!name.equals("icons/") && name.endsWith("/") || name.startsWith("META-INF/MUMFREY")) {
                         continue;
                     }
                     jarOut.putNextEntry(new JarEntry(name));
@@ -91,6 +94,27 @@ public class Forge implements InstallationMode {
             }
         }
         return "Impact Forge has been successfully installed at " + outputFile;
+    }
+
+    // Change the tweak class to point to MixinTweaker
+    private void mutateManifest(InputStream input, OutputStream output) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input, UTF_8));
+
+        String line;
+        while (null != (line = reader.readLine())) {
+            if (line.startsWith("TweakClass:")) {
+                line = "TweakClass: org.spongepowered.asm.launch.MixinTweaker";
+            }
+
+            if (line.isEmpty()) {
+                continue;
+            }
+
+            line += "\n";
+            output.write(line.getBytes(UTF_8));
+        }
+
+        output.write("\n".getBytes(UTF_8));
     }
 
     public static String sha1hex(byte[] data) {
