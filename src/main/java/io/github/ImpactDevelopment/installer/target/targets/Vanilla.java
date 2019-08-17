@@ -119,8 +119,13 @@ public class Vanilla implements InstallationMode {
         });
     }
 
-    public static void populateLib(ILibrary lib, JsonArray libraries) {
-        // too much nesting for
+    private void populateLib(ILibrary lib, JsonArray libraries) {
+        if (version.mcVersion.equals("1.14.4") && optifineVersion().isPresent() && lib.getName().equals("net.minecraft:launchwrapper:1.12")) {
+            JsonObject optiLaunchWrapper = new JsonObject();
+            optiLaunchWrapper.addProperty("name", "optifine:launchwrapper-of:2.1");
+            libraries.add(optiLaunchWrapper);
+            return;
+        }
         JsonObject library = new JsonObject();
         library.addProperty("name", lib.getName());
         libraries.add(library);

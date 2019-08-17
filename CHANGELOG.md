@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fixed installing unreleased Minecraft versions from a JSON file
+- Fixed OptiFine compatibility for 1.14.4
+
 ## [0.5.5] - 2019-07-29
 
 ### Fixed
