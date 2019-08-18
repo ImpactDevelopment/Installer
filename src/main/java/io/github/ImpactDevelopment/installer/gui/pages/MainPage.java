@@ -90,7 +90,7 @@ public class MainPage extends JPanel {
         });
         container.add(comboBox);
         if (!val.equals(OptiFineSetting.NONE) && setting instanceof OptiFineSetting) {
-            container.add(new JLabel("OptiFine can sometimes cause visual glitches in Impact; only include it if you need it."));
+            container.add(new JLabel("OptiFine can sometimes cause visual glitches in Impact, so only include it if you need it."));
         }
         add(container);
     }
