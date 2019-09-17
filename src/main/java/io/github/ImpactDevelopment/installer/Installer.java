@@ -37,10 +37,15 @@ public class Installer {
 
     public static void main(String... argv) throws Throwable {
         // Parse CLI arguments
-        JCommander.newBuilder()
+        JCommander cmd = JCommander.newBuilder()
+                .programName(project)
                 .addObject(args)
-                .build()
-                .parse(argv);
+                .args(argv)
+                .build();
+        if (args.showUsage) {
+            cmd.usage();
+            return;
+        }
 
 
         InstallationConfig config = new InstallationConfig();

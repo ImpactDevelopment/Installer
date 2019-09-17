@@ -60,6 +60,9 @@ public class Args {
     @Parameter(names = {"--optifine", "--of"}, description = "OptiFine, in the format like 1.12.2_HD_U_E2")
     public String optifine;
 
+    @Parameter(names = {"-h", "-?", "--help"}, description = "Display this help and exit", help = true, order = 0)
+    public boolean showUsage = false;
+
     public void apply(InstallationConfig config) {
         if (mcPath != null) {
             Path path = Paths.get(mcPath);
