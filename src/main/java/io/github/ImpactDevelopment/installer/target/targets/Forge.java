@@ -31,6 +31,8 @@ import org.apache.commons.io.IOUtils;
 
 import javax.swing.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.jar.JarEntry;
@@ -50,13 +52,17 @@ public class Forge implements InstallationMode {
 
     @Override
     public String apply() {
-        File outputFolder = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("mods").toFile();
-        outputFolder.mkdir();
-        File outputFile = new File(outputFolder, version.name + "-" + version.version + "-" + version.mcVersion + ".jar");
-        try (
-                FileOutputStream fileOut = new FileOutputStream(outputFile);
-                JarOutputStream jarOut = new JarOutputStream(fileOut);
-        ) {
+        Path out = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("mods").resolve(version.mcVersion).resolve(version.name + "-" + version.version + "-" + version.mcVersion + ".jar");
+
+        if (!Files.exists(out.getParent())) {
+            try {
+                Files.createDirectories(out.getParent());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try (JarOutputStream jarOut = new JarOutputStream(new FileOutputStream(out.toFile()))) {
             for (ILibrary library : version.resolveLibraries(config)) {
                 byte[] b = Fetcher.fetchBytes(library.getURL());
                 if (b.length != library.getSize() || !sha1hex(b).equals(library.getSHA1())) {
@@ -87,13 +93,28 @@ public class Forge implements InstallationMode {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        for (File f : outputFolder.listFiles()) {
-            if (f.getName().startsWith("Impact-") && !f.getName().equals(outputFile.getName())) {
-                JOptionPane.showMessageDialog(null, "Replacing older version of Impact " + f, "\uD83D\uDE0E", JOptionPane.INFORMATION_MESSAGE);
-                f.delete();
-            }
+
+        // Remove other Impact forge jars
+        try {
+            Files.list(out.getParent())
+                    .filter(f -> !f.equals(out))
+                    .filter(f -> f.getFileName().toString().startsWith("Impact-"))
+                    .filter(f -> f.getFileName().toString().endsWith(".jar"))
+                    .forEach(f -> {
+                        try {
+                            JOptionPane.showMessageDialog(null, "Replacing " + f, "\uD83D\uDE0E", JOptionPane.INFORMATION_MESSAGE);
+                            Files.delete(f);
+                        } catch (IOException e) {
+                            JOptionPane.showMessageDialog(null, "Failed to remove " + f, "\uD83D\uDE0E", JOptionPane.ERROR_MESSAGE);
+                            e.printStackTrace();
+                        }
+                    });
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error while checking for older Impact Forge installations: " + e.getLocalizedMessage(), "\uD83D\uDE0E", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
-        return "Impact Forge has been successfully installed at " + outputFile;
+
+        return "Impact Forge has been successfully installed at " + out;
     }
 
     // Change the tweak class to point to MixinTweaker
