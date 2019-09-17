@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Added
+- `--help` argument to print command line usage
+- `--version` argument to print the installer version
+
 ## [0.6.0] - 2019-08-17
 
 ## Fixed
