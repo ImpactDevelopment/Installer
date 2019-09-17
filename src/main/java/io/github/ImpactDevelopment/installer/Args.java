@@ -63,6 +63,9 @@ public class Args {
     @Parameter(names = {"-h", "-?", "--help"}, description = "Display this help and exit", help = true, order = 0)
     public boolean showUsage = false;
 
+    @Parameter(names = {"--version"}, description = "Output version information and exit\n", help = true, order = 1)
+    public boolean showVersion = false;
+
     public void apply(InstallationConfig config) {
         if (mcPath != null) {
             Path path = Paths.get(mcPath);

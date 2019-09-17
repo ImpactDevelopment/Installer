@@ -46,6 +46,10 @@ public class Installer {
             cmd.usage();
             return;
         }
+        if (args.showVersion) {
+            System.out.println(args.getClass().getPackage().getImplementationVersion());
+            return;
+        }
 
 
         InstallationConfig config = new InstallationConfig();
