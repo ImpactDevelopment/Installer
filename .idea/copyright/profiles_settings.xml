@@ -1,3 +1,7 @@
 <component name="CopyrightManager">
-    <settings default="Installer" />
+  <settings default="Installer">
+    <module2copyright>
+      <element module="All" copyright="Installer" />
+    </module2copyright>
+  </settings>
 </component>

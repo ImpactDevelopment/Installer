@@ -16,7 +16,7 @@ If not, we welcome any suggestion, but please don't be offended if we don't thin
 ## I want to fix a bug or implement an idea
 Brilliant. You'll first want to ensure you have [forked us][fork], cloned your fork and [setup a development environment][devenv].
 
-Please do your best to follow the guidance below regarding [documenting your changes]. Also note that we require all commits to be signed by a verified PGP key.
+Please do your best to follow the guidance below regarding [documenting your changes]. Also note that we require all commits to be signed by a verified PGP key. Be sure to add yourself to the [CONTRIBUTORS][contrib] file too.
 
 Once that's done you can checkout a new branch, make your changes to it, publish it and open a Pull Request asking us to merge the changes in your branch.
 
@@ -43,12 +43,13 @@ You'll want to add your change in the `## [Upcoming]` section, since it will mos
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
-Finally, remember that Changelogs are for humans, not machines. You should be describing what changed, from a user's perspective, not how it was changed from a technical perspective (that is what commit messages are for.  
+Finally, remember that Changelogs are for humans, not machines. You should be describing what changed, from a user's perspective, not how it was changed from a technical perspective (that is what commit messages are for).  
 
 [issues list]: /ImpactDevelopment/Installer/issues
 [new issue]: /ImpactDevelopment/Installer/issues/new
 [fork]: /ImpactDevelopment/Installer/fork
 [devenv]: /ImpactDevelopment/Installer#setting-up-a-development-environment
+[contrib]: CONTRIBUTORS.md
 [documenting your changes]: #documenting-your-changes
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [good commit message]: https://chris.beams.io/posts/git-commit/
