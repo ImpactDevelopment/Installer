@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Analytics, and an option `--no-analytics` to disable them
 
 ### Fixed
+- Fixed launcher profile name with new nightly format (`nighty-DATE-1.12.2` now becomes `Impact nightly for 1.12.2` instead of `Impact nightly-DATE for 1.12.2`), which matches how it used to behave in the old format (which became `Impact 4.8-nightly for 1.12.2`). This is so that each day's new nightly doesn't spam your launcher with a new profile each time.
+
+### Fixed
 - Fixed Forge installs going into `.minecraft/mods` instead of `.minecraft/mods/[version]` ([#71](https://github.com/ImpactDevelopment/Installer/issues/71))
 
 ## [0.6.0] - 2019-08-17

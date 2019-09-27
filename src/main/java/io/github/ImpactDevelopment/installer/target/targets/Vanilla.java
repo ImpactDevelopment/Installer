@@ -210,9 +210,6 @@ public class Vanilla implements InstallationMode {
         if (strippedVersion.indexOf('.') != strippedVersion.lastIndexOf('.')) {
             strippedVersion = strippedVersion.substring(0, strippedVersion.lastIndexOf('.'));
         }
-        if (version.version.contains("-")) {
-            strippedVersion += version.version.substring(version.version.lastIndexOf("-"));
-        }
 
         profiles.addOrMutate(version.name + " " + strippedVersion + " for " + version.mcVersion, getId());
         System.out.println("Saving vanilla profiles");
