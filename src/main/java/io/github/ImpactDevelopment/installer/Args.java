@@ -65,6 +65,9 @@ public class Args {
     @Parameter(names = {"--optifine", "--of"}, description = "OptiFine, in the format like 1.12.2_HD_U_E2")
     public String optifine;
 
+    @Parameter(names = {"--no-ga", "--no-analytics", "--dnt", "--no-tracky"}, description = "Disable Google Analytics")
+    public boolean noAnalytics = false;
+
     @Parameter(names = {"-h", "-?", "--help"}, description = "Display this help and exit", help = true, order = 0)
     public boolean showUsage = false;
 

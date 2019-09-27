@@ -23,7 +23,9 @@
 package io.github.ImpactDevelopment.installer.setting;
 
 import io.github.ImpactDevelopment.installer.Args;
+import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
 import io.github.ImpactDevelopment.installer.setting.settings.InstallationModeSetting;
+import io.github.ImpactDevelopment.installer.utils.Tracky;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class InstallationConfig {
+
     private final Map<Setting, Object> settingValues = new LinkedHashMap<>();
 
     public InstallationConfig(Args args) {
@@ -74,6 +77,7 @@ public class InstallationConfig {
     }
 
     public String execute() throws IOException {
+        Tracky.event("installer", "install", getSettingValue(ImpactVersionSetting.INSTANCE).getCombinedVersion());
         return getSettingValue(InstallationModeSetting.INSTANCE).mode.apply(this).apply();
     }
 }

@@ -29,6 +29,7 @@ import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetti
 import io.github.ImpactDevelopment.installer.setting.settings.MinecraftDirectorySetting;
 import io.github.ImpactDevelopment.installer.target.InstallationMode;
 import io.github.ImpactDevelopment.installer.utils.Fetcher;
+import io.github.ImpactDevelopment.installer.utils.Tracky;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
@@ -66,6 +67,8 @@ public class Forge implements InstallationMode {
                 e.printStackTrace();
             }
         }
+
+        Tracky.persist(config.getSettingValue(MinecraftDirectorySetting.INSTANCE));
 
         try (JarOutputStream jarOut = new JarOutputStream(new FileOutputStream(out.toFile()))) {
             for (ILibrary library : version.resolveLibraries(config)) {

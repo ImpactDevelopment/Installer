@@ -28,6 +28,7 @@ import com.google.gson.GsonBuilder;
 import io.github.ImpactDevelopment.installer.gui.AppIcon;
 import io.github.ImpactDevelopment.installer.gui.AppWindow;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
+import io.github.ImpactDevelopment.installer.utils.Tracky;
 
 import javax.swing.*;
 import java.nio.file.Path;
@@ -37,6 +38,7 @@ import java.text.SimpleDateFormat;
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.*;
 
 public class Installer {
+
     public static final String project = "Impact";
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
@@ -66,6 +68,7 @@ public class Installer {
             String ret = config.execute();
             System.out.println("Message: " + ret);
         } else {
+            Tracky.awtEnabled();
             setupGUI(config);
         }
     }

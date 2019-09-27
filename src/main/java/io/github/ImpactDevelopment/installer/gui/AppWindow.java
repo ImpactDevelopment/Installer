@@ -25,6 +25,7 @@ package io.github.ImpactDevelopment.installer.gui;
 import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.gui.pages.MainPage;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
+import io.github.ImpactDevelopment.installer.utils.Tracky;
 
 import javax.swing.*;
 
@@ -54,6 +55,7 @@ public class AppWindow extends JFrame {
         setVisible(true);
         AppIcon.setAppIcon(this);
         recreate();
+        Tracky.event("installer", "display", null);
     }
 
     public void recreate() {

@@ -58,6 +58,7 @@ dependencies {
     implementation 'org.bouncycastle:bcprov-jdk15on:1.60'
     implementation 'org.bouncycastle:bcpg-jdk15on:1.60'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation 'com.brsanthu:google-analytics-java:2.0.0'
 }
 
 jar {

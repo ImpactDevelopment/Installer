@@ -33,6 +33,7 @@ import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetti
 import io.github.ImpactDevelopment.installer.setting.settings.MinecraftDirectorySetting;
 import io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting;
 import io.github.ImpactDevelopment.installer.target.InstallationMode;
+import io.github.ImpactDevelopment.installer.utils.Tracky;
 import org.apache.commons.io.IOUtils;
 
 import java.io.FileNotFoundException;
@@ -168,6 +169,7 @@ public class Vanilla implements InstallationMode {
         System.out.println("Installing impact " + getId());
         System.out.println("Info:");
         version.printInfo();
+        Tracky.persist(config.getSettingValue(MinecraftDirectorySetting.INSTANCE));
         sanityCheck(allowMinecraftToBeOpen);
         installVersionJson();
         installProfiles();

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `--help` argument to print command line usage
 - `--version` argument to print the installer version
+- Analytics, and an option `--no-analytics` to disable them
 
 ### Fixed
 - Fixed Forge installs going into `.minecraft/mods` instead of `.minecraft/mods/[version]` ([#71](https://github.com/ImpactDevelopment/Installer/issues/71))
