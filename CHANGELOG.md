@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2019-09-27
+
 ### Added
 - `--help` argument to print command line usage
 - `--version` argument to print the installer version
@@ -13,8 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fixed launcher profile name with new nightly format (`nighty-DATE-1.12.2` now becomes `Impact nightly for 1.12.2` instead of `Impact nightly-DATE for 1.12.2`), which matches how it used to behave in the old format (which became `Impact 4.8-nightly for 1.12.2`). This is so that each day's new nightly doesn't spam your launcher with a new profile each time.
-
-### Fixed
 - Fixed Forge installs going into `.minecraft/mods` instead of `.minecraft/mods/[version]` ([#71](https://github.com/ImpactDevelopment/Installer/issues/71))
 
 ## [0.6.0] - 2019-08-17
@@ -115,7 +115,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.6.0...HEAD
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.7.0...HEAD
+[0.7.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.0
 [0.6.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.6.0
 [0.5.5]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.5
 [0.5.4]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.4
