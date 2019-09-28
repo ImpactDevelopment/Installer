@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1] - 2019-09-27
+
+### Fixed
+- Fixed a windows only crash caused by some weird manipulation of paths that ended up containing a colon
+
 ## [0.7.0] - 2019-09-27
 
 ### Added
@@ -115,7 +120,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.7.0...HEAD
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.7.1...HEAD
+[0.7.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.1]
 [0.7.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.0
 [0.6.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.6.0
 [0.5.5]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.5
