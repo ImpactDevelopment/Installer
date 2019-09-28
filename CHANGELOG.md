@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.0] - 2019-08-17
 
-## Fixed
+### Fixed
 - Don't completely overwrite Impact's `META-INF/MANIFEST.MF` when building a Forge jar
 
 ## [0.5.6] - 2019-08-17
