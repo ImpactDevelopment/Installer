@@ -23,11 +23,11 @@
 package io.github.ImpactDevelopment.installer.setting;
 
 import io.github.ImpactDevelopment.installer.Args;
-import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
-import io.github.ImpactDevelopment.installer.setting.settings.InstallationModeSetting;
-import io.github.ImpactDevelopment.installer.utils.Tracky;
+import io.github.ImpactDevelopment.installer.gui.AppWindow;
+import io.github.ImpactDevelopment.installer.setting.settings.TargetSetting;
+import io.github.ImpactDevelopment.installer.target.Target;
 
-import java.io.IOException;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -76,8 +76,26 @@ public class InstallationConfig {
         return !thisSettingReverted;
     }
 
-    public String execute() throws IOException {
-        Tracky.event("installer", "install", getSettingValue(ImpactVersionSetting.INSTANCE).getCombinedVersion());
-        return getSettingValue(InstallationModeSetting.INSTANCE).mode.apply(this).apply();
+    // TODO do we need execute?
+    public void execute(AppWindow app, ActionEvent event) {
+        getTarget().getActions().forEach(action -> action.run(app, event));
+    }
+
+    public void execute(String actionName, AppWindow app, ActionEvent event) {
+        getTarget().getActions().stream()
+                .filter(action -> action.getName().equals(actionName))
+                .forEach(action -> action.run(app, event));
+    }
+
+    public void execute(String actionName) {
+        execute(actionName, null, null);
+    }
+
+    public void execute() {
+        execute(null, null);
+    }
+
+    public Target getTarget() {
+        return getSettingValue(TargetSetting.INSTANCE).mode.apply(this);
     }
 }

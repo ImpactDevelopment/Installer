@@ -32,10 +32,11 @@ import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
 import io.github.ImpactDevelopment.installer.setting.settings.MinecraftDirectorySetting;
 import io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting;
-import io.github.ImpactDevelopment.installer.target.InstallationMode;
+import io.github.ImpactDevelopment.installer.target.Target;
 import io.github.ImpactDevelopment.installer.utils.Tracky;
 import org.apache.commons.io.IOUtils;
 
+import javax.swing.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -47,7 +48,7 @@ import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.WINDOW
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.getOS;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class Vanilla implements InstallationMode {
+public class Vanilla extends Target {
 
     private final String id;
     private final ImpactJsonVersion version;
@@ -57,6 +58,38 @@ public class Vanilla implements InstallationMode {
         this.version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
         this.config = config;
         this.id = version.mcVersion + "-" + version.name + "_" + version.version + prettifiedOptifineVersion().orElse("");
+
+        addAction("Install", (app, event) -> {
+            try {
+                String msg = install();
+                if (app == null) System.out.println(msg);
+                else JOptionPane.showMessageDialog(app, msg, "\uD83D\uDE0E", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException e) {
+                e.printStackTrace();
+                if (app != null) app.exception(e);
+            }
+        });
+        addAction("Show JSON", (app, event) -> show());
+    }
+
+
+    private void show() {
+        JsonObject toDisplay = generateJsonVersion();
+        String data = Installer.gson.toJson(toDisplay);
+        if (Installer.args.noGUI) {
+            System.out.println(data);
+        } else {
+            SwingUtilities.invokeLater(() -> {
+                JFrame frame = new JFrame(toDisplay.get("id").getAsString());
+                JTextArea area = new JTextArea();
+                area.setEditable(true);
+                area.append(data);
+                area.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+                frame.getContentPane().add(new JScrollPane(area));
+                frame.setSize(690, 420);
+                frame.setVisible(true);
+            });
+        }
     }
 
     public JsonObject generateJsonVersion() {
@@ -151,8 +184,7 @@ public class Vanilla implements InstallationMode {
         }
     }
 
-    @Override
-    public String apply() throws IOException {
+    public String install() throws IOException {
         install(false);
         return "Impact has been successfully installed";
     }

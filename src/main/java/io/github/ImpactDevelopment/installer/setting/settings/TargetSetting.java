@@ -22,30 +22,24 @@
 
 package io.github.ImpactDevelopment.installer.setting.settings;
 
-import io.github.ImpactDevelopment.installer.impact.ImpactVersions;
 import io.github.ImpactDevelopment.installer.setting.ChoiceSetting;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
+import io.github.ImpactDevelopment.installer.target.TargetOptions;
 
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public enum MinecraftVersionSetting implements ChoiceSetting<String> {
+public enum TargetSetting implements ChoiceSetting<TargetOptions> {
     INSTANCE;
 
     @Override
-    public List<String> getPossibleValues(InstallationConfig config) {
-        return ImpactVersions.getAllVersions().stream()
-                .filter(config.getSettingValue(TargetSetting.INSTANCE)::supports)
-                .map(version -> version.mcVersion)
-                .distinct()
-                .sorted(Comparator.reverseOrder())
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean validSetting(InstallationConfig config, String value) {
-        return true;
+    public List<TargetOptions> getPossibleValues(InstallationConfig config) {
+        List<TargetOptions> options = new ArrayList<>(Arrays.asList(TargetOptions.values()));
+        if (!config.hasSettingValue(this) || config.getSettingValue(this).showInGUI) {
+            options.removeIf(opt -> !opt.showInGUI);
+        }
+        return options;
     }
 
     @Override

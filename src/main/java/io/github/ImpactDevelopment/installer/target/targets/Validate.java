@@ -26,20 +26,27 @@ import io.github.ImpactDevelopment.installer.impact.ImpactJsonVersion;
 import io.github.ImpactDevelopment.installer.libraries.ILibrary;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
-import io.github.ImpactDevelopment.installer.target.InstallationMode;
+import io.github.ImpactDevelopment.installer.target.Target;
 import io.github.ImpactDevelopment.installer.utils.Fetcher;
 
-public class Validate implements InstallationMode {
+import javax.swing.*;
+
+public class Validate extends Target {
     private final ImpactJsonVersion version;
     private final InstallationConfig config;
 
     public Validate(InstallationConfig config) {
         this.version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
         this.config = config;
+
+        addAction("Validate", (app, event) -> {
+            String msg = validate();
+            if (app == null) System.out.println(msg);
+            else JOptionPane.showMessageDialog(app, msg, "\uD83D\uDE0E", JOptionPane.INFORMATION_MESSAGE);
+        });
     }
 
-    @Override
-    public String apply() {
+    private String validate() {
         for (ILibrary library : version.resolveLibraries(config)) {
             byte[] b = Fetcher.fetchBytes(library.getURL());
             if (b.length != library.getSize() || !Forge.sha1hex(b).equals(library.getSHA1())) {

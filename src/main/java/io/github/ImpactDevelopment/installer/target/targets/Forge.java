@@ -27,7 +27,7 @@ import io.github.ImpactDevelopment.installer.libraries.ILibrary;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
 import io.github.ImpactDevelopment.installer.setting.settings.MinecraftDirectorySetting;
-import io.github.ImpactDevelopment.installer.target.InstallationMode;
+import io.github.ImpactDevelopment.installer.target.Target;
 import io.github.ImpactDevelopment.installer.utils.Fetcher;
 import io.github.ImpactDevelopment.installer.utils.Tracky;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -46,7 +46,7 @@ import java.util.jar.JarOutputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class Forge implements InstallationMode {
+public class Forge extends Target {
 
     private final ImpactJsonVersion version;
     private final InstallationConfig config;
@@ -54,10 +54,15 @@ public class Forge implements InstallationMode {
     public Forge(InstallationConfig config) {
         this.version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
         this.config = config;
+
+        addAction("Validate", (app, event) -> {
+            String msg = install();
+            if (app == null) System.out.println(msg);
+            else JOptionPane.showMessageDialog(app, msg, "\uD83D\uDE0E", JOptionPane.INFORMATION_MESSAGE);
+        });
     }
 
-    @Override
-    public String apply() {
+    private String install() {
         Path out = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("mods").resolve(version.mcVersion).resolve(version.name + "-" + version.version + "-" + version.mcVersion + ".jar");
 
         if (!Files.exists(out.getParent())) {

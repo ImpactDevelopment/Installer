@@ -24,7 +24,7 @@ package io.github.ImpactDevelopment.installer.setting.settings;
 
 import io.github.ImpactDevelopment.installer.setting.ChoiceSetting;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
-import io.github.ImpactDevelopment.installer.target.InstallationModeOptions;
+import io.github.ImpactDevelopment.installer.target.TargetOptions;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -44,7 +44,7 @@ public enum OptiFineSetting implements ChoiceSetting<String> {
 
     @Override
     public List<String> getPossibleValues(InstallationConfig config) {
-        if (config.getSettingValue(InstallationModeSetting.INSTANCE) == InstallationModeOptions.FORGE) {
+        if (config.getSettingValue(TargetSetting.INSTANCE) == TargetOptions.FORGE) {
             return Collections.emptyList();
         }
         String minecraftVersion = config.getSettingValue(MinecraftVersionSetting.INSTANCE);

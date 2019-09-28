@@ -20,30 +20,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.ImpactDevelopment.installer.setting.settings;
+package io.github.ImpactDevelopment.installer.target;
 
-import io.github.ImpactDevelopment.installer.setting.ChoiceSetting;
-import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
-import io.github.ImpactDevelopment.installer.target.InstallationModeOptions;
+public enum ModeOptions {
+    OFFICIAL("Official Minecraft Launcher"), MMC("MultiMC");
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+    private final String name;
 
-public enum InstallationModeSetting implements ChoiceSetting<InstallationModeOptions> {
-    INSTANCE;
-
-    @Override
-    public List<InstallationModeOptions> getPossibleValues(InstallationConfig config) {
-        List<InstallationModeOptions> options = new ArrayList<>(Arrays.asList(InstallationModeOptions.values()));
-        if (!config.hasSettingValue(this) || config.getSettingValue(this).showInGUI) {
-            options.removeIf(opt -> !opt.showInGUI);
-        }
-        return options;
+    ModeOptions(String name) {
+        this.name = name;
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName();
+        return name;
     }
 }

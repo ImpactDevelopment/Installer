@@ -40,7 +40,7 @@ public enum ImpactVersionSetting implements ChoiceSetting<ImpactVersion> {
     public List<ImpactVersion> getPossibleValues(InstallationConfig config) {
         String mcVersion = config.getSettingValue(MinecraftVersionSetting.INSTANCE);
         return ImpactVersions.getAllVersions().stream()
-                .filter(config.getSettingValue(InstallationModeSetting.INSTANCE)::supports)
+                .filter(config.getSettingValue(TargetSetting.INSTANCE)::supports)
                 .filter(version -> mcVersion.equals(version.mcVersion))
                 .sorted(Comparator.comparing((ImpactVersionReleased version) -> version.impactVersion).reversed())
                 .collect(Collectors.toList());

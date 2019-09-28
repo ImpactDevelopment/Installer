@@ -29,9 +29,8 @@ import io.github.ImpactDevelopment.installer.impact.ImpactVersionReleased;
 import io.github.ImpactDevelopment.installer.impact.ImpactVersions;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.settings.*;
-import io.github.ImpactDevelopment.installer.target.InstallationModeOptions;
+import io.github.ImpactDevelopment.installer.target.TargetOptions;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -83,16 +82,12 @@ public class Args {
             config.setSettingValue(MinecraftDirectorySetting.INSTANCE, path);
         }
         if (mode != null) {
-            config.setSettingValue(InstallationModeSetting.INSTANCE, InstallationModeOptions.valueOf(mode.toUpperCase()));
+            config.setSettingValue(TargetSetting.INSTANCE, TargetOptions.valueOf(mode.toUpperCase()));
         }
         if (all) {
             for (ImpactVersionReleased version : ImpactVersions.getAllVersions()) {
                 setImpactVersion(config, true, version);
-                try {
-                    System.out.println(config.execute());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                config.execute(); // TODO select action from cli
             }
         }
         if (impactVersion != null) {

@@ -22,8 +22,25 @@
 
 package io.github.ImpactDevelopment.installer.target;
 
-import java.io.IOException;
+import io.github.ImpactDevelopment.installer.gui.AppWindow;
 
-public interface InstallationMode {
-    String apply() throws IOException;  // not gonna lie this is me when i enter sicko mode
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
+
+public abstract class Target {
+    private List<Action> actions = new ArrayList<>();
+
+    public List<Action> getActions() {
+        return actions;
+    }
+
+    protected void addAction(String name, BiConsumer<AppWindow, ActionEvent> action) {
+        addAction(new Action(name, action));
+    }
+
+    protected void addAction(Action action) {
+        actions.add(action);
+    }
 }

@@ -64,8 +64,7 @@ public class Installer {
         args.apply(config);
         if (args.noGUI) {
             // run it now
-            String ret = config.execute();
-            System.out.println("Message: " + ret);
+            config.execute(); // TODO select action from cli
         } else {
             Tracky.awtEnabled();
             setupGUI(config);

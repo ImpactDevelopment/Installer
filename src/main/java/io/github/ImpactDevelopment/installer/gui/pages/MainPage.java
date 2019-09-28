@@ -37,22 +37,20 @@ import java.nio.file.Paths;
 public class MainPage extends JPanel {
     public MainPage(AppWindow app) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        addSetting(ModeSetting.INSTANCE, "Mode", app);
         addPathSetting(MinecraftDirectorySetting.INSTANCE, "Minecraft directory", app);
-        addSetting(InstallationModeSetting.INSTANCE, "Install for", app);
+        addSetting(TargetSetting.INSTANCE, "Target", app);
         addSetting(MinecraftVersionSetting.INSTANCE, "Minecraft version", app);
         addSetting(ImpactVersionSetting.INSTANCE, "Impact version", app);
         addSetting(OptiFineSetting.INSTANCE, "OptiFine version", app);
 
-        JButton install = new JButton("Install");
-        install.addActionListener((ActionEvent) -> {
-            try {
-                String msg = app.config.execute();
-                JOptionPane.showMessageDialog(app, msg, "\uD83D\uDE0E", JOptionPane.INFORMATION_MESSAGE);
-            } catch (Throwable e) {
-                app.exception(e);
-            }
+        JPanel buttons = new JPanel(new FlowLayout());
+        app.config.getTarget().getActions().forEach(action -> {
+            JButton button = new JButton(action.getName());
+            button.addActionListener(event -> action.run(app, event));
+            buttons.add(button);
         });
-        add(install);
+        add(buttons);
     }
 
     private <T> void addSetting(ChoiceSetting<T> setting, String text, AppWindow app) {
