@@ -31,6 +31,7 @@ import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.utils.Tracky;
 
 import javax.swing.*;
+import java.nio.file.FileSystems;
 import java.text.SimpleDateFormat;
 
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.*;
@@ -45,7 +46,7 @@ public class Installer {
     public static void main(String... argv) throws Throwable {
         // Parse CLI arguments
         JCommander cmd = JCommander.newBuilder()
-                .programName(project)
+                .programName(getCommand())
                 .addObject(args)
                 .args(argv)
                 .build();
@@ -54,7 +55,7 @@ public class Installer {
             return;
         }
         if (args.showVersion) {
-            System.out.println(args.getClass().getPackage().getImplementationVersion());
+            System.out.println(getVersion());
             return;
         }
 
@@ -93,6 +94,34 @@ public class Installer {
         }
 
         SwingUtilities.invokeLater(() -> new AppWindow(config));
+    }
+
+    private static String getCommand() {
+        String separator = FileSystems.getDefault().getSeparator();
+        String jar = args.getClass()
+                .getProtectionDomain()
+                .getCodeSource()
+                .getLocation()
+                .getPath();
+
+        // Manually parse the path instead of using java.nio.Path due to weird errors on windows
+
+        // Strip trailing /
+        while (jar.endsWith(separator)) {
+            jar = jar.substring(0, jar.length() - 1);
+        }
+
+        String filename = jar.substring(jar.lastIndexOf(separator) + 1);
+
+        if (filename.toLowerCase().endsWith(".jar")) {
+            return "java -jar " + filename;
+        }
+
+        return filename;
+    }
+
+    public static String getVersion() {
+        return args.getClass().getPackage().getImplementationVersion();
     }
 
     public static String getTitle() {
