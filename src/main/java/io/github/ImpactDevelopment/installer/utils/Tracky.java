@@ -48,7 +48,6 @@ public class Tracky {
             try {
                 cid = IOUtils.toString(Tracky.class.getResourceAsStream("/" + FILENAME_IN_JAR), StandardCharsets.UTF_8);
             } catch (Throwable th) {
-                th.printStackTrace();
             }
             if (cid.trim().isEmpty()) { // rare, bordering on impossible
                 try {
