@@ -96,6 +96,8 @@ task('optimize', type: ProGuardTask, dependsOn: shadowJar) {
 
     keep 'class com.beust.jcommander.** { *; }'
 
+    keep 'class com.brsanthu.** { *; }'
+
     [
             // keep only the RSA stuff from bouncycastle
             'org.bouncycastle.jcajce.provider.asymmetric.rsa.PSSSignatureSpi$SHA512withRSA',
