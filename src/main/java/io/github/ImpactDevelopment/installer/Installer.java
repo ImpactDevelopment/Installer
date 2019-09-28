@@ -31,8 +31,6 @@ import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.utils.Tracky;
 
 import javax.swing.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.*;
@@ -47,7 +45,7 @@ public class Installer {
     public static void main(String... argv) throws Throwable {
         // Parse CLI arguments
         JCommander cmd = JCommander.newBuilder()
-                .programName("java -jar " + getJarPath().getFileName())
+                .programName(project)
                 .addObject(args)
                 .args(argv)
                 .build();
@@ -56,7 +54,7 @@ public class Installer {
             return;
         }
         if (args.showVersion) {
-            System.out.println(getVersion());
+            System.out.println(args.getClass().getPackage().getImplementationVersion());
             return;
         }
 
@@ -99,17 +97,5 @@ public class Installer {
 
     public static String getTitle() {
         return project + " Installer";
-    }
-
-    public static String getVersion() {
-        return args.getClass().getPackage().getImplementationVersion();
-    }
-
-    public static Path getJarPath() {
-        return Paths.get(args.getClass()
-                .getProtectionDomain()
-                .getCodeSource()
-                .getLocation()
-                .getPath());
     }
 }
