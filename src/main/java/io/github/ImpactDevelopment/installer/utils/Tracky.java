@@ -32,6 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class Tracky {
 
@@ -96,7 +97,9 @@ public class Tracky {
             return;
         }
         System.out.println("Sending event category=" + category + " action=" + action + " label=" + label + " cid=" + CID);
-        ANALYTICS.event().eventCategory(category).eventAction(action).eventLabel(label).sendAsync();
+        try {
+            ANALYTICS.event().eventCategory(category).eventAction(action).eventLabel(label).sendAsync().get(100L, TimeUnit.MILLISECONDS);
+        } catch (Throwable th) {}
     }
 
     public static void persist(Path mcDir) {

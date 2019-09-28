@@ -77,7 +77,16 @@ public class InstallationConfig {
     }
 
     public String execute() throws IOException {
-        Tracky.event("installer", "install", getSettingValue(ImpactVersionSetting.INSTANCE).getCombinedVersion());
-        return getSettingValue(InstallationModeSetting.INSTANCE).mode.apply(this).apply();
+        String label = getSettingValue(ImpactVersionSetting.INSTANCE).getCombinedVersion();
+        Tracky.event("installer", "install", label);
+        String result;
+        try {
+            result = getSettingValue(InstallationModeSetting.INSTANCE).mode.apply(this).apply();
+        } catch (RuntimeException | IOException ex) {
+            Tracky.event("installer", "error", label);
+            throw ex;
+        }
+        Tracky.event("installer", "success", label);
+        return result;
     }
 }
