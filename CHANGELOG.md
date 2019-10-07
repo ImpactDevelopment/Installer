@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.2] - 2019-10-06
+
+### Changed
+- Changed event processing relating to successful installs vs errors
+
 ## [0.7.1] - 2019-09-27
 
 ### Fixed
@@ -120,8 +125,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.7.1...HEAD
-[0.7.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.1]
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.7.2...HEAD
+[0.7.2]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.2
+[0.7.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.1
 [0.7.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.0
 [0.6.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.6.0
 [0.5.5]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.5
