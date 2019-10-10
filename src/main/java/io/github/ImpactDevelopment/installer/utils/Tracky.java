@@ -40,6 +40,7 @@ public class Tracky {
     private static final String FILENAME_IN_INSTALL = "cid.txt";
     private static final String TRACKY_ID = "UA-143397381-1";
     private static final String CID;
+    public static GoogleAnalytics ANALYTICS;
 
     static {
         if (Installer.args.noAnalytics) {
@@ -66,9 +67,8 @@ public class Tracky {
             }
             CID = cid;
         }
+        ANALYTICS = analytics(false);
     }
-
-    public static GoogleAnalytics ANALYTICS = analytics(false);
 
     public static void awtEnabled() {
         ANALYTICS = analytics(true);
