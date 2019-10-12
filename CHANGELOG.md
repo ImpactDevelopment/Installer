@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.3] - 2019-10-11
+
+### Fixed
+- Fixed a small internal ordering bug
+
 ## [0.7.2] - 2019-10-06
 
 ### Changed
@@ -125,7 +130,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.7.2...HEAD
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.7.3...HEAD
+[0.7.3]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.3
 [0.7.2]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.2
 [0.7.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.1
 [0.7.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.0
