@@ -30,6 +30,7 @@ import org.apache.commons.io.IOUtils;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -53,7 +54,7 @@ public class Tracky {
             }
             if (cid.trim().isEmpty()) { // rare, bordering on impossible
                 try {
-                    cid = new String(Files.readAllBytes(new InstallationConfig().getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("Impact").resolve(FILENAME_IN_INSTALL)));
+                    cid = new String(Files.readAllBytes(mcDir().resolve("Impact").resolve(FILENAME_IN_INSTALL)));
                     if (cid.isEmpty()) {
                         // ok this is big brain time
                         // they have previously disabled analytics!
@@ -68,6 +69,13 @@ public class Tracky {
             CID = cid;
         }
         ANALYTICS = analytics(false);
+    }
+
+    private static Path mcDir() {
+        if (!Installer.args.mcPath.isEmpty()) {
+            return Paths.get(Installer.args.mcPath);
+        }
+        return new InstallationConfig().getSettingValue(MinecraftDirectorySetting.INSTANCE);
     }
 
     public static void awtEnabled() {
