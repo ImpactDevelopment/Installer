@@ -72,8 +72,9 @@ public class Tracky {
     }
 
     private static Path mcDir() {
-        if (!Installer.args.mcPath.isEmpty()) {
-            return Paths.get(Installer.args.mcPath);
+        String mcPath = Installer.args.mcPath;
+        if (mcPath != null && !mcPath.isEmpty()) {
+            return Paths.get(mcPath);
         }
         return new InstallationConfig().getSettingValue(MinecraftDirectorySetting.INSTANCE);
     }

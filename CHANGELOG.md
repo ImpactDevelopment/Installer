@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.4] - 2019-10-13
+
+### Fixed
+- Fixed a file that was relative to the default Minecraft directory, not the selected one
+
 ## [0.7.3] - 2019-10-11
 
 ### Fixed
@@ -130,7 +135,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.7.3...HEAD
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.7.4...HEAD
+[0.7.4]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.4
 [0.7.3]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.3
 [0.7.2]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.2
 [0.7.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.1
