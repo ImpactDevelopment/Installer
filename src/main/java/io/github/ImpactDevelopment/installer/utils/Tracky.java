@@ -129,7 +129,6 @@ public class Tracky {
                 Files.write(cid, CID.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE_NEW);
             }
         } catch (Throwable th) {
-            th.printStackTrace();
         }
     }
 }
