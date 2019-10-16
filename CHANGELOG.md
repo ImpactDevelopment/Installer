@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fixed duplication of files in Forge mode
+
 ## [0.7.4] - 2019-10-13
 
 ### Fixed

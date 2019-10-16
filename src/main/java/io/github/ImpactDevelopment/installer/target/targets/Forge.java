@@ -41,6 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
@@ -69,7 +70,7 @@ public class Forge implements InstallationMode {
         }
 
         Tracky.persist(config.getSettingValue(MinecraftDirectorySetting.INSTANCE));
-
+        HashSet<String> fileNames = new HashSet<>();
         try (JarOutputStream jarOut = new JarOutputStream(new FileOutputStream(out.toFile()))) {
             for (ILibrary library : version.resolveLibraries(config)) {
                 byte[] b = Fetcher.fetchBytes(library.getURL());
@@ -91,9 +92,14 @@ public class Forge implements InstallationMode {
                         }
                         continue;
                     }
-                    if (!name.equals("icons/") && name.endsWith("/") || name.startsWith("META-INF/MUMFREY")) {
+                    if (name.startsWith("META-INF/MUMFREY") || name.equals("module-info.class")) {
                         continue;
                     }
+                    if (fileNames.contains(name)) {
+                        System.out.println("WARNING: discarding file since I've already included one with the same name: " + name);
+                        continue;
+                    }
+                    fileNames.add(name);
                     jarOut.putNextEntry(new JarEntry(name));
                     IOUtils.copy(input, jarOut);
                 }
