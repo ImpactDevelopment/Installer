@@ -59,7 +59,7 @@ public class Vanilla implements InstallationMode {
         this.id = version.mcVersion + "-" + version.name + "_" + version.version + prettifiedOptifineVersion().orElse("");
     }
 
-    public JsonObject generateJsonVersion() {
+    public JsonObject generateVanillaJsonVersion() {
         JsonObject object = new JsonObject();
         object.addProperty("id", id);
         object.addProperty("type", "release");
@@ -71,7 +71,23 @@ public class Vanilla implements InstallationMode {
         object.addProperty("minimumLauncherVersion", 0);
         object.addProperty("mainClass", "net.minecraft.launchwrapper.Launch");
         populateArguments(object);
-        populateLibraries(object);
+        populateLibraries(object, false);
+        return object;
+    }
+
+    public JsonObject generateMultiMCJsonVersion() {
+        JsonObject object = new JsonObject();
+        JsonArray arrayTweakers = new JsonArray();
+        arrayTweakers.add("clientapi.load.ClientTweaker");
+        arrayTweakers.add("baritone.launch.BaritoneTweaker");
+        object.addProperty("fileID", "me.zero.clarinet.Impact");
+        object.addProperty("mainClass", "net.minecraft.launchwrapper.Launch");
+        object.addProperty("mcVersion", version.mcVersion);
+        object.addProperty("name", "Impact " + version.version);
+        object.addProperty("order",10);
+        object.addProperty("version",id);
+        object.add("+tweakers", arrayTweakers);
+        populateLibraries(object, true);
         return object;
     }
 
@@ -94,12 +110,16 @@ public class Vanilla implements InstallationMode {
         }
     }
 
-    private void populateLibraries(JsonObject object) {
+    private void populateLibraries(JsonObject object, boolean multimc) {
         JsonArray libraries = new JsonArray();
         for (ILibrary lib : version.resolveLibraries(config)) {
             populateLib(lib, libraries);
         }
-        object.add("libraries", libraries);
+        if (multimc) {
+            object.add("+libraries", libraries);
+        } else {
+            object.add("libraries", libraries);
+        }
 
         populateOptifine(libraries);
     }
@@ -197,7 +217,7 @@ public class Vanilla implements InstallationMode {
             }
         }
         System.out.println("Writing to " + directory.resolve(id + ".json"));
-        Files.write(directory.resolve(id + ".json"), Installer.gson.toJson(generateJsonVersion()).getBytes(StandardCharsets.UTF_8));
+        Files.write(directory.resolve(id + ".json"), Installer.gson.toJson(generateVanillaJsonVersion()).getBytes(StandardCharsets.UTF_8));
     }
 
     private void installProfiles() throws IOException {

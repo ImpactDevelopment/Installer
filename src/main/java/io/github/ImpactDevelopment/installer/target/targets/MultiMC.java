@@ -29,22 +29,22 @@ import io.github.ImpactDevelopment.installer.target.InstallationMode;
 
 import javax.swing.*;
 
-public class ShowJSON implements InstallationMode {
+public class MultiMC implements InstallationMode {
     private final InstallationConfig config;
 
-    public ShowJSON(InstallationConfig config) {
+    public MultiMC(InstallationConfig config) {
         this.config = config;
     }
 
     @Override
     public String apply() {
-        JsonObject toDisplay = new Vanilla(config).generateVanillaJsonVersion();
+        JsonObject toDisplay = new Vanilla(config).generateMultiMCJsonVersion();
         String data = Installer.gson.toJson(toDisplay);
         if (Installer.args.noGUI) {
             return data;
         }
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame(toDisplay.get("id").getAsString());
+            JFrame frame = new JFrame(toDisplay.get("version").getAsString());
             JTextArea area = new JTextArea();
             area.setEditable(true);
             area.append(data);
@@ -53,6 +53,6 @@ public class ShowJSON implements InstallationMode {
             frame.setSize(690, 420);
             frame.setVisible(true);
         });
-        return "Here is the JSON for Vanilla " + toDisplay.get("id");
+        return "Here is the JSON for MultiMC " + toDisplay.get("version");
     }
 }
