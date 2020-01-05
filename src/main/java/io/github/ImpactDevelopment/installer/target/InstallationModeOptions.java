@@ -24,11 +24,7 @@ package io.github.ImpactDevelopment.installer.target;
 
 import io.github.ImpactDevelopment.installer.impact.ImpactVersion;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
-import io.github.ImpactDevelopment.installer.target.targets.Forge;
-import io.github.ImpactDevelopment.installer.target.targets.ShowJSON;
-import io.github.ImpactDevelopment.installer.target.targets.MultiMC;
-import io.github.ImpactDevelopment.installer.target.targets.Validate;
-import io.github.ImpactDevelopment.installer.target.targets.Vanilla;
+import io.github.ImpactDevelopment.installer.target.targets.*;
 
 import java.util.function.Function;
 
@@ -36,7 +32,7 @@ public enum InstallationModeOptions {
     VANILLA(Vanilla::new, true),
     FORGE(Forge::new, true),
     VALIDATE(Validate::new, false),
-    MULTIMC(MultiMC::new,true),
+    MULTIMC(MultiMC::new, true),
     SHOWJSON(ShowJSON::new, true);
 
     InstallationModeOptions(Function<InstallationConfig, InstallationMode> mode, boolean showInGUI) {

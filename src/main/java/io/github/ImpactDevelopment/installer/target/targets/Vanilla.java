@@ -84,8 +84,8 @@ public class Vanilla implements InstallationMode {
         object.addProperty("mainClass", "net.minecraft.launchwrapper.Launch");
         object.addProperty("mcVersion", version.mcVersion);
         object.addProperty("name", "Impact " + version.version);
-        object.addProperty("order",10);
-        object.addProperty("version",id);
+        object.addProperty("order", 10);
+        object.addProperty("version", id);
         object.add("+tweakers", arrayTweakers);
         populateLibraries(object, true);
         return object;
