@@ -26,18 +26,18 @@ import io.github.ImpactDevelopment.installer.impact.ImpactVersion;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.target.targets.Forge;
 import io.github.ImpactDevelopment.installer.target.targets.ShowJSON;
+import io.github.ImpactDevelopment.installer.target.targets.MultiMC;
 import io.github.ImpactDevelopment.installer.target.targets.Validate;
 import io.github.ImpactDevelopment.installer.target.targets.Vanilla;
 
 import java.util.function.Function;
 
 public enum InstallationModeOptions {
-    VANILLA(Vanilla::new, true), FORGE(Forge::new, true), VALIDATE(Validate::new, false), SHOWJSON(ShowJSON::new, true) {
-        @Override
-        public String toString() {
-            return "Show JSON";
-        }
-    };
+    VANILLA(Vanilla::new, true),
+    FORGE(Forge::new, true),
+    VALIDATE(Validate::new, false),
+    MULTIMC(MultiMC::new,true),
+    SHOWJSON(ShowJSON::new, true);
 
     InstallationModeOptions(Function<InstallationConfig, InstallationMode> mode, boolean showInGUI) {
         this.mode = mode;
@@ -59,7 +59,20 @@ public enum InstallationModeOptions {
     @Override
     public String toString() {
         // incredibly based code
-        String name = super.toString();
-        return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+        // this is oof NGL :eyes:
+        switch (this) {
+            case VANILLA:
+                return "Vanilla";
+            case SHOWJSON:
+                return "Show Vanilla JSON";
+            case MULTIMC:
+                return "Show MultiMC JSON";
+            case FORGE:
+                return "Forge";
+            case VALIDATE:
+                return "Validate Vanilla version";
+            default:
+                return "Unknown";
+        }
     }
 }

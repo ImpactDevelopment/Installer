@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Added support for MultiMC json
+
+### Changed
+- Changed InstallationModeOptions toString() to be prettier
+
 ## [0.7.5] - 2019-10-16
 
 ### Fixed
