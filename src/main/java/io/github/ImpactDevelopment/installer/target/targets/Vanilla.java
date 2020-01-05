@@ -69,7 +69,7 @@ public class Vanilla implements InstallationMode {
         object.addProperty("releaseTime", version.date);
         object.add("downloads", new JsonObject());
         object.addProperty("minimumLauncherVersion", 0);
-        object.addProperty("mainClass", "net.minecraft.launchwrapper.Launch");
+        object.addProperty("mainClass", version.mainClass);
         populateArguments(object);
         populateLibraries(object, false);
         return object;
@@ -78,10 +78,9 @@ public class Vanilla implements InstallationMode {
     public JsonObject generateMultiMCJsonVersion() {
         JsonObject object = new JsonObject();
         JsonArray arrayTweakers = new JsonArray();
-        arrayTweakers.add("clientapi.load.ClientTweaker");
-        arrayTweakers.add("baritone.launch.BaritoneTweaker");
-        object.addProperty("fileID", "me.zero.clarinet.Impact");
-        object.addProperty("mainClass", "net.minecraft.launchwrapper.Launch");
+        version.tweakers.forEach(arrayTweakers::add);
+        object.addProperty("fileID", "net.impactclient.Impact");
+        object.addProperty("mainClass", version.mainClass);
         object.addProperty("mcVersion", version.mcVersion);
         object.addProperty("name", "Impact " + version.version);
         object.addProperty("order", 10);
@@ -93,17 +92,15 @@ public class Vanilla implements InstallationMode {
 
     private void populateArguments(JsonObject object) {
         if (version.mcVersion.compareTo("1.12.2") <= 0) {
-            String args = "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type}";
-            for (String tweaker : version.tweakers) {
-                args += " --tweakClass " + tweaker;
-            }
-            object.addProperty("minecraftArguments", args);
+            String defaultArgs = "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type}";
+            String tweakerArgs = version.tweakers.stream().reduce("", (accumulator, tweaker) -> accumulator + " --tweakClass " + tweaker);
+            object.addProperty("minecraftArguments", defaultArgs + tweakerArgs);
         } else {
             JsonArray game = new JsonArray();
-            for (String tweaker : version.tweakers) {
+            version.tweakers.forEach(tweaker -> {
                 game.add("--tweakClass");
                 game.add(tweaker);
-            }
+            });
             JsonObject arguments = new JsonObject();
             arguments.add("game", game);
             object.add("arguments", arguments);

@@ -28,7 +28,6 @@ import io.github.ImpactDevelopment.installer.libraries.LibraryMaven;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,16 +39,18 @@ public class ImpactJsonVersion {
     public String name; // will always be Impact :wink:
     public String version;
     public String mcVersion;
+    public String mainClass = "net.minecraft.launchwrapper.Launch";
     public String date;
-    public String[] tweakers;
+    public List<String> tweakers;
     public ImpactJsonLibrary[] libraries;
 
     public void printInfo() {
         System.out.println(name);
         System.out.println(version);
         System.out.println(mcVersion);
+        System.out.println(mainClass);
         System.out.println(date);
-        System.out.println(Arrays.toString(tweakers));
+        System.out.println(tweakers);
         for (ImpactJsonLibrary lib : libraries) {
             System.out.println(lib.name + " " + lib.sha1 + " " + lib.size);
         }
