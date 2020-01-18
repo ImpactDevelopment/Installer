@@ -97,27 +97,37 @@ public class Installer {
     }
 
     private static String getCommand() {
-        String separator = FileSystems.getDefault().getSeparator();
-        String jar = args.getClass()
-                .getProtectionDomain()
-                .getCodeSource()
-                .getLocation()
-                .getPath();
+        // try-catch due to weird errors on windows
+        try {
+            String separator = FileSystems.getDefault().getSeparator();
+            String jar = args.getClass()
+                    .getProtectionDomain()
+                    .getCodeSource()
+                    .getLocation()
+                    .getPath();
 
-        // Manually parse the path instead of using java.nio.Path due to weird errors on windows
+            // Manually parse the path instead of using java.nio.Path due to weird errors on windows
 
-        // Strip trailing /
-        while (jar.endsWith(separator)) {
-            jar = jar.substring(0, jar.length() - 1);
+            // Strip trailing /
+            while (jar.endsWith(separator)) {
+                jar = jar.substring(0, jar.length() - 1);
+            }
+
+            String filename = jar.substring(jar.lastIndexOf(separator) + 1);
+
+            if (filename.toLowerCase().endsWith(".jar")) {
+                return "java -jar " + filename;
+            }
+
+            return filename;
+        } catch (Throwable t) {
+            if (!System.getenv("DEBUG").equals("")) {
+                System.err.println("Error getting installer filename");
+                t.printStackTrace();
+                System.err.print("\n\n");
+            }
+            return String.format("<%s>", getTitle());
         }
-
-        String filename = jar.substring(jar.lastIndexOf(separator) + 1);
-
-        if (filename.toLowerCase().endsWith(".jar")) {
-            return "java -jar " + filename;
-        }
-
-        return filename;
     }
 
     public static String getVersion() {
