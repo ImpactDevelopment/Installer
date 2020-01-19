@@ -38,7 +38,7 @@ plugins {
 ext {
     id = 'ImpactInstaller'
     group 'io.github.ImpactDevelopment'
-    version '0.7.5'
+    version '0.7.9'
     description = 'Impact Installer'
     mainClassName = 'io.github.ImpactDevelopment.installer.Installer'
     targetCompatibility = sourceCompatibility = JavaVersion.VERSION_1_8
@@ -122,6 +122,9 @@ createExe {
     copyright = 'Copyright (C) Impact Developers'
     fileDescription = project.description
     version = textVersion = project.version
+
+    headerType = 'gui'
+    stayAlive = true // This should make stdout work, but it doesn't
 
     // Default to Mojang's JRE and fallback to JRE version search
     bundledJrePath = '%PROGRAMFILES(X86)%/Minecraft Launcher/runtime/jre-x64'

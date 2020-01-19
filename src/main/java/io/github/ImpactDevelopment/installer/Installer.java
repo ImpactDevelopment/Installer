@@ -31,7 +31,8 @@ import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.utils.Tracky;
 
 import javax.swing.*;
-import java.nio.file.FileSystems;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.*;
@@ -97,35 +98,26 @@ public class Installer {
     }
 
     private static String getCommand() {
-        // try-catch due to weird errors on windows
+        String filename = getFilename();
+        return filename.toLowerCase().endsWith(".jar")
+                ? String.format("java -jar %s", filename)
+                : filename;
+    }
+
+    private static String getFilename() {
+        // try-catch due to weird JVM errors on some windows machines
         try {
-            String separator = FileSystems.getDefault().getSeparator();
-            String jar = args.getClass()
+            URL uri = args.getClass()
                     .getProtectionDomain()
                     .getCodeSource()
-                    .getLocation()
-                    .getPath();
-
-            // Manually parse the path instead of using java.nio.Path due to weird errors on windows
-
-            // Strip trailing /
-            while (jar.endsWith(separator)) {
-                jar = jar.substring(0, jar.length() - 1);
+                    .getLocation();
+            // some people report errors with nio, so another try-catch
+            try {
+                return Paths.get(uri.toURI()).getFileName().toString();
+            } catch (Throwable ignored) {
+                return uri.getPath();
             }
-
-            String filename = jar.substring(jar.lastIndexOf(separator) + 1);
-
-            if (filename.toLowerCase().endsWith(".jar")) {
-                return "java -jar " + filename;
-            }
-
-            return filename;
-        } catch (Throwable t) {
-            if (!System.getenv("DEBUG").equals("")) {
-                System.err.println("Error getting installer filename");
-                t.printStackTrace();
-                System.err.print("\n\n");
-            }
+        } catch (Throwable ignored) {
             return String.format("<%s>", getTitle());
         }
     }
