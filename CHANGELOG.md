@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2020-01-22
+
 ### Added
 - Added support for MultiMC json
 
@@ -147,7 +149,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.7.5...HEAD
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.8.0...HEAD
+[0.8.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.0
 [0.7.5]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.5
 [0.7.4]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.4
 [0.7.3]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.3
