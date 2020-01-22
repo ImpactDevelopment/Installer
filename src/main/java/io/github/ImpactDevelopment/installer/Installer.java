@@ -47,7 +47,7 @@ public class Installer {
     public static void main(String... argv) throws Throwable {
         // Parse CLI arguments
         JCommander cmd = JCommander.newBuilder()
-                .programName(getCommand())
+                .programName(String.format("<%s>", getTitle()))
                 .addObject(args)
                 .args(argv)
                 .build();
