@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.2] - 2020-02-13
+
 ### Changed
 - Changed the OptiFine blacklist to above 1.15.2, and added the launchwrapper-of hack from 1.14.4 to 1.15.2.
 
@@ -157,7 +159,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.8.1...HEAD
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.8.2...HEAD
+[0.8.2]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.2
 [0.8.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.1
 [0.8.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.0
 [0.7.5]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.5
