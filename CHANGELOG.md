@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.1] - 2020-02-13
+
 ### Changed
 - Preemptively removed OptiFine from 1.15.2 (we can't be compatible with something that isn't released yet)
 
@@ -152,7 +154,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.8.0...HEAD
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.8.1...HEAD
+[0.8.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.1
 [0.8.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.0
 [0.7.5]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.5
 [0.7.4]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.4
