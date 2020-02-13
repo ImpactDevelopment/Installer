@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Preemptively removed OptiFine from 1.15.2 (we can't be compatible with something that isn't released yet)
+
 ## [0.8.0] - 2020-01-22
 
 ### Added

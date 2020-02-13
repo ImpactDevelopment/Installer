@@ -44,7 +44,7 @@ public enum OptiFineSetting implements ChoiceSetting<String> {
 
     @Override
     public List<String> getPossibleValues(InstallationConfig config) {
-        if (config.getSettingValue(InstallationModeSetting.INSTANCE) == InstallationModeOptions.FORGE) {
+        if (config.getSettingValue(InstallationModeSetting.INSTANCE) == InstallationModeOptions.FORGE || config.getSettingValue(MinecraftVersionSetting.INSTANCE).compareTo("1.14.4") > 0) {
             return Collections.emptyList();
         }
         String minecraftVersion = config.getSettingValue(MinecraftVersionSetting.INSTANCE);
