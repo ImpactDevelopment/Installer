@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Changed the OptiFine blacklist to above 1.15.2, and added the launchwrapper-of hack from 1.14.4 to 1.15.2.
+
 ## [0.8.1] - 2020-02-13
 
 ### Changed
