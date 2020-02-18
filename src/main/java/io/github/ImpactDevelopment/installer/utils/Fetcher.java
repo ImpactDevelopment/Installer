@@ -24,10 +24,12 @@ package io.github.ImpactDevelopment.installer.utils;
 
 import org.apache.commons.io.IOUtils;
 
+import javax.net.ssl.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.security.cert.X509Certificate;
 
 /**
  * Put all the URL fetching in one place so that it can be logged
@@ -38,6 +40,30 @@ public class Fetcher {
     }
 
     public static byte[] fetchBytes(String url) {
+        try {
+            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+            }};
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            HostnameVerifier allHostsValid = new HostnameVerifier() {
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            };
+            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
         System.out.println("DOWNLOADING " + url);
         try {
             return IOUtils.toByteArray(new URI(url));
