@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 
 /**
@@ -40,28 +42,12 @@ public class Fetcher {
     }
 
     public static byte[] fetchBytes(String url) {
+        SSLSocketFactory originalSSL = HttpsURLConnection.getDefaultSSLSocketFactory(); // for restoring later
+        HostnameVerifier originalHost = HttpsURLConnection.getDefaultHostnameVerifier();
         try {
-            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-
-                public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                }
-
-                public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                }
-            }};
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustAllCerts, new java.security.SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            HostnameVerifier allHostsValid = new HostnameVerifier() {
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            };
-            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+            disableAllVerification();
         } catch (Throwable th) {
+            System.out.println("Unable to disable https");
             th.printStackTrace();
         }
         System.out.println("DOWNLOADING " + url);
@@ -69,6 +55,38 @@ public class Fetcher {
             return IOUtils.toByteArray(new URI(url));
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException("Unable to fetch " + url, e);
+        } finally {
+            try {
+                HttpsURLConnection.setDefaultSSLSocketFactory(originalSSL); // restore to full https verification
+                HttpsURLConnection.setDefaultHostnameVerifier(originalHost);
+            } catch (Throwable th) {
+                System.out.println("Unable to restore https! This could actually be a problem!");
+            }
         }
+    }
+
+    public static void disableAllVerification() throws NoSuchAlgorithmException, KeyManagementException {
+        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+
+            public void checkClientTrusted(X509Certificate[] certs, String authType) {
+            }
+
+            public void checkServerTrusted(X509Certificate[] certs, String authType) {
+            }
+        }};
+        SSLContext sc = SSLContext.getInstance("SSL");
+        sc.init(null, trustAllCerts, new java.security.SecureRandom());
+        SSLSocketFactory allSSLValid = sc.getSocketFactory();
+        HostnameVerifier allHostsValid = new HostnameVerifier() {
+            public boolean verify(String hostname, SSLSession session) {
+                return true;
+            }
+        };
+
+        HttpsURLConnection.setDefaultSSLSocketFactory(allSSLValid);
+        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
     }
 }
