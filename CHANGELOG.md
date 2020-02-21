@@ -6,8 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.3] - 2020-02-21
+
 ### Fixed
 - Fixed HTTPS failure on installer launch. GPG is still verified.
+- Fixed 1.14.4 not having launchwrapper-of hack applied 
 
 ## [0.8.2] - 2020-02-13
 
@@ -162,7 +165,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.8.2...HEAD
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.8.3...HEAD
+[0.8.3]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.3
 [0.8.2]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.2
 [0.8.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.1
 [0.8.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.0
