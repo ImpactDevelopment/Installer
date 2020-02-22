@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- The ability to override CLI argument defaults from a properties file in the jar. This means the Donator Installer can be generated dynamically by the website.
+
 ## [0.8.3] - 2020-02-21
 
 ### Fixed
