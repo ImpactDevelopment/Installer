@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.4] - 2020-02-24
+
 ### Added
 - The ability to override CLI argument defaults from a properties file in the jar. This means the Donator Installer can be generated dynamically by the website.
 - A fallback from unauthenticated HTTPS to HTTPS. I do not understand why, but it made it work for someone.
