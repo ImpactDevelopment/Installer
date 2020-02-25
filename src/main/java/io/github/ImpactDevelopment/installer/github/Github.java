@@ -43,7 +43,13 @@ public class Github {
             try {
                 return getFromURL("http://impactclient.net/releases.json");
             } catch (Throwable th) {
-                System.out.println("Unable to fetch from epic site");
+                System.out.println("Unable to fetch from epic site http");
+                th.printStackTrace();
+            }
+            try {
+                return getFromURL("https://impactclient.net/releases.json");
+            } catch (Throwable th) {
+                System.out.println("Unable to fetch from epic site https");
                 th.printStackTrace();
             }
         }

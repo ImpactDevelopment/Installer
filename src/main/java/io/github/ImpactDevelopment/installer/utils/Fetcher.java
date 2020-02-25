@@ -40,10 +40,18 @@ public class Fetcher {
     }
 
     public static byte[] fetchBytes(String url) {
-        SSLSocketFactory originalSSL = HttpsURLConnection.getDefaultSSLSocketFactory(); // for restoring later
-        HostnameVerifier originalHost = HttpsURLConnection.getDefaultHostnameVerifier();
         System.out.println("DOWNLOADING " + url);
         try {
+            return IOUtils.toByteArray(new URI(url));
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
+        SSLSocketFactory originalSSL = HttpsURLConnection.getDefaultSSLSocketFactory(); // for restoring later
+        HostnameVerifier originalHost = HttpsURLConnection.getDefaultHostnameVerifier();
+        String originalIPv4 = System.getProperty("java.net.preferIPv4Stack");
+        try {
+            System.out.println("Trying some hacks to get this to load!");
+            System.setProperty("java.net.preferIPv4Stack", "true");
             try {
                 return IOUtils.toByteArray(new URI(url));
             } catch (Throwable th) {
@@ -65,6 +73,8 @@ public class Fetcher {
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
             throw new RuntimeException(e);
         } finally {
+            System.out.println("Undoing hacks!");
+            System.setProperty("java.net.preferIPv4Stack", originalIPv4);
             try {
                 HttpsURLConnection.setDefaultSSLSocketFactory(originalSSL); // restore to full https verification
                 HttpsURLConnection.setDefaultHostnameVerifier(originalHost);
