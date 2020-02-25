@@ -25,9 +25,7 @@ package io.github.ImpactDevelopment.installer.utils;
 import org.apache.commons.io.IOUtils;
 
 import javax.net.ssl.*;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -44,17 +42,28 @@ public class Fetcher {
     public static byte[] fetchBytes(String url) {
         SSLSocketFactory originalSSL = HttpsURLConnection.getDefaultSSLSocketFactory(); // for restoring later
         HostnameVerifier originalHost = HttpsURLConnection.getDefaultHostnameVerifier();
-        try {
-            disableAllVerification();
-        } catch (Throwable th) {
-            System.out.println("Unable to disable https");
-            th.printStackTrace();
-        }
         System.out.println("DOWNLOADING " + url);
         try {
-            return IOUtils.toByteArray(new URI(url));
-        } catch (IOException | URISyntaxException e) {
-            throw new RuntimeException("Unable to fetch " + url, e);
+            try {
+                return IOUtils.toByteArray(new URI(url));
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
+            disableHTTPSPart1();
+            try {
+                return IOUtils.toByteArray(new URI(url));
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
+            disableHTTPSPart2();
+            try {
+                return IOUtils.toByteArray(new URI(url));
+            } catch (Throwable th) {
+                th.printStackTrace();
+                throw new RuntimeException("Unable to fetch " + url, th);
+            }
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            throw new RuntimeException(e);
         } finally {
             try {
                 HttpsURLConnection.setDefaultSSLSocketFactory(originalSSL); // restore to full https verification
@@ -65,7 +74,7 @@ public class Fetcher {
         }
     }
 
-    public static void disableAllVerification() throws NoSuchAlgorithmException, KeyManagementException {
+    public static void disableHTTPSPart1() throws NoSuchAlgorithmException, KeyManagementException {
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
             public java.security.cert.X509Certificate[] getAcceptedIssuers() {
                 return null;
@@ -79,14 +88,10 @@ public class Fetcher {
         }};
         SSLContext sc = SSLContext.getInstance("SSL");
         sc.init(null, trustAllCerts, new java.security.SecureRandom());
-        SSLSocketFactory allSSLValid = sc.getSocketFactory();
-        HostnameVerifier allHostsValid = new HostnameVerifier() {
-            public boolean verify(String hostname, SSLSession session) {
-                return true;
-            }
-        };
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+    }
 
-        HttpsURLConnection.setDefaultSSLSocketFactory(allSSLValid);
-        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+    public static void disableHTTPSPart2() {
+        HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
     }
 }

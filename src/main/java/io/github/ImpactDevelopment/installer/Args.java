@@ -178,14 +178,14 @@ public class Args {
 
     // Convert a string value to a primitive type
     // Won't work for non-primitive types, but luckily all our args are primitives
-    private static Object toType(Class<?> type, String value ) {
-        if(Boolean.class == type || Boolean.TYPE == type) return Boolean.parseBoolean(value);
-        if(Byte.class == type || Byte.TYPE == type) return Byte.parseByte(value);
-        if(Short.class == type || Short.TYPE == type) return Short.parseShort(value);
-        if(Integer.class == type || Integer.TYPE == type) return Integer.parseInt(value);
-        if(Long.class == type || Long.TYPE == type) return Long.parseLong(value);
-        if(Float.class == type || Float.TYPE == type) return Float.parseFloat(value);
-        if(Double.class == type || Double.TYPE == type) return Double.parseDouble(value);
+    private static Object toType(Class<?> type, String value) {
+        if (Boolean.class == type || Boolean.TYPE == type) return Boolean.parseBoolean(value);
+        if (Byte.class == type || Byte.TYPE == type) return Byte.parseByte(value);
+        if (Short.class == type || Short.TYPE == type) return Short.parseShort(value);
+        if (Integer.class == type || Integer.TYPE == type) return Integer.parseInt(value);
+        if (Long.class == type || Long.TYPE == type) return Long.parseLong(value);
+        if (Float.class == type || Float.TYPE == type) return Float.parseFloat(value);
+        if (Double.class == type || Double.TYPE == type) return Double.parseDouble(value);
         return value;
     }
 }
