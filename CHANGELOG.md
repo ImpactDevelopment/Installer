@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.5] - 2020-03-25
+
 ### Added
 - Even more workarounds for peoples broken network stacks!
 
@@ -174,7 +176,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.8.4...HEAD
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.8.5...HEAD
+[0.8.5]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.5
 [0.8.4]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.4
 [0.8.3]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.3
 [0.8.2]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.2
