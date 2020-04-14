@@ -22,10 +22,25 @@
 
 package io.github.ImpactDevelopment.installer.setting.settings;
 
-import io.github.ImpactDevelopment.installer.setting.BooleanSetting;
+import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
+import io.github.ImpactDevelopment.installer.setting.Setting;
 
-public enum OptiFineSetting implements BooleanSetting {
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public enum OptiFineFileSetting implements Setting<Path> {
     INSTANCE;
+
+    @Override
+    public Path getDefaultValue(InstallationConfig config) {
+            return Paths.get(System.getProperty("user.home"));
+    }
+
+    @Override
+    public boolean validSetting(InstallationConfig config, Path value) {
+//        return value.getFileName().toString().toLowerCase().endsWith(".jar");
+        return true;
+    }
 
     @Override
     public String toString() {

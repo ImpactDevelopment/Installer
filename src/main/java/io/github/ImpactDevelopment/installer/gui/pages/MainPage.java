@@ -30,6 +30,8 @@ import io.github.ImpactDevelopment.installer.setting.settings.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,11 +39,11 @@ import java.nio.file.Paths;
 public class MainPage extends JPanel {
     public MainPage(AppWindow app) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        addPathSetting(MinecraftDirectorySetting.INSTANCE, "Minecraft directory", app);
+        add(buildPathSetting(MinecraftDirectorySetting.INSTANCE, "Minecraft directory", JFileChooser.DIRECTORIES_ONLY, app));
         addSetting(InstallationModeSetting.INSTANCE, "Install for", app);
         addSetting(MinecraftVersionSetting.INSTANCE, "Minecraft version", app);
         addSetting(ImpactVersionSetting.INSTANCE, "Impact version", app);
-        addSetting(OptiFineSetting.INSTANCE, "OptiFine version", app);
+        addOptifineSetting(app);
 
         JButton install = new JButton("Install");
         install.addActionListener((ActionEvent) -> {
@@ -62,25 +64,6 @@ public class MainPage extends JPanel {
         }
         InstallationConfig config = app.config;
         JPanel container = new JPanel(new FlowLayout());
-        if (val.equals(OptiFineSetting.MISSING)) {
-            container.add(new JLabel("No OptiFine installation is detected for Minecraft " + config.getSettingValue(MinecraftVersionSetting.INSTANCE)));
-            JButton button = new JButton();
-            button.setText("<html>If you need OptiFine, install it separately beforehand. <font color=\"#0000CC\"><u>https://optifine.net/downloads</u></font></html>");
-            button.setBackground(Color.WHITE);
-            button.setBorderPainted(false);
-            button.setHorizontalAlignment(SwingConstants.LEFT);
-            button.setOpaque(false);
-            button.addActionListener((ActionEvent) -> {
-                try {
-                    Desktop.getDesktop().browse(new URI("https://optifine.net/downloads"));
-                } catch (Exception ex) {
-                    app.exception(ex);
-                }
-            });
-            container.add(button);
-            add(container);
-            return;
-        }
         container.add(new JLabel(text + ": "));
         JComboBox<String> comboBox = new JComboBox<>(setting.getPossibleValues(config).stream().map(v -> setting.displayName(config, v)).toArray(String[]::new));
         comboBox.setSelectedIndex(setting.getPossibleValues(config).indexOf(val));
@@ -94,22 +77,82 @@ public class MainPage extends JPanel {
             app.recreate();
         });
         container.add(comboBox);
-        if (!val.equals(OptiFineSetting.NONE) && setting instanceof OptiFineSetting) {
-            container.add(new JLabel("OptiFine can sometimes cause visual glitches in Impact; only include it if you need it."));
-        }
         add(container);
     }
 
-    private void addPathSetting(Setting<Path> setting, String text, AppWindow app) {
+    private void addOptifineSetting(AppWindow app) {
+        OptiFineSetting setting = OptiFineSetting.INSTANCE;
+        InstallationConfig config = app.config;
+        Boolean val = config.getSettingValue(setting);
+        if (val == null) {
+            return;
+        }
+
+        JPanel grid = new JPanel(new GridLayout(4, 1, 0, 0));
+
+        JPanel radial = new JPanel(new FlowLayout());
+
+        radial.add(new JLabel("Include OptiFine? "));
+
+        ActionListener listener = (event) -> {
+            try {
+                config.setSettingValue(setting, event.getActionCommand().equalsIgnoreCase("yes"));
+            } catch (Throwable e) {
+                app.exception(e);
+                config.setSettingValue(setting, val);
+            }
+            app.recreate();
+        };
+        JRadioButton yes = new JRadioButton("Yes");
+        JRadioButton no = new JRadioButton("No");
+        yes.setMnemonic(KeyEvent.VK_Y);
+        yes.addActionListener(listener);
+        yes.setSelected(val);
+        no.setMnemonic(KeyEvent.VK_N);
+        no.addActionListener(listener);
+        no.setSelected(!val);
+        ButtonGroup group = new ButtonGroup();
+        group.add(yes);
+        group.add(no);
+        radial.add(yes);
+        radial.add(no);
+
+        grid.add(radial);
+
+        if (val) {
+            grid.add(buildPathSetting(OptiFineFileSetting.INSTANCE, "OptiFine jar", JFileChooser.FILES_ONLY, app));
+
+
+            grid.add(new JLabel("OptiFine can sometimes cause visual glitches in Impact; only include it if you need it!"));
+
+            JButton link = new JButton();
+            link.setText("<html>You can download OptiFine from their website: <font color=\"#0000CC\"><u>https://optifine.net/downloads</u></font></html>");
+            link.setBackground(Color.WHITE);
+            link.setBorderPainted(false);
+            link.setHorizontalAlignment(SwingConstants.LEFT);
+            link.setOpaque(false);
+            link.addActionListener((ActionEvent) -> {
+                try {
+                    Desktop.getDesktop().browse(new URI("https://optifine.net/downloads"));
+                } catch (Exception ex) {
+                    app.exception(ex);
+                }
+            });
+            grid.add(link);
+        }
+
+        add(grid);
+    }
+
+    private JPanel buildPathSetting(Setting<Path> setting, String text, int selectionMode, AppWindow app) {
         InstallationConfig config = app.config;
         Path current = config.getSettingValue(setting);
-        JPanel container = new JPanel();
-        container.setLayout(new FlowLayout());
+        JPanel container = new JPanel(new FlowLayout());
         JTextField field = new JTextField(current.toString());
         field.setColumns(15);
         JButton button = new JButton("Browse");
         JFileChooser dialog = new JFileChooser(current.toFile());
-        dialog.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        dialog.setFileSelectionMode(selectionMode);
         field.addActionListener(event -> {
             Path newPath = Paths.get(field.getText());
             config.setSettingValue(setting, newPath);
@@ -126,6 +169,6 @@ public class MainPage extends JPanel {
         container.add(new JLabel(text + ": "));
         container.add(field);
         container.add(button);
-        add(container);
+        return container;
     }
 }

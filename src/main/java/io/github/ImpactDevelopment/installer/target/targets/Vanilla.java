@@ -28,9 +28,11 @@ import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.impact.ImpactJsonVersion;
 import io.github.ImpactDevelopment.installer.libraries.ILibrary;
 import io.github.ImpactDevelopment.installer.libraries.MavenResolver;
+import io.github.ImpactDevelopment.installer.optifine.OptiFine;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
 import io.github.ImpactDevelopment.installer.setting.settings.MinecraftDirectorySetting;
+import io.github.ImpactDevelopment.installer.setting.settings.OptiFineFileSetting;
 import io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting;
 import io.github.ImpactDevelopment.installer.target.InstallationMode;
 import io.github.ImpactDevelopment.installer.utils.Tracky;
@@ -41,7 +43,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
 
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.WINDOWS;
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.getOS;
@@ -52,11 +53,13 @@ public class Vanilla implements InstallationMode {
     private final String id;
     private final ImpactJsonVersion version;
     private final InstallationConfig config;
+    private final OptiFine optifine;
 
     public Vanilla(InstallationConfig config) {
         this.version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
+        this.optifine = config.getSettingValue(OptiFineSetting.INSTANCE) ? new OptiFine(config.getSettingValue(OptiFineFileSetting.INSTANCE)) : null;
         this.config = config;
-        this.id = version.mcVersion + "-" + version.name + "_" + version.version + prettifiedOptifineVersion().orElse("");
+        this.id = version.mcVersion + "-" + version.name + "_" + version.version + (optifine == null ? "" : "-OptiFine_"+optifine.getOptiFineVersion());
     }
 
     public JsonObject generateVanillaJsonVersion() {
@@ -112,40 +115,23 @@ public class Vanilla implements InstallationMode {
         for (ILibrary lib : version.resolveLibraries(config)) {
             populateLib(lib, libraries);
         }
+        if (optifine != null) {
+            JsonObject lib = new JsonObject();
+            lib.addProperty("name", optifine.getOptiFineID());
+            libraries.add(lib);
+        }
+
         if (multimc) {
             object.add("+libraries", libraries);
         } else {
             object.add("libraries", libraries);
         }
-
-        populateOptifine(libraries);
-    }
-
-    private void populateOptifine(JsonArray libraries) {
-        optifineVersion().ifPresent(optifine -> {
-            JsonObject opti = new JsonObject();
-            opti.addProperty("name", "optifine:OptiFine:" + optifine);
-            libraries.add(opti);
-        });
-    }
-
-    private Optional<String> optifineVersion() {
-        return Optional.ofNullable(config.getSettingValue(OptiFineSetting.INSTANCE)).filter(optifine -> !optifine.equals(OptiFineSetting.NONE)).filter(optifine -> !optifine.equals(OptiFineSetting.MISSING));
-    }
-
-    private Optional<String> prettifiedOptifineVersion() {
-        return optifineVersion().map(str -> {
-            if (!str.startsWith(version.mcVersion + "_")) {
-                throw new IllegalStateException(str + " " + version.mcVersion);
-            }
-            return "-OptiFine" + str.substring(version.mcVersion.length());
-        });
     }
 
     private void populateLib(ILibrary lib, JsonArray libraries) {
-        if (version.mcVersion.compareTo("1.14.4") >= 0 && optifineVersion().isPresent() && lib.getName().equals("net.minecraft:launchwrapper:1.12")) {
+        if (optifine != null && optifine.requiresCustomLaunchwrapper() && lib.getName().equals("net.minecraft:launchwrapper:1.12")) {
             JsonObject optiLaunchWrapper = new JsonObject();
-            optiLaunchWrapper.addProperty("name", "optifine:launchwrapper-of:2.1");
+            optiLaunchWrapper.addProperty("name", optifine.getRequiredLaunchwrapper());
             libraries.add(optiLaunchWrapper);
             return;
         }

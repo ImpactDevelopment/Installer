@@ -20,15 +20,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.ImpactDevelopment.installer.setting.settings;
+package io.github.ImpactDevelopment.installer.setting;
 
-import io.github.ImpactDevelopment.installer.setting.BooleanSetting;
+public interface BooleanSetting extends Setting<Boolean> {
 
-public enum OptiFineSetting implements BooleanSetting {
-    INSTANCE;
+    default String displayName(InstallationConfig config, Boolean option) {
+        return option.toString();
+    }
 
     @Override
-    public String toString() {
-        return getClass().getSimpleName();
+    default Boolean getDefaultValue(InstallationConfig config) {
+        return false;
+    }
+
+    @Override
+    default boolean validSetting(InstallationConfig config, Boolean value) {
+        return true;
     }
 }

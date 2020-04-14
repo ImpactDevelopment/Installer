@@ -66,7 +66,7 @@ public class Args {
     @Parameter(names = {"--mc-dir", "--minecraft-dir", "--minecraft-directory", "--mc-path"}, description = "Path to the Minecraft directory")
     public String mcPath;
 
-    @Parameter(names = {"--optifine", "--of"}, description = "OptiFine, in the format like 1.12.2_HD_U_E2")
+    @Parameter(names = {"--optifine", "--of"}, description = "Path to an OptiFine jar")
     public String optifine;
 
     @Parameter(names = {"--no-ga", "--no-analytics", "--dnt", "--no-tracky"}, description = "Disable Google Analytics")
@@ -144,7 +144,8 @@ public class Args {
             setImpactVersion(config, false, new ImpactVersionDisk(Paths.get(file)));
         }
         if (optifine != null) {
-            if (!config.setSettingValue(OptiFineSetting.INSTANCE, optifine)) {
+            config.setSettingValue(OptiFineSetting.INSTANCE, true);
+            if (!config.setSettingValue(OptiFineFileSetting.INSTANCE, Paths.get(optifine))) {
                 throw new IllegalArgumentException(optifine + " is not found");
             }
         }
