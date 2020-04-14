@@ -26,4 +26,8 @@ import java.io.IOException;
 
 public interface InstallationMode {
     String apply() throws IOException;  // not gonna lie this is me when i enter sicko mode
+
+    default String installOptifine() throws IOException {
+        throw new IOException("Error: this installation mode doesn't support installing OptiFine");
+    }
 }

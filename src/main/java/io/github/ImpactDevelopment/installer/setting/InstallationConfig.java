@@ -89,4 +89,8 @@ public class InstallationConfig {
         Tracky.event("installer", "success", label);
         return result;
     }
+
+    public String installOptifine() throws IOException {
+        return getSettingValue(InstallationModeSetting.INSTANCE).mode.apply(this).installOptifine();
+    }
 }

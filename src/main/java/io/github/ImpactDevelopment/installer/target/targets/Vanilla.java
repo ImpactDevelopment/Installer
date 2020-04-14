@@ -160,6 +160,23 @@ public class Vanilla implements InstallationMode {
         return "Impact has been successfully installed";
     }
 
+    @Override
+    public String installOptifine() throws IOException {
+        if (optifine == null) {
+            throw new IOException("Error, no optifine specified");
+        }
+
+        Path libs = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("libraries");
+        System.out.println("Installing OptiFine into:");
+        System.out.println(libs.toString());
+
+        optifine.installOptiFine(libs);
+        if (optifine.requiresCustomLaunchwrapper()) {
+            optifine.installCustomLaunchwrapper(libs);
+        }
+        return "Installed OptiFine successfully";
+    }
+
     public void sanityCheck(boolean allowMinecraftToBeOpen) {
         checkDirectory();
         checkVersionInstalled();
@@ -176,6 +193,7 @@ public class Vanilla implements InstallationMode {
         sanityCheck(allowMinecraftToBeOpen);
         installVersionJson();
         installProfiles();
+        installOptifine();
     }
 
     private void checkDirectory() {

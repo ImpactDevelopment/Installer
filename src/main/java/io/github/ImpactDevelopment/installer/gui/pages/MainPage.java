@@ -36,6 +36,8 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static javax.swing.JOptionPane.*;
+
 public class MainPage extends JPanel {
     public MainPage(AppWindow app) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -49,7 +51,22 @@ public class MainPage extends JPanel {
         install.addActionListener((ActionEvent) -> {
             try {
                 String msg = app.config.execute();
-                JOptionPane.showMessageDialog(app, msg, "\uD83D\uDE0E", JOptionPane.INFORMATION_MESSAGE);
+                switch (app.config.getSettingValue(InstallationModeSetting.INSTANCE)) {
+                    case SHOWJSON:
+                    case MULTIMC:
+                        if (app.config.getSettingValue(OptiFineSetting.INSTANCE)) {
+                            // Special case if installing optifine in showJson mode
+                            msg += "\nDo you want to install OptiFine's libs?";
+                            if (JOptionPane.showConfirmDialog(app, msg, "\uD83D\uDE0E", YES_NO_OPTION, INFORMATION_MESSAGE) == YES_OPTION) {
+                                msg = app.config.installOptifine();
+                            } else {
+                                // Only break the switch if no more msg to show, otherwise fallthrough
+                                break;
+                            }
+                        }
+                    default:
+                        JOptionPane.showMessageDialog(app, msg, "\uD83D\uDE0E", INFORMATION_MESSAGE);
+                }
             } catch (Throwable e) {
                 app.exception(e);
             }

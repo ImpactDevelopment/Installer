@@ -28,6 +28,7 @@ import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.target.InstallationMode;
 
 import javax.swing.*;
+import java.io.IOException;
 
 public class ShowJSON implements InstallationMode {
     private final InstallationConfig config;
@@ -54,5 +55,10 @@ public class ShowJSON implements InstallationMode {
             frame.setVisible(true);
         });
         return "Here is the JSON for Vanilla " + toDisplay.get("id");
+    }
+
+    @Override
+    public String installOptifine() throws IOException {
+        return new Vanilla(config).installOptifine();
     }
 }
