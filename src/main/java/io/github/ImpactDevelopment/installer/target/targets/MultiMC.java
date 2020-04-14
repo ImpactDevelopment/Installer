@@ -22,23 +22,22 @@
 
 package io.github.ImpactDevelopment.installer.target.targets;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
-import io.github.ImpactDevelopment.installer.target.InstallationMode;
 
 import javax.swing.*;
 
-public class MultiMC implements InstallationMode {
-    private final InstallationConfig config;
+public class MultiMC extends Vanilla {
 
     public MultiMC(InstallationConfig config) {
-        this.config = config;
+        super(config);
     }
 
     @Override
     public String apply() {
-        JsonObject toDisplay = new Vanilla(config).generateMultiMCJsonVersion();
+        JsonObject toDisplay = generateJsonVersion();
         String data = Installer.gson.toJson(toDisplay);
         if (Installer.args.noGUI) {
             return data;
@@ -54,5 +53,25 @@ public class MultiMC implements InstallationMode {
             frame.setVisible(true);
         });
         return "Here is the JSON for MultiMC " + toDisplay.get("version");
+    }
+
+    @Override
+    public JsonObject generateJsonVersion() {
+        JsonObject object = new JsonObject();
+        object.addProperty("fileID", "net.impactclient.Impact");
+        object.addProperty("mainClass", version.mainClass);
+        object.addProperty("mcVersion", version.mcVersion);
+        object.addProperty("name", "Impact " + version.version);
+        object.addProperty("order", 10);
+        object.addProperty("version", id);
+        object.add("+tweakers", generateTweakers());
+        object.add("+libraries", generateLibraries());
+        return object;
+    }
+
+    private JsonArray generateTweakers() {
+        JsonArray arrayTweakers = new JsonArray();
+        version.tweakers.forEach(arrayTweakers::add);
+        return arrayTweakers;
     }
 }

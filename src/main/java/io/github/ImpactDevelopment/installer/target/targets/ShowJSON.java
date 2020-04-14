@@ -38,7 +38,7 @@ public class ShowJSON implements InstallationMode {
 
     @Override
     public String apply() {
-        JsonObject toDisplay = new Vanilla(config).generateVanillaJsonVersion();
+        JsonObject toDisplay = new Vanilla(config).generateJsonVersion();
         String data = Installer.gson.toJson(toDisplay);
         if (Installer.args.noGUI) {
             return data;

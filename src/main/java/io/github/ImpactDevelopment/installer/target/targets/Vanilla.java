@@ -49,9 +49,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Vanilla implements InstallationMode {
 
-    private final String id;
-    private final ImpactJsonVersion version;
-    private final InstallationConfig config;
+    protected final String id;
+    protected final ImpactJsonVersion version;
+    protected final InstallationConfig config;
 
     public Vanilla(InstallationConfig config) {
         this.version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
@@ -59,7 +59,7 @@ public class Vanilla implements InstallationMode {
         this.id = version.mcVersion + "-" + version.name + "_" + version.version + prettifiedOptifineVersion().orElse("");
     }
 
-    public JsonObject generateVanillaJsonVersion() {
+    public JsonObject generateJsonVersion() {
         JsonObject object = new JsonObject();
         object.addProperty("id", id);
         object.addProperty("type", "release");
@@ -71,22 +71,7 @@ public class Vanilla implements InstallationMode {
         object.addProperty("minimumLauncherVersion", 0);
         object.addProperty("mainClass", version.mainClass);
         populateArguments(object);
-        populateLibraries(object, false);
-        return object;
-    }
-
-    public JsonObject generateMultiMCJsonVersion() {
-        JsonObject object = new JsonObject();
-        JsonArray arrayTweakers = new JsonArray();
-        version.tweakers.forEach(arrayTweakers::add);
-        object.addProperty("fileID", "net.impactclient.Impact");
-        object.addProperty("mainClass", version.mainClass);
-        object.addProperty("mcVersion", version.mcVersion);
-        object.addProperty("name", "Impact " + version.version);
-        object.addProperty("order", 10);
-        object.addProperty("version", id);
-        object.add("+tweakers", arrayTweakers);
-        populateLibraries(object, true);
+        object.add("libraries", generateLibraries());
         return object;
     }
 
@@ -107,26 +92,20 @@ public class Vanilla implements InstallationMode {
         }
     }
 
-    private void populateLibraries(JsonObject object, boolean multimc) {
+    protected JsonArray generateLibraries() {
         JsonArray libraries = new JsonArray();
+
         for (ILibrary lib : version.resolveLibraries(config)) {
             populateLib(lib, libraries);
         }
-        if (multimc) {
-            object.add("+libraries", libraries);
-        } else {
-            object.add("libraries", libraries);
-        }
 
-        populateOptifine(libraries);
-    }
-
-    private void populateOptifine(JsonArray libraries) {
         optifineVersion().ifPresent(optifine -> {
-            JsonObject opti = new JsonObject();
-            opti.addProperty("name", "optifine:OptiFine:" + optifine);
-            libraries.add(opti);
+            JsonObject lib = new JsonObject();
+            lib.addProperty("name", "optifine:OptiFine:" + optifine);
+            libraries.add(lib);
         });
+
+        return libraries;
     }
 
     private Optional<String> optifineVersion() {
@@ -214,7 +193,7 @@ public class Vanilla implements InstallationMode {
             }
         }
         System.out.println("Writing to " + directory.resolve(id + ".json"));
-        Files.write(directory.resolve(id + ".json"), Installer.gson.toJson(generateVanillaJsonVersion()).getBytes(StandardCharsets.UTF_8));
+        Files.write(directory.resolve(id + ".json"), Installer.gson.toJson(generateJsonVersion()).getBytes(StandardCharsets.UTF_8));
     }
 
     private void installProfiles() throws IOException {
