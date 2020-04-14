@@ -27,6 +27,7 @@ import io.github.ImpactDevelopment.installer.setting.ChoiceSetting;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.Setting;
 import io.github.ImpactDevelopment.installer.setting.settings.*;
+import io.github.ImpactDevelopment.installer.target.InstallationModeOptions;
 
 import javax.swing.*;
 import java.awt.*;
@@ -98,6 +99,10 @@ public class MainPage extends JPanel {
             container.add(new JLabel("OptiFine can sometimes cause visual glitches in Impact; only include it if you need it."));
         }
         add(container);
+
+        if (val.equals(InstallationModeOptions.MULTIMC)) {
+            addPathSetting(MultiMCDirectorySetting.INSTANCE, "MultiMC installation directory", app);
+        }
     }
 
     private void addPathSetting(Setting<Path> setting, String text, AppWindow app) {
