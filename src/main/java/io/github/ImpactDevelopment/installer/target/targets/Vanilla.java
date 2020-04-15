@@ -59,15 +59,9 @@ public class Vanilla implements InstallationMode {
     public Vanilla(InstallationConfig config) throws RuntimeException {
         this.version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
         this.optifine = config.getSettingValue(OptiFineSetting.INSTANCE) ? new OptiFine(config.getSettingValue(OptiFineFileSetting.INSTANCE)) : null;
+        this.vanillaJar = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("versions").resolve(version.mcVersion).resolve(version.mcVersion+".jar");
         this.config = config;
         this.id = String.format("%s-%s_%s%s", version.mcVersion, version.name, version.version, optifine == null ? "" : "-OptiFine_"+optifine.getOptiFineVersion());
-
-        // TODO consider downloading the jar from mojang ourselves?
-        //      or at least consider how to do this for multimc?
-        this.vanillaJar = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("versions").resolve(version.mcVersion).resolve(version.mcVersion+".jar");
-        if (optifine != null && !Files.isRegularFile(vanillaJar)) {
-            throw new IllegalStateException("If installing OptiFine, you must play Minecraft "+version.mcVersion+" at least once before continuing!");
-        }
 
         if (optifine != null && !optifine.getMinecraftVersion().equals(version.mcVersion)) {
             throw new IllegalStateException(String.format("OptiFine %s is not compatible with Minecraft %s", optifine.getVersion(), version.mcVersion));
@@ -209,9 +203,8 @@ public class Vanilla implements InstallationMode {
     }
 
     private void checkVersionInstalled() {
-        Path path = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("versions").resolve(version.mcVersion).resolve(version.mcVersion + ".jar");
-        if (!Files.exists(path)) {
-            throw new RuntimeException("Please install and run Vanilla " + version.mcVersion + " once as normal before continuing.", new FileNotFoundException(path.toString()));
+        if (!Files.exists(vanillaJar)) {
+            throw new RuntimeException("Please install and run Vanilla " + version.mcVersion + " once as normal before continuing.", new FileNotFoundException(vanillaJar.toString()));
         }
     }
 
