@@ -32,6 +32,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -132,12 +133,7 @@ public class OptiFine {
         if (version.length <= 2) {
             throw new IllegalStateException("OptiFine version has too few elements");
         }
-        StringBuilder b = new StringBuilder();
-        for (int i = 2; i < version.length; i++) {
-            if (i > 2) b.append("_");
-            b.append(version[i]);
-        }
-        return b.toString();
+        return String.join("_", Arrays.asList(version).subList(2, version.length));
     }
 
     // Get the full version as used by maven
