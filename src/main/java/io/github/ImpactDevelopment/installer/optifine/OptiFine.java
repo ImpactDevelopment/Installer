@@ -24,6 +24,11 @@ package io.github.ImpactDevelopment.installer.optifine;
 
 import javax.annotation.Nullable;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,6 +52,9 @@ public class OptiFine {
     private final String tweaker;
     private final String transformer;
     private final String launchwrapperEntry;
+
+    // public static void process(File baseFile, File diffFile, File modFile)
+    private final Method patcher;
 
     public OptiFine(Path jarPath) throws RuntimeException {
         // Set locals first while iterating the zip file, then set the final fields after
@@ -111,6 +119,13 @@ public class OptiFine {
         this.tweaker = tweaker;
         this.transformer = transformer;
         this.launchwrapperEntry = launchwrapperEntry;
+
+        // load required methods from OptiFine jar
+        try {
+            patcher = loadOptiFinePatcher(jarPath);
+        } catch (MalformedURLException | ClassNotFoundException | NoSuchMethodException e) {
+            throw new RuntimeException("Unable to load optifine patcher", e);
+        }
     }
 
     // Get the minecraft version this targets
@@ -156,17 +171,24 @@ public class OptiFine {
     }
 
     // Install optifine jar and launchwrapper (if required) to the target libraries directory
-    public void install(Path libs) throws IOException {
-        installOptiFine(libs.resolve(pathFromID(getOptiFineID())));
+    public void install(Path libs, Path vanilla) throws IOException {
+        try {
+            installOptiFine(libs.resolve(pathFromID(getOptiFineID())), vanilla);
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException("Error calling OptiFine patcher method", e);
+        }
         if (getLaunchwrapperID() != null) {
             installLaunchwrapper(libs.resolve(pathFromID(getLaunchwrapperID())));
         }
     }
 
-    // Copy the optifine jar to the target libraries directory
-    private void installOptiFine(Path destination) throws IOException {
+    // Install the patched optifine jar in the target libraries directory
+    private void installOptiFine(Path destination, Path vanilla) throws IOException, InvocationTargetException, IllegalAccessException {
+        Files.deleteIfExists(destination);
         Files.createDirectories(destination.getParent());
-        Files.copy(jarPath, destination, REPLACE_EXISTING);
+
+        // Static method so null instance
+        patcher.invoke(null, vanilla.toFile(), jarPath.toFile(), destination.toFile());
     }
 
     // Extract the launchwrapper jar to the target libraries directory
@@ -190,5 +212,11 @@ public class OptiFine {
         String id = parts[1];
         String version = parts[2];
         return Paths.get(group).resolve(id).resolve(version).resolve(String.format("%s-%s.jar", id, version));
+    }
+
+    private static Method loadOptiFinePatcher(Path jarPath) throws MalformedURLException, ClassNotFoundException, NoSuchMethodException {
+        ClassLoader classloader = new URLClassLoader(new URL[]{jarPath.toUri().toURL()});
+        Class<?> patcher = classloader.loadClass("optifine.Patcher");
+        return patcher.getMethod("process", File.class, File.class, File.class);
     }
 }

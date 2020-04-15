@@ -54,12 +54,20 @@ public class Vanilla implements InstallationMode {
     private final ImpactJsonVersion version;
     private final InstallationConfig config;
     private final OptiFine optifine;
+    private final Path vanillaJar;
 
     public Vanilla(InstallationConfig config) throws RuntimeException {
         this.version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
         this.optifine = config.getSettingValue(OptiFineSetting.INSTANCE) ? new OptiFine(config.getSettingValue(OptiFineFileSetting.INSTANCE)) : null;
         this.config = config;
         this.id = String.format("%s-%s_%s%s", version.mcVersion, version.name, version.version, optifine == null ? "" : "-OptiFine_"+optifine.getOptiFineVersion());
+
+        // TODO consider downloading the jar from mojang ourselves?
+        //      or at least consider how to do this for multimc?
+        this.vanillaJar = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("versions").resolve(version.mcVersion).resolve(version.mcVersion+".jar");
+        if (optifine != null && !Files.isRegularFile(vanillaJar)) {
+            throw new IllegalStateException("If installing OptiFine, you must play Minecraft "+version.mcVersion+" at least once before continuing!");
+        }
 
         if (optifine != null && !optifine.getMinecraftVersion().equals(version.mcVersion)) {
             throw new IllegalStateException(String.format("OptiFine %s is not compatible with Minecraft %s", optifine.getVersion(), version.mcVersion));
@@ -172,7 +180,7 @@ public class Vanilla implements InstallationMode {
 
         Path libs = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("libraries");
         System.out.println("Installing OptiFine into "+libs.toString());
-        optifine.install(libs);
+        optifine.install(libs, vanillaJar);
 
         return "Installed OptiFine successfully";
     }
