@@ -134,7 +134,7 @@ public class Vanilla implements InstallationMode {
     }
 
     private void populateLib(ILibrary lib, JsonArray libraries) {
-        if (optifine != null && optifine.requiresCustomLaunchwrapper() && lib.getName().equals("net.minecraft:launchwrapper:1.12")) {
+        if (optifine != null && optifine.getLaunchwrapperID() != null && lib.getName().equals("net.minecraft:launchwrapper:1.12")) {
             JsonObject optiLaunchWrapper = new JsonObject();
             optiLaunchWrapper.addProperty("name", optifine.getLaunchwrapperID());
             libraries.add(optiLaunchWrapper);
@@ -176,9 +176,7 @@ public class Vanilla implements InstallationMode {
         System.out.println(libs.toString());
 
         optifine.installOptiFine(libs);
-        if (optifine.requiresCustomLaunchwrapper()) {
-            optifine.installCustomLaunchwrapper(libs);
-        }
+        optifine.installCustomLaunchwrapper(libs);
         return "Installed OptiFine successfully";
     }
 

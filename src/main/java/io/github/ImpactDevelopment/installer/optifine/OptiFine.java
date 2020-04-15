@@ -132,7 +132,7 @@ public class OptiFine {
     // Get the artifact id for OptiFine's custom launchwrapper, or null if upstreams's is ok.
     @Nullable
     public String getLaunchwrapperID() {
-        if (requiresCustomLaunchwrapper()) {
+        if (!launchwrapperEntry.isEmpty()) {
             Matcher match = LW_REGEX.matcher(launchwrapperEntry);
             if (match.matches()) {
                 return String.format("optifine:%s:%s", match.group(1), match.group(2));
@@ -141,13 +141,9 @@ public class OptiFine {
         return null;
     }
 
-    public boolean requiresCustomLaunchwrapper() {
-        return !launchwrapperEntry.isEmpty();
-    }
-
     // Extract the launchwrapper jar to the target libraries directory
     public void installCustomLaunchwrapper(Path libs) throws IOException {
-        if (requiresCustomLaunchwrapper()) {
+        if (getLaunchwrapperID() != null) {
             Path outputPath = libs.resolve(pathFromID(getLaunchwrapperID()));
             Files.createDirectories(outputPath.getParent());
             Files.deleteIfExists(outputPath);
