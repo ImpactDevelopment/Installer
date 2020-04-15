@@ -66,7 +66,7 @@ public class Args {
     @Parameter(names = {"--mc-dir", "--minecraft-dir", "--minecraft-directory", "--mc-path"}, description = "Path to the Minecraft directory")
     public String mcPath;
 
-    @Parameter(names = {"--optifine", "--of"}, description = "Path to an OptiFine jar")
+    @Parameter(names = {"--optifine", "--of"}, description = "Path to an OptiFine installer jar")
     public String optifine;
 
     @Parameter(names = {"--no-ga", "--no-analytics", "--dnt", "--no-tracky"}, description = "Disable Google Analytics")

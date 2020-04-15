@@ -42,54 +42,62 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class OptiFine {
 
-    private static final Pattern LW_REGEX = Pattern.compile("^(launchwrapper-of)-([0-9.]+)[.]jar$");
+    private static final String GROUP = "optifine";
     private static final Pattern TWEAKER_REGEX = Pattern.compile("^TweakClass:\\s+(.+)$");
-    private static final Pattern VERSION_REGEX = Pattern.compile("^OptiFine\\s+([^_]+)_(.+)$");
 
     private final Path jarPath;
-    private final String version;
-    private final String mcVersion;
+    private final String[] version;
     private final String tweaker;
     private final String transformer;
-    private final String launchwrapperEntry;
+    private final String launchwrapperVersion;
 
+    // patcherMethod takes a vanilla "base" jar along with an OptiFine "diff" jar and writes the result to a "mod" jar
     // public static void process(File baseFile, File diffFile, File modFile)
-    private final Method patcher;
+    private final Method patcherMethod;
 
     public OptiFine(Path jarPath) throws RuntimeException {
         // Set locals first while iterating the zip file, then set the final fields after
-        String version = "";
-        String mcVersion = "";
+        String version;
+        String launchwrapperVersion = null;
         String tweaker = "";
         String transformer = "";
-        String launchwrapperEntry = "";
+
+        // load required methods from the OptiFine installer jar
+        Method getOptiFineVersionMethod;
+        Method patcherMethod;
+        try {
+            ClassLoader classloader = new URLClassLoader(new URL[]{jarPath.toUri().toURL()});
+            patcherMethod = classloader.loadClass("optifine.Patcher").getMethod("process", File.class, File.class, File.class);
+            getOptiFineVersionMethod = classloader.loadClass("optifine.Installer").getMethod("getOptiFineVersion", ZipFile.class);
+        } catch (MalformedURLException | ClassNotFoundException | NoSuchMethodException e) {
+            throw new RuntimeException("Unable to load OptiFine classes", e);
+        }
 
         // Iterate over the zip entries in the jar and extract any info we care about
         try {
-            try (ZipFile file = new ZipFile(jarPath.toFile())) {
-                final Enumeration<? extends ZipEntry> entries = file.entries();
+            try (ZipFile jar = new ZipFile(jarPath.toFile())) {
+                // Extract optifine version
+                version = (String) getOptiFineVersionMethod.invoke(null, jar);
+
+                final Enumeration<? extends ZipEntry> entries = jar.entries();
                 while (entries.hasMoreElements()) {
                     final ZipEntry entry = entries.nextElement();
-                    if (LW_REGEX.matcher(entry.getName()).matches()) {
-                        launchwrapperEntry = entry.getName();
+                    if (entry.getName().equals("launchwrapper-of.txt")) {
+                        try (BufferedReader input = new BufferedReader(new InputStreamReader((jar.getInputStream(entry))))) {
+                            if (input.ready()) {
+                                launchwrapperVersion = input.readLine();
+                            }
+                        }
                     }
-                    // This is probably the best way to get the version, since filenames can be easily changed.
-                    // We set version and mcVersion to values from the first matching line in changelog.txt
-                    // (this should be the first line, but loop just in case).
-                    if (entry.getName().equals("changelog.txt")) {
-                        try (BufferedReader input = new BufferedReader(new InputStreamReader((file.getInputStream(entry))))) {
-                            while (input.ready()) {
-                                Matcher line = VERSION_REGEX.matcher(input.readLine());
-                                if (line.matches()) {
-                                    mcVersion = line.group(1);
-                                    version = line.group(2);
-                                    break;
-                                }
+                    if (entry.getName().equals("META-INF/services/cpw.mods.modlauncher.api.ITransformationService")) {
+                        try (BufferedReader input = new BufferedReader(new InputStreamReader(jar.getInputStream(entry)))) {
+                            if (input.ready()) {
+                                transformer = input.readLine();
                             }
                         }
                     }
                     if (entry.getName().equals("META-INF/MANIFEST.MF")) {
-                        try (BufferedReader input = new BufferedReader(new InputStreamReader(file.getInputStream(entry)))) {
+                        try (BufferedReader input = new BufferedReader(new InputStreamReader(jar.getInputStream(entry)))) {
                             while (input.ready()) {
                                 Matcher line = TWEAKER_REGEX.matcher(input.readLine());
                                 if (line.matches()) {
@@ -99,48 +107,42 @@ public class OptiFine {
                             }
                         }
                     }
-                    if (entry.getName().equals("META-INF/services/cpw.mods.modlauncher.api.ITransformationService")) {
-                        try (BufferedReader input = new BufferedReader(new InputStreamReader(file.getInputStream(entry)))) {
-                            if (input.ready()) {
-                                transformer = input.readLine();
-                            }
-                        }
-                    }
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("Error processing OptiFine jar", e);
         }
 
         // Set the final fields
         this.jarPath = jarPath;
-        this.version = version;
-        this.mcVersion = mcVersion;
+        this.version = version.split("_");
         this.tweaker = tweaker;
         this.transformer = transformer;
-        this.launchwrapperEntry = launchwrapperEntry;
-
-        // load required methods from OptiFine jar
-        try {
-            patcher = loadOptiFinePatcher(jarPath);
-        } catch (MalformedURLException | ClassNotFoundException | NoSuchMethodException e) {
-            throw new RuntimeException("Unable to load optifine patcher", e);
-        }
+        this.launchwrapperVersion = launchwrapperVersion;
+        this.patcherMethod = patcherMethod;
     }
 
     // Get the minecraft version this targets
     public String getMinecraftVersion() {
-        return mcVersion;
+        return version[1];
     }
 
     // Get just the optifine part of the version
     public String getOptiFineVersion() {
-        return version;
+        if (version.length <= 2) {
+            throw new IllegalStateException("OptiFine version has too few elements");
+        }
+        StringBuilder b = new StringBuilder();
+        for (int i = 2; i < version.length; i++) {
+            if (i > 2) b.append("_");
+            b.append(version[i]);
+        }
+        return b.toString();
     }
 
     // Get the full version as used by maven
     public String getVersion() {
-        return mcVersion+"_"+version;
+        return String.format("%s_%s", getMinecraftVersion(), getOptiFineVersion());
     }
 
     // Get the tweaker class used by launchwrapper
@@ -155,19 +157,13 @@ public class OptiFine {
 
     // Get the artifact id for OptiFine
     public String getOptiFineID() {
-        return "optifine:OptiFine:"+getVersion();
+        return String.format("%s:%s:%s", GROUP, version[0], getVersion());
     }
 
     // Get the artifact id for OptiFine's custom launchwrapper, or null if upstreams's is ok.
     @Nullable
     public String getLaunchwrapperID() {
-        if (!launchwrapperEntry.isEmpty()) {
-            Matcher match = LW_REGEX.matcher(launchwrapperEntry);
-            if (match.matches()) {
-                return String.format("optifine:%s:%s", match.group(1), match.group(2));
-            }
-        }
-        return null;
+        return launchwrapperVersion == null ? null : String.format("%s:launchwrapper-of:%s", GROUP, launchwrapperVersion);
     }
 
     // Install optifine jar and launchwrapper (if required) to the target libraries directory
@@ -188,13 +184,14 @@ public class OptiFine {
         Files.createDirectories(destination.getParent());
 
         // Static method so null instance
-        patcher.invoke(null, vanilla.toFile(), jarPath.toFile(), destination.toFile());
+        patcherMethod.invoke(null, vanilla.toFile(), jarPath.toFile(), destination.toFile());
     }
 
     // Extract the launchwrapper jar to the target libraries directory
     private void installLaunchwrapper(Path destination) throws IOException {
+        String entry = String.format("launchwrapper-of-%s.jar", launchwrapperVersion);
         try (ZipFile file = new ZipFile(jarPath.toFile())) {
-            try (InputStream input = file.getInputStream(file.getEntry(launchwrapperEntry))) {
+            try (InputStream input = file.getInputStream(file.getEntry(entry))) {
                 Files.createDirectories(destination.getParent());
                 Files.copy(input, destination, REPLACE_EXISTING);
             }
@@ -202,21 +199,15 @@ public class OptiFine {
     }
 
     // Get a maven path based on an artifact id.
-    // Ignores any classifier since last I checked, so does the Minecraft Launcher
-    private Path pathFromID(String artifact) throws IllegalArgumentException {
+    // Ignores any classifier since (last I checked) so does the Minecraft Launcher
+    private static Path pathFromID(String artifact) throws IllegalArgumentException {
         String[] parts = artifact.split(":");
         if (parts.length < 3) {
-            throw new IllegalArgumentException("OptiFine.pathFromID expected an artifact id with at least three parts, got "+artifact);
+            throw new IllegalArgumentException("OptiFine.pathFromID() expected an artifact id with at least three parts, got "+artifact);
         }
         String group = parts[0].replace(".", File.separator);
         String id = parts[1];
         String version = parts[2];
         return Paths.get(group).resolve(id).resolve(version).resolve(String.format("%s-%s.jar", id, version));
-    }
-
-    private static Method loadOptiFinePatcher(Path jarPath) throws MalformedURLException, ClassNotFoundException, NoSuchMethodException {
-        ClassLoader classloader = new URLClassLoader(new URL[]{jarPath.toUri().toURL()});
-        Class<?> patcher = classloader.loadClass("optifine.Patcher");
-        return patcher.getMethod("process", File.class, File.class, File.class);
     }
 }
