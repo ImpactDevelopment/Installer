@@ -43,15 +43,21 @@ public class OptiFine {
     private static final int BUFFER_SIZE = 4096;
 
     private final Path jarPath;
-
-    private String version = "";
-    private String mcVersion = "";
-    private String tweaker = "";
-    private String transformer = "";
-    private String launchwrapperEntry = "";
+    private final String version;
+    private final String mcVersion;
+    private final String tweaker;
+    private final String transformer;
+    private final String launchwrapperEntry;
 
     public OptiFine(Path jarPath) throws RuntimeException {
-        this.jarPath = jarPath;
+        // Set locals first while iterating the zip file, then set the final fields after
+        String version = "";
+        String mcVersion = "";
+        String tweaker = "";
+        String transformer = "";
+        String launchwrapperEntry = "";
+
+        // Iterate over the zip entries in the jar and extract any info we care about
         try {
             try (ZipFile file = new ZipFile(jarPath.toFile())) {
                 final Enumeration<? extends ZipEntry> entries = file.entries();
@@ -60,7 +66,9 @@ public class OptiFine {
                     if (LW_REGEX.matcher(entry.getName()).matches()) {
                         launchwrapperEntry = entry.getName();
                     }
-                    // This is probably the best way to get the version, since filenames can be easily changed
+                    // This is probably the best way to get the version, since filenames can be easily changed.
+                    // We set version and mcVersion to values from the first matching line in changelog.txt
+                    // (this should be the first line, but loop just in case).
                     if (entry.getName().equals("changelog.txt")) {
                         try (BufferedReader input = new BufferedReader(new InputStreamReader((file.getInputStream(entry))))) {
                             while (input.ready()) {
@@ -96,6 +104,14 @@ public class OptiFine {
         } catch (IOException e) {
             throw new RuntimeException("Error processing OptiFine jar", e);
         }
+
+        // Set the final fields
+        this.jarPath = jarPath;
+        this.version = version;
+        this.mcVersion = mcVersion;
+        this.tweaker = tweaker;
+        this.transformer = transformer;
+        this.launchwrapperEntry = launchwrapperEntry;
     }
 
     // Get the minecraft version this targets
