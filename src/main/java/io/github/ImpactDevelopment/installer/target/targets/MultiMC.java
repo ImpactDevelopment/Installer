@@ -37,7 +37,7 @@ public class MultiMC implements InstallationMode {
     }
 
     @Override
-    public String apply() {
+    public String apply() throws Throwable {
         JsonObject toDisplay = new Vanilla(config).generateMultiMCJsonVersion();
         String data = Installer.gson.toJson(toDisplay);
         if (Installer.args.noGUI) {

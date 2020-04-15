@@ -127,7 +127,7 @@ public class Args {
                 setImpactVersion(config, true, version);
                 try {
                     System.out.println(config.execute());
-                } catch (IOException e) {
+                } catch (Throwable e) {
                     throw new RuntimeException(e);
                 }
             }

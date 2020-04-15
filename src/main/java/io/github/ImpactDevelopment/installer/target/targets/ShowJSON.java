@@ -28,7 +28,6 @@ import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.target.InstallationMode;
 
 import javax.swing.*;
-import java.io.IOException;
 
 public class ShowJSON implements InstallationMode {
     private final InstallationConfig config;
@@ -38,7 +37,7 @@ public class ShowJSON implements InstallationMode {
     }
 
     @Override
-    public String apply() {
+    public String apply() throws Throwable {
         JsonObject toDisplay = new Vanilla(config).generateVanillaJsonVersion();
         String data = Installer.gson.toJson(toDisplay);
         if (Installer.args.noGUI) {
@@ -58,7 +57,7 @@ public class ShowJSON implements InstallationMode {
     }
 
     @Override
-    public String installOptifine() throws IOException {
+    public String installOptifine() throws Throwable {
         return new Vanilla(config).installOptifine();
     }
 }

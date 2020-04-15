@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.InvalidParameterException;
 
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.WINDOWS;
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.getOS;
@@ -55,11 +56,15 @@ public class Vanilla implements InstallationMode {
     private final InstallationConfig config;
     private final OptiFine optifine;
 
-    public Vanilla(InstallationConfig config) {
+    public Vanilla(InstallationConfig config) throws InvalidParameterException {
         this.version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
         this.optifine = config.getSettingValue(OptiFineSetting.INSTANCE) ? new OptiFine(config.getSettingValue(OptiFineFileSetting.INSTANCE)) : null;
         this.config = config;
-        this.id = version.mcVersion + "-" + version.name + "_" + version.version + (optifine == null ? "" : "-OptiFine_"+optifine.getOptiFineVersion());
+        this.id = String.format("%s-%s_%s%s", version.mcVersion, version.name, version.version, optifine == null ? "" : "-OptiFine_"+optifine.getOptiFineVersion());
+
+        if (optifine != null && !optifine.getMinecraftVersion().equals(version.mcVersion)) {
+            throw new InvalidParameterException(String.format("OptiFine %s is not compatible with Minecraft %s", optifine.getVersion(), version.mcVersion));
+        }
     }
 
     public JsonObject generateVanillaJsonVersion() {

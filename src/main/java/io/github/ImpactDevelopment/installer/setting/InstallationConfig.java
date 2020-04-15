@@ -27,7 +27,6 @@ import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetti
 import io.github.ImpactDevelopment.installer.setting.settings.InstallationModeSetting;
 import io.github.ImpactDevelopment.installer.utils.Tracky;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -76,21 +75,21 @@ public class InstallationConfig {
         return !thisSettingReverted;
     }
 
-    public String execute() throws IOException {
+    public String execute() throws Throwable {
         String label = getSettingValue(ImpactVersionSetting.INSTANCE).getCombinedVersion();
         Tracky.event("installer", "install", label);
         String result;
         try {
             result = getSettingValue(InstallationModeSetting.INSTANCE).mode.apply(this).apply();
-        } catch (RuntimeException | IOException ex) {
+        } catch (Throwable t) {
             Tracky.event("installer", "error", label);
-            throw ex;
+            throw t;
         }
         Tracky.event("installer", "success", label);
         return result;
     }
 
-    public String installOptifine() throws IOException {
+    public String installOptifine() throws Throwable {
         return getSettingValue(InstallationModeSetting.INSTANCE).mode.apply(this).installOptifine();
     }
 }

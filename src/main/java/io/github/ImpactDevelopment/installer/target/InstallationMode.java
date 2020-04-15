@@ -25,9 +25,9 @@ package io.github.ImpactDevelopment.installer.target;
 import java.io.IOException;
 
 public interface InstallationMode {
-    String apply() throws IOException;  // not gonna lie this is me when i enter sicko mode
+    String apply() throws Throwable;  // not gonna lie this is me when i enter sicko mode
 
-    default String installOptifine() throws IOException {
+    default String installOptifine() throws Throwable {
         throw new IOException("Error: this installation mode doesn't support installing OptiFine");
     }
 }
