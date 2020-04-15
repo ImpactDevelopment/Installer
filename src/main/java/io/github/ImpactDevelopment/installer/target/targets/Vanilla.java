@@ -168,15 +168,13 @@ public class Vanilla implements InstallationMode {
     @Override
     public String installOptifine() throws IOException {
         if (optifine == null) {
-            throw new IOException("Error, no optifine specified");
+            throw new IllegalStateException("No optifine specified, cannot install OptiFine");
         }
 
         Path libs = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("libraries");
-        System.out.println("Installing OptiFine into:");
-        System.out.println(libs.toString());
+        System.out.println("Installing OptiFine into "+libs.toString());
+        optifine.install(libs);
 
-        optifine.installOptiFine(libs);
-        optifine.installCustomLaunchwrapper(libs);
         return "Installed OptiFine successfully";
     }
 

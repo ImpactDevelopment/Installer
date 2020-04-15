@@ -141,30 +141,34 @@ public class OptiFine {
         return null;
     }
 
-    // Extract the launchwrapper jar to the target libraries directory
-    public void installCustomLaunchwrapper(Path libs) throws IOException {
+    // Install optifine jar and launchwrapper (if required) to the target libraries directory
+    public void install(Path libs) throws IOException {
+        installOptiFine(libs.resolve(pathFromID(getOptiFineID())));
         if (getLaunchwrapperID() != null) {
-            Path outputPath = libs.resolve(pathFromID(getLaunchwrapperID()));
-            Files.createDirectories(outputPath.getParent());
-            Files.deleteIfExists(outputPath);
-            try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(outputPath.toFile()))) {
-                try (ZipFile file = new ZipFile(jarPath.toFile())) {
-                    InputStream input = file.getInputStream(file.getEntry(launchwrapperEntry));
-                    byte[] buffer = new byte[BUFFER_SIZE];
-                    int read = 0;
-                    while ((read = input.read(buffer)) != -1) {
-                        output.write(buffer, 0, read);
-                    }
-                }
-            }
+            installLaunchwrapper(libs.resolve(pathFromID(getLaunchwrapperID())));
         }
     }
 
     // Copy the optifine jar to the target libraries directory
-    public void installOptiFine(Path libs) throws IOException {
-        Path outputPath = libs.resolve(pathFromID(getOptiFineID()));
-        Files.createDirectories(outputPath.getParent());
-        Files.copy(jarPath, outputPath, REPLACE_EXISTING);
+    private void installOptiFine(Path destination) throws IOException {
+        Files.createDirectories(destination.getParent());
+        Files.copy(jarPath, destination, REPLACE_EXISTING);
+    }
+
+    // Extract the launchwrapper jar to the target libraries directory
+    private void installLaunchwrapper(Path destination) throws IOException {
+        Files.deleteIfExists(destination);
+        Files.createDirectories(destination.getParent());
+        try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(destination.toFile()))) {
+            try (ZipFile file = new ZipFile(jarPath.toFile())) {
+                InputStream input = file.getInputStream(file.getEntry(launchwrapperEntry));
+                byte[] buffer = new byte[BUFFER_SIZE];
+                int read = 0;
+                while ((read = input.read(buffer)) != -1) {
+                    output.write(buffer, 0, read);
+                }
+            }
+        }
     }
 
     // Get a maven path based on an artifact id.
