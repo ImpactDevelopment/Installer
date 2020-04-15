@@ -27,7 +27,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.InvalidParameterException;
 import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -173,10 +172,10 @@ public class OptiFine {
 
     // Get a maven path based on an artifact id.
     // Ignores any classifier since last I checked, so does the Minecraft Launcher
-    private Path pathFromID(String artifact) {
+    private Path pathFromID(String artifact) throws IllegalArgumentException {
         String[] parts = artifact.split(":");
         if (parts.length < 3) {
-            throw new InvalidParameterException("OptiFine.pathFromID expected an artifact id with at least three parts, got "+artifact);
+            throw new IllegalArgumentException("OptiFine.pathFromID expected an artifact id with at least three parts, got "+artifact);
         }
         String group = parts[0].replace(".", File.separator);
         String id = parts[1];

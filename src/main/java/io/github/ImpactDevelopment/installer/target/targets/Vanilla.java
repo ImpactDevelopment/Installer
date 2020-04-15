@@ -43,7 +43,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.InvalidParameterException;
 
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.WINDOWS;
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.getOS;
@@ -63,7 +62,7 @@ public class Vanilla implements InstallationMode {
         this.id = String.format("%s-%s_%s%s", version.mcVersion, version.name, version.version, optifine == null ? "" : "-OptiFine_"+optifine.getOptiFineVersion());
 
         if (optifine != null && !optifine.getMinecraftVersion().equals(version.mcVersion)) {
-            throw new InvalidParameterException(String.format("OptiFine %s is not compatible with Minecraft %s", optifine.getVersion(), version.mcVersion));
+            throw new IllegalStateException(String.format("OptiFine %s is not compatible with Minecraft %s", optifine.getVersion(), version.mcVersion));
         }
     }
 
