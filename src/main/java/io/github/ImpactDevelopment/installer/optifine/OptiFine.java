@@ -40,7 +40,6 @@ public class OptiFine {
     private static final Pattern LW_REGEX = Pattern.compile("^(launchwrapper-of)-([0-9.]+)[.]jar$");
     private static final Pattern TWEAKER_REGEX = Pattern.compile("^TweakClass:\\s+(.+)$");
     private static final Pattern VERSION_REGEX = Pattern.compile("^OptiFine\\s+([^_]+)_(.+)$");
-    private static final int BUFFER_SIZE = 4096;
 
     private final Path jarPath;
     private final String version;
@@ -172,16 +171,10 @@ public class OptiFine {
 
     // Extract the launchwrapper jar to the target libraries directory
     private void installLaunchwrapper(Path destination) throws IOException {
-        Files.deleteIfExists(destination);
-        Files.createDirectories(destination.getParent());
-        try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(destination.toFile()))) {
-            try (ZipFile file = new ZipFile(jarPath.toFile())) {
-                InputStream input = file.getInputStream(file.getEntry(launchwrapperEntry));
-                byte[] buffer = new byte[BUFFER_SIZE];
-                int read = 0;
-                while ((read = input.read(buffer)) != -1) {
-                    output.write(buffer, 0, read);
-                }
+        try (ZipFile file = new ZipFile(jarPath.toFile())) {
+            try (InputStream input = file.getInputStream(file.getEntry(launchwrapperEntry))) {
+                Files.createDirectories(destination.getParent());
+                Files.copy(input, destination, REPLACE_EXISTING);
             }
         }
     }
