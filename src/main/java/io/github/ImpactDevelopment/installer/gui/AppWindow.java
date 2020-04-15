@@ -50,7 +50,7 @@ public class AppWindow extends JFrame {
         setContentPane(wrapper);
         setContent(loadingScreen());
         setSize(690, 420);
-        setResizable(true);
+        setResizable(false);
         setLocationRelativeTo(null);// center on screen
         setVisible(true);
         AppIcon.setAppIcon(this);
