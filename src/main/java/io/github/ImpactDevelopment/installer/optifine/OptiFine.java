@@ -51,7 +51,7 @@ public class OptiFine {
     private String transformer = "";
     private String launchwrapperEntry = "";
 
-    public OptiFine(Path jarPath) {
+    public OptiFine(Path jarPath) throws RuntimeException {
         this.jarPath = jarPath;
         try {
             try (ZipFile file = new ZipFile(jarPath.toFile())) {
@@ -95,7 +95,7 @@ public class OptiFine {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error processing OptiFine jar", e);
         }
     }
 

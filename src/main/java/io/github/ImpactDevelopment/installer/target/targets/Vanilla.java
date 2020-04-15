@@ -56,7 +56,7 @@ public class Vanilla implements InstallationMode {
     private final InstallationConfig config;
     private final OptiFine optifine;
 
-    public Vanilla(InstallationConfig config) throws InvalidParameterException {
+    public Vanilla(InstallationConfig config) throws RuntimeException {
         this.version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
         this.optifine = config.getSettingValue(OptiFineSetting.INSTANCE) ? new OptiFine(config.getSettingValue(OptiFineFileSetting.INSTANCE)) : null;
         this.config = config;
