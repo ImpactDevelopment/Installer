@@ -22,9 +22,12 @@
 
 package io.github.ImpactDevelopment.installer.optifine;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.InvalidParameterException;
 import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -121,7 +124,14 @@ public class OptiFine {
         return transformer;
     }
 
-    public String getRequiredLaunchwrapper() {
+    // Get the artifact id for OptiFine
+    public String getOptiFineID() {
+        return "optifine:OptiFine:"+getVersion();
+    }
+
+    // Get the artifact id for OptiFine's custom launchwrapper, or null if upstreams's is ok.
+    @Nullable
+    public String getLaunchwrapperID() {
         if (requiresCustomLaunchwrapper()) {
             Matcher match = LW_REGEX.matcher(launchwrapperEntry);
             if (match.matches()) {
@@ -138,8 +148,7 @@ public class OptiFine {
     // Extract the launchwrapper jar to the target libraries directory
     public void installCustomLaunchwrapper(Path libs) throws IOException {
         if (requiresCustomLaunchwrapper()) {
-            String[] parts = getRequiredLaunchwrapper().split(":");
-            Path outputPath = libs.resolve(parts[0]).resolve(parts[1]).resolve(parts[2]).resolve(String.format("%s-%s.jar", parts[1], parts[2]));
+            Path outputPath = libs.resolve(pathFromID(getLaunchwrapperID()));
             Files.createDirectories(outputPath.getParent());
             Files.deleteIfExists(outputPath);
             try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(outputPath.toFile()))) {
@@ -157,12 +166,21 @@ public class OptiFine {
 
     // Copy the optifine jar to the target libraries directory
     public void installOptiFine(Path libs) throws IOException {
-        Path outputPath = libs.resolve("optifine").resolve("OptiFine").resolve(getVersion()).resolve(String.format("OptiFine-%s.jar", getVersion()));
+        Path outputPath = libs.resolve(pathFromID(getOptiFineID()));
         Files.createDirectories(outputPath.getParent());
         Files.copy(jarPath, outputPath, REPLACE_EXISTING);
     }
 
-    public String getOptiFineID() {
-        return "optifine:OptiFine:"+getVersion();
+    // Get a maven path based on an artifact id.
+    // Ignores any classifier since last I checked, so does the Minecraft Launcher
+    private Path pathFromID(String artifact) {
+        String[] parts = artifact.split(":");
+        if (parts.length < 3) {
+            throw new InvalidParameterException("OptiFine.pathFromID expected an artifact id with at least three parts, got "+artifact);
+        }
+        String group = parts[0].replace(".", File.separator);
+        String id = parts[1];
+        String version = parts[2];
+        return Paths.get(group).resolve(id).resolve(version).resolve(String.format("%s-%s.jar", id, version));
     }
 }

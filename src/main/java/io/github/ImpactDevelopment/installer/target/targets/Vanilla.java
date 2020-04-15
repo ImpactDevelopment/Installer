@@ -136,7 +136,7 @@ public class Vanilla implements InstallationMode {
     private void populateLib(ILibrary lib, JsonArray libraries) {
         if (optifine != null && optifine.requiresCustomLaunchwrapper() && lib.getName().equals("net.minecraft:launchwrapper:1.12")) {
             JsonObject optiLaunchWrapper = new JsonObject();
-            optiLaunchWrapper.addProperty("name", optifine.getRequiredLaunchwrapper());
+            optiLaunchWrapper.addProperty("name", optifine.getLaunchwrapperID());
             libraries.add(optiLaunchWrapper);
             return;
         }
