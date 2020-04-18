@@ -54,7 +54,7 @@ public class MainPage extends JPanel {
                 switch (app.config.getSettingValue(InstallationModeSetting.INSTANCE)) {
                     case SHOWJSON:
                     case MULTIMC:
-                        if (app.config.getSettingValue(OptiFineSetting.INSTANCE)) {
+                        if (app.config.getSettingValue(OptiFineToggleSetting.INSTANCE)) {
                             // Special case if installing optifine in showJson mode
                             msg += "\nDo you want to install OptiFine's libs?";
                             if (JOptionPane.showConfirmDialog(app, msg, "\uD83D\uDE0E", YES_NO_OPTION, INFORMATION_MESSAGE) == YES_OPTION) {
@@ -98,7 +98,7 @@ public class MainPage extends JPanel {
     }
 
     private void addOptifineSetting(AppWindow app) {
-        OptiFineSetting setting = OptiFineSetting.INSTANCE;
+        OptiFineToggleSetting setting = OptiFineToggleSetting.INSTANCE;
         InstallationConfig config = app.config;
         Boolean val = config.getSettingValue(setting);
         if (val == null) {

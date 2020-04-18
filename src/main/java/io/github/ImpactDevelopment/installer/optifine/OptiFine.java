@@ -175,7 +175,7 @@ public class OptiFine {
     }
 
     // Install the patched optifine jar in the target libraries directory
-    private void installOptiFine(Path destination, Path vanilla) throws IOException, InvocationTargetException, IllegalAccessException {
+    protected void installOptiFine(Path destination, Path vanilla) throws IOException, InvocationTargetException, IllegalAccessException {
         Files.deleteIfExists(destination);
         Files.createDirectories(destination.getParent());
 
@@ -184,7 +184,7 @@ public class OptiFine {
     }
 
     // Extract the launchwrapper jar to the target libraries directory
-    private void installLaunchwrapper(Path destination) throws IOException {
+    protected void installLaunchwrapper(Path destination) throws IOException {
         String entry = String.format("launchwrapper-of-%s.jar", launchwrapperVersion);
         try (ZipFile file = new ZipFile(jarPath.toFile())) {
             try (InputStream input = file.getInputStream(file.getEntry(entry))) {

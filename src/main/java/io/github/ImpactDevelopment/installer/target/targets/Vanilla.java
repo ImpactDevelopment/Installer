@@ -29,11 +29,9 @@ import io.github.ImpactDevelopment.installer.impact.ImpactJsonVersion;
 import io.github.ImpactDevelopment.installer.libraries.ILibrary;
 import io.github.ImpactDevelopment.installer.libraries.MavenResolver;
 import io.github.ImpactDevelopment.installer.optifine.OptiFine;
+import io.github.ImpactDevelopment.installer.optifine.OptiFineExisting;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
-import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
-import io.github.ImpactDevelopment.installer.setting.settings.MinecraftDirectorySetting;
-import io.github.ImpactDevelopment.installer.setting.settings.OptiFineFileSetting;
-import io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting;
+import io.github.ImpactDevelopment.installer.setting.settings.*;
 import io.github.ImpactDevelopment.installer.target.InstallationMode;
 import io.github.ImpactDevelopment.installer.utils.Tracky;
 import org.apache.commons.io.IOUtils;
@@ -43,7 +41,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
+import static io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting.MISSING;
+import static io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting.NONE;
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.WINDOWS;
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.getOS;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -57,12 +58,18 @@ public class Vanilla implements InstallationMode {
     private final Path vanillaJar;
 
     public Vanilla(InstallationConfig config) throws RuntimeException {
-        this.version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
-        this.optifine = config.getSettingValue(OptiFineSetting.INSTANCE) ? new OptiFine(config.getSettingValue(OptiFineFileSetting.INSTANCE)) : null;
-        this.vanillaJar = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("versions").resolve(version.mcVersion).resolve(version.mcVersion+".jar");
+        Path mcDir = config.getSettingValue(MinecraftDirectorySetting.INSTANCE);
         this.config = config;
+        this.version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
+        this.vanillaJar = mcDir.resolve("versions").resolve(version.mcVersion).resolve(version.mcVersion+".jar");
+        this.optifine = config.getSettingValue(OptiFineToggleSetting.INSTANCE)
+                ? new OptiFine(config.getSettingValue(OptiFineFileSetting.INSTANCE))
+                : Optional.ofNullable(config.getSettingValue(OptiFineSetting.INSTANCE))
+                        .filter(of -> !of.equals(NONE))
+                        .filter(of -> !of.equals(MISSING))
+                        .map(of -> new OptiFineExisting(mcDir.resolve("libraries"), of))
+                        .orElse(null);
         this.id = String.format("%s-%s_%s%s", version.mcVersion, version.name, version.version, optifine == null ? "" : "-OptiFine_"+optifine.getOptiFineVersion());
-
         if (optifine != null && !optifine.getMinecraftVersion().equals(version.mcVersion)) {
             throw new IllegalStateException(String.format("OptiFine %s is not compatible with Minecraft %s", optifine.getVersion(), version.mcVersion));
         }

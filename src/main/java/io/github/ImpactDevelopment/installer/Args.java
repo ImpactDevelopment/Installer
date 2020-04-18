@@ -144,7 +144,7 @@ public class Args {
             setImpactVersion(config, false, new ImpactVersionDisk(Paths.get(file)));
         }
         if (optifine != null) {
-            config.setSettingValue(OptiFineSetting.INSTANCE, true);
+            config.setSettingValue(OptiFineToggleSetting.INSTANCE, true);
             if (!config.setSettingValue(OptiFineFileSetting.INSTANCE, Paths.get(optifine))) {
                 throw new IllegalArgumentException(optifine + " is not found");
             }
