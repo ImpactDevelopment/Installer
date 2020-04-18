@@ -202,7 +202,9 @@ public class Vanilla implements InstallationMode {
         sanityCheck(allowMinecraftToBeOpen);
         installVersionJson();
         installProfiles();
-        installOptifine();
+        if (optifine != null) {
+            installOptifine();
+        }
     }
 
     private void checkDirectory() {
