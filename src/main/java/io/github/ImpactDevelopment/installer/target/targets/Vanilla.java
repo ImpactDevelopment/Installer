@@ -180,7 +180,6 @@ public class Vanilla implements InstallationMode {
         }
 
         Path libs = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("libraries");
-        System.out.println("Installing OptiFine into " + libs.toString());
         optifine.install(libs, vanillaJar);
 
         return "Installed OptiFine successfully";

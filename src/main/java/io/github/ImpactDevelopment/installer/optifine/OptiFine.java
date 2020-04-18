@@ -179,6 +179,7 @@ public class OptiFine {
         Files.deleteIfExists(destination);
         Files.createDirectories(destination.getParent());
 
+        System.out.println("Installing OptiFine into " + destination.toString());
         // Static method so null instance
         patcherMethod.invoke(null, vanilla.toFile(), jarPath.toFile(), destination.toFile());
     }
@@ -188,6 +189,7 @@ public class OptiFine {
         String entry = String.format("launchwrapper-of-%s.jar", launchwrapperVersion);
         try (ZipFile file = new ZipFile(jarPath.toFile())) {
             try (InputStream input = file.getInputStream(file.getEntry(entry))) {
+                System.out.printf("Installing OptiFine's launchwrapper v%s into %s%n", launchwrapperVersion, destination.toString());
                 Files.createDirectories(destination.getParent());
                 Files.copy(input, destination, REPLACE_EXISTING);
             }
