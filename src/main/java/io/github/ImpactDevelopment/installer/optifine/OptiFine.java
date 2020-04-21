@@ -201,7 +201,7 @@ public class OptiFine {
     private static Path pathFromID(String artifact) throws IllegalArgumentException {
         String[] parts = artifact.split(":");
         if (parts.length < 3) {
-            throw new IllegalArgumentException("OptiFine.pathFromID() expected an artifact id with at least three parts, got "+artifact);
+            throw new IllegalArgumentException("OptiFine.pathFromID() expected an artifact id with at least three parts, got " + artifact);
         }
         String group = parts[0].replace(".", File.separator);
         String id = parts[1];

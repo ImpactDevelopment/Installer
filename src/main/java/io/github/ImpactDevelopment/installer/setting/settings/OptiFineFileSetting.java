@@ -33,7 +33,7 @@ public enum OptiFineFileSetting implements Setting<Path> {
 
     @Override
     public Path getDefaultValue(InstallationConfig config) {
-            return OperatingSystem.getDownloads();
+        return OperatingSystem.getDownloads();
     }
 
     @Override

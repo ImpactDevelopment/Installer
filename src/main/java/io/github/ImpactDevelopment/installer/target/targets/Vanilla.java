@@ -61,15 +61,15 @@ public class Vanilla implements InstallationMode {
         Path mcDir = config.getSettingValue(MinecraftDirectorySetting.INSTANCE);
         this.config = config;
         this.version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
-        this.vanillaJar = mcDir.resolve("versions").resolve(version.mcVersion).resolve(version.mcVersion+".jar");
+        this.vanillaJar = mcDir.resolve("versions").resolve(version.mcVersion).resolve(version.mcVersion + ".jar");
         this.optifine = config.getSettingValue(OptiFineToggleSetting.INSTANCE)
                 ? new OptiFine(config.getSettingValue(OptiFineFileSetting.INSTANCE))
                 : Optional.ofNullable(config.getSettingValue(OptiFineSetting.INSTANCE))
-                        .filter(of -> !of.equals(NONE))
-                        .filter(of -> !of.equals(MISSING))
-                        .map(of -> new OptiFineExisting(mcDir.resolve("libraries"), of))
-                        .orElse(null);
-        this.id = String.format("%s-%s_%s%s", version.mcVersion, version.name, version.version, optifine == null ? "" : "-OptiFine_"+optifine.getOptiFineVersion());
+                .filter(of -> !of.equals(NONE))
+                .filter(of -> !of.equals(MISSING))
+                .map(of -> new OptiFineExisting(mcDir.resolve("libraries"), of))
+                .orElse(null);
+        this.id = String.format("%s-%s_%s%s", version.mcVersion, version.name, version.version, optifine == null ? "" : "-OptiFine_" + optifine.getOptiFineVersion());
         if (optifine != null && !optifine.getMinecraftVersion().equals(version.mcVersion)) {
             throw new IllegalStateException(String.format("OptiFine %s is not compatible with Minecraft %s", optifine.getVersion(), version.mcVersion));
         }
