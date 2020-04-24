@@ -51,10 +51,12 @@ public class Forge implements InstallationMode {
 
     private final ImpactJsonVersion version;
     private final InstallationConfig config;
+    private final boolean liteloaderSupport;
 
-    public Forge(InstallationConfig config) {
+    public Forge(InstallationConfig config, boolean liteloaderSupport) {
         this.version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
         this.config = config;
+        this.liteloaderSupport = liteloaderSupport;
     }
 
     @Override
@@ -69,6 +71,10 @@ public class Forge implements InstallationMode {
             }
         }
 
+        if (liteloaderSupport) {
+            JOptionPane.showMessageDialog(null, "This Forge jar will ONLY work with Liteloader + Forge, not with either on their own.\nIf you don't have liteloader, use the Forge option instead!\nIf you change your mind and just want Forge (no liteloader), you will need to reinstall Impact with the correct option!", "IMPORTANT", JOptionPane.INFORMATION_MESSAGE);
+        }
+
         Tracky.persist(config.getSettingValue(MinecraftDirectorySetting.INSTANCE));
         HashSet<String> fileNames = new HashSet<>();
         try (JarOutputStream jarOut = new JarOutputStream(new FileOutputStream(out.toFile()))) {
@@ -76,6 +82,9 @@ public class Forge implements InstallationMode {
                 byte[] b = Fetcher.fetchBytes(library.getURL());
                 if (b.length != library.getSize() || !sha1hex(b).equals(library.getSHA1())) {
                     throw new RuntimeException(b.length + " " + library.getSize() + " " + sha1hex(b) + " " + library.getSHA1());
+                }
+                if (liteloaderSupport && library.getURL().contains("mixin")) {
+                    continue;
                 }
                 ArchiveInputStream input = new ArchiveStreamFactory().createArchiveInputStream(new ByteArrayInputStream(b));
                 ArchiveEntry entry;
@@ -90,6 +99,11 @@ public class Forge implements InstallationMode {
                             jarOut.putNextEntry(new JarEntry(name));
                             mutateManifest(input, jarOut);
                         }
+                        continue;
+                    }
+                    if (name.equals("mixins.capi.json")) {
+                        jarOut.putNextEntry(new JarEntry(name));
+                        mutateCapi(input, jarOut);
                         continue;
                     }
                     if (name.startsWith("META-INF/MUMFREY") || name.equals("module-info.class")) {
@@ -139,6 +153,27 @@ public class Forge implements InstallationMode {
         while (null != (line = reader.readLine())) {
             if (line.startsWith("TweakClass:")) {
                 line = "TweakClass: org.spongepowered.asm.launch.MixinTweaker";
+            }
+
+            if (line.isEmpty()) {
+                continue;
+            }
+
+            line += "\n";
+            output.write(line.getBytes(UTF_8));
+        }
+
+        output.write("\n".getBytes(UTF_8));
+    }
+
+    // Change the mixin minimum version to 0.7.5
+    private void mutateCapi(InputStream input, OutputStream output) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input, UTF_8));
+
+        String line;
+        while (null != (line = reader.readLine())) {
+            if (line.contains("0.7.8")) {
+                line = line.replace("0.7.8", "0.7.5");
             }
 
             if (line.isEmpty()) {

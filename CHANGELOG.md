@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Added a sketchy compatibility mode for Forge + Liteloader for 1.12.2 only
+
 ## [0.8.5] - 2020-03-25
 
 ### Added
