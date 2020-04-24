@@ -27,7 +27,6 @@ import io.github.ImpactDevelopment.installer.setting.ChoiceSetting;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.Setting;
 import io.github.ImpactDevelopment.installer.setting.settings.*;
-import io.github.ImpactDevelopment.installer.target.InstallationModeOptions;
 
 import javax.swing.*;
 import java.awt.*;
@@ -46,8 +45,12 @@ public class MainPage extends JPanel {
         addSetting(InstallationModeSetting.INSTANCE, "Install for", app);
         addSetting(MinecraftVersionSetting.INSTANCE, "Minecraft version", app);
         addSetting(ImpactVersionSetting.INSTANCE, "Impact version", app);
-        if (!app.config.getSettingValue(InstallationModeSetting.INSTANCE).equals(InstallationModeOptions.FORGE)) {
-            addOptifineSetting(app);
+        switch (app.config.getSettingValue(InstallationModeSetting.INSTANCE)) {
+            case FORGE:
+            case FORGE_PLUS_LITELOADER:
+                break;
+            default:
+                addOptifineSetting(app);
         }
 
         JButton install = new JButton("Install");
