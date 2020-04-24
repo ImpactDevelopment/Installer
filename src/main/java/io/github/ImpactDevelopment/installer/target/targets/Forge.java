@@ -101,7 +101,7 @@ public class Forge implements InstallationMode {
                         }
                         continue;
                     }
-                    if (name.equals("mixins.capi.json")) {
+                    if (liteloaderSupport && name.equals("mixins.capi.json")) {
                         jarOut.putNextEntry(new JarEntry(name));
                         mutateCapi(input, jarOut);
                         continue;
