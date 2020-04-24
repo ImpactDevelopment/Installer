@@ -155,6 +155,10 @@ public class Forge implements InstallationMode {
                 line = "TweakClass: org.spongepowered.asm.launch.MixinTweaker";
             }
 
+            if (line.startsWith("MixinConfigs: ") && liteloaderSupport) {
+                line = line.replace(", ", ",");
+            }
+
             if (line.isEmpty()) {
                 continue;
             }
