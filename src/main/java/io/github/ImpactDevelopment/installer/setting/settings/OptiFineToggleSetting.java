@@ -20,14 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.ImpactDevelopment.installer.target;
+package io.github.ImpactDevelopment.installer.setting.settings;
 
-import java.io.IOException;
+import io.github.ImpactDevelopment.installer.setting.BooleanSetting;
 
-public interface InstallationMode {
-    String apply() throws Throwable;  // not gonna lie this is me when i enter sicko mode
+public enum OptiFineToggleSetting implements BooleanSetting {
+    INSTANCE;
 
-    default String installOptifine() throws Throwable {
-        throw new IOException("Error: this installation mode doesn't support installing OptiFine");
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 }

@@ -28,10 +28,10 @@ import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.impact.ImpactJsonVersion;
 import io.github.ImpactDevelopment.installer.libraries.ILibrary;
 import io.github.ImpactDevelopment.installer.libraries.MavenResolver;
+import io.github.ImpactDevelopment.installer.optifine.OptiFine;
+import io.github.ImpactDevelopment.installer.optifine.OptiFineExisting;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
-import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
-import io.github.ImpactDevelopment.installer.setting.settings.MinecraftDirectorySetting;
-import io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting;
+import io.github.ImpactDevelopment.installer.setting.settings.*;
 import io.github.ImpactDevelopment.installer.target.InstallationMode;
 import io.github.ImpactDevelopment.installer.utils.Tracky;
 import org.apache.commons.io.IOUtils;
@@ -43,6 +43,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import static io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting.MISSING;
+import static io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting.NONE;
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.WINDOWS;
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.getOS;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -52,11 +54,25 @@ public class Vanilla implements InstallationMode {
     private final String id;
     private final ImpactJsonVersion version;
     private final InstallationConfig config;
+    private final OptiFine optifine;
+    private final Path vanillaJar;
 
-    public Vanilla(InstallationConfig config) {
-        this.version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
+    public Vanilla(InstallationConfig config) throws RuntimeException {
+        Path mcDir = config.getSettingValue(MinecraftDirectorySetting.INSTANCE);
         this.config = config;
-        this.id = version.mcVersion + "-" + version.name + "_" + version.version + prettifiedOptifineVersion().orElse("");
+        this.version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
+        this.vanillaJar = mcDir.resolve("versions").resolve(version.mcVersion).resolve(version.mcVersion + ".jar");
+        this.optifine = config.getSettingValue(OptiFineToggleSetting.INSTANCE)
+                ? new OptiFine(config.getSettingValue(OptiFineFileSetting.INSTANCE))
+                : Optional.ofNullable(config.getSettingValue(OptiFineSetting.INSTANCE))
+                .filter(of -> !of.equals(NONE))
+                .filter(of -> !of.equals(MISSING))
+                .map(of -> new OptiFineExisting(mcDir.resolve("libraries"), of))
+                .orElse(null);
+        this.id = String.format("%s-%s_%s%s", version.mcVersion, version.name, version.version, optifine == null ? "" : "-OptiFine_" + optifine.getOptiFineVersion());
+        if (optifine != null && !optifine.getMinecraftVersion().equals(version.mcVersion)) {
+            throw new IllegalStateException(String.format("OptiFine %s is not compatible with Minecraft %s", optifine.getVersion(), version.mcVersion));
+        }
     }
 
     public JsonObject generateVanillaJsonVersion() {
@@ -112,40 +128,23 @@ public class Vanilla implements InstallationMode {
         for (ILibrary lib : version.resolveLibraries(config)) {
             populateLib(lib, libraries);
         }
+        if (optifine != null) {
+            JsonObject lib = new JsonObject();
+            lib.addProperty("name", optifine.getOptiFineID());
+            libraries.add(lib);
+        }
+
         if (multimc) {
             object.add("+libraries", libraries);
         } else {
             object.add("libraries", libraries);
         }
-
-        populateOptifine(libraries);
-    }
-
-    private void populateOptifine(JsonArray libraries) {
-        optifineVersion().ifPresent(optifine -> {
-            JsonObject opti = new JsonObject();
-            opti.addProperty("name", "optifine:OptiFine:" + optifine);
-            libraries.add(opti);
-        });
-    }
-
-    private Optional<String> optifineVersion() {
-        return Optional.ofNullable(config.getSettingValue(OptiFineSetting.INSTANCE)).filter(optifine -> !optifine.equals(OptiFineSetting.NONE)).filter(optifine -> !optifine.equals(OptiFineSetting.MISSING));
-    }
-
-    private Optional<String> prettifiedOptifineVersion() {
-        return optifineVersion().map(str -> {
-            if (!str.startsWith(version.mcVersion + "_")) {
-                throw new IllegalStateException(str + " " + version.mcVersion);
-            }
-            return "-OptiFine" + str.substring(version.mcVersion.length());
-        });
     }
 
     private void populateLib(ILibrary lib, JsonArray libraries) {
-        if (version.mcVersion.compareTo("1.14.4") >= 0 && optifineVersion().isPresent() && lib.getName().equals("net.minecraft:launchwrapper:1.12")) {
+        if (optifine != null && optifine.getLaunchwrapperID() != null && lib.getName().equals("net.minecraft:launchwrapper:1.12")) {
             JsonObject optiLaunchWrapper = new JsonObject();
-            optiLaunchWrapper.addProperty("name", "optifine:launchwrapper-of:2.1");
+            optiLaunchWrapper.addProperty("name", optifine.getLaunchwrapperID());
             libraries.add(optiLaunchWrapper);
             return;
         }
@@ -174,6 +173,18 @@ public class Vanilla implements InstallationMode {
         return "Impact has been successfully installed";
     }
 
+    @Override
+    public String installOptifine() throws IOException {
+        if (optifine == null) {
+            throw new IllegalStateException("No optifine specified, cannot install OptiFine");
+        }
+
+        Path libs = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("libraries");
+        optifine.install(libs, vanillaJar);
+
+        return "Installed OptiFine successfully";
+    }
+
     public void sanityCheck(boolean allowMinecraftToBeOpen) {
         checkDirectory();
         checkVersionInstalled();
@@ -190,6 +201,9 @@ public class Vanilla implements InstallationMode {
         sanityCheck(allowMinecraftToBeOpen);
         installVersionJson();
         installProfiles();
+        if (optifine != null) {
+            installOptifine();
+        }
     }
 
     private void checkDirectory() {
@@ -197,9 +211,8 @@ public class Vanilla implements InstallationMode {
     }
 
     private void checkVersionInstalled() {
-        Path path = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("versions").resolve(version.mcVersion).resolve(version.mcVersion + ".jar");
-        if (!Files.exists(path)) {
-            throw new RuntimeException("Please install and run Vanilla " + version.mcVersion + " once as normal before continuing.", new FileNotFoundException(path.toString()));
+        if (!Files.exists(vanillaJar)) {
+            throw new RuntimeException("Please install and run Vanilla " + version.mcVersion + " once as normal before continuing.", new FileNotFoundException(vanillaJar.toString()));
         }
     }
 

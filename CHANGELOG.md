@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Reworked the way OptiFine is supported. Instead of searching for an installed OptiFine instance, the user provides us with an OptiFine installer jar.
 
 ## [0.8.6] - 2020-04-24
 

@@ -37,7 +37,7 @@ public class ShowJSON implements InstallationMode {
     }
 
     @Override
-    public String apply() {
+    public String apply() throws Throwable {
         JsonObject toDisplay = new Vanilla(config).generateVanillaJsonVersion();
         String data = Installer.gson.toJson(toDisplay);
         if (Installer.args.noGUI) {
@@ -54,5 +54,10 @@ public class ShowJSON implements InstallationMode {
             frame.setVisible(true);
         });
         return "Here is the JSON for Vanilla " + toDisplay.get("id");
+    }
+
+    @Override
+    public String installOptifine() throws Throwable {
+        return new Vanilla(config).installOptifine();
     }
 }
