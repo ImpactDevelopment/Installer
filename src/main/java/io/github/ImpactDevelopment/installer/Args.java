@@ -63,7 +63,7 @@ public class Args {
     @Parameter(names = {"--all"}, description = "Run on all Impact releases")
     public boolean all = false;
 
-    @Parameter(names = {"--mc-dir", "--minecraft-dir", "--minecraft-directory", "--mc-path"}, description = "Path to the Minecraft directory")
+    @Parameter(names = {"--mc-dir", "--minecraft-dir", "--minecraft-directory", "--launcher-dir", "--launcher-directory"}, description = "Path to the Minecraft Launcher directory")
     public String mcPath;
 
     @Parameter(names = {"--optifine", "--of"}, description = "Path to an OptiFine installer jar")

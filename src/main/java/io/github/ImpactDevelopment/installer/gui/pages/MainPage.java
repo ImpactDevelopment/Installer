@@ -41,7 +41,6 @@ import static javax.swing.JOptionPane.*;
 public class MainPage extends JPanel {
     public MainPage(AppWindow app) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(buildPathSetting(MinecraftDirectorySetting.INSTANCE, "Minecraft directory", JFileChooser.DIRECTORIES_ONLY, app));
         addSetting(InstallationModeSetting.INSTANCE, "Install for", app);
         addSetting(MinecraftVersionSetting.INSTANCE, "Minecraft version", app);
         addSetting(ImpactVersionSetting.INSTANCE, "Impact version", app);
