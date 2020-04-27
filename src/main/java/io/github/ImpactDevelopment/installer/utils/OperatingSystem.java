@@ -55,7 +55,7 @@ public enum OperatingSystem {
     public static Path getDownloads() {
         if (getOS() == OperatingSystem.LINUX) {
             String xdg = System.getenv("XDG_DOWNLOAD_DIR");
-            if (!xdg.isEmpty()) return Paths.get(xdg);
+            if (xdg != null && !xdg.isEmpty()) return Paths.get(xdg);
         }
         return getHome().resolve("Downloads");
     }
