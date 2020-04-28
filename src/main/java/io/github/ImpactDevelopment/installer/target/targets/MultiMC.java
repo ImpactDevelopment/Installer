@@ -109,7 +109,7 @@ public class MultiMC extends Vanilla {
             throw new IllegalStateException("No vanillaJar specified, cannot install OptiFine");
         }
 
-        // Since MultiMC 0.6.3 "local" libraries must be installed in instance/libraries rather than the main libraries
+        // MultiMC 0.6.3 "local" libraries must be installed in instance/libraries rather than the main libraries
         // directory. Unlike global libs, instance libs don't expect a full maven style path, instead MMC expects the
         // artifact file to be in the root of the instance libraries directory.
         // See https://github.com/MultiMC/MultiMC5/blob/develop/changelog.md#multimc-063
