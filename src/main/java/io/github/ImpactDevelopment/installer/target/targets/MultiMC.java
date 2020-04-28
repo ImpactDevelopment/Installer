@@ -23,11 +23,13 @@
 package io.github.ImpactDevelopment.installer.target.targets;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 
 import javax.swing.*;
+import java.util.stream.StreamSupport;
 
 public class MultiMC extends Vanilla {
 
@@ -65,7 +67,21 @@ public class MultiMC extends Vanilla {
         object.addProperty("order", 10);
         object.addProperty("version", id);
         object.add("+tweakers", generateTweakers());
-        object.add("+libraries", generateLibraries());
+        JsonArray libraries = generateLibraries();
+
+        // Append "MMC-hint": "local" to any optifine libraries
+        StreamSupport.stream(libraries.spliterator(), false)
+                .filter(lib -> {
+                    try {
+                        return lib.getAsJsonObject().getAsJsonPrimitive("name").getAsString().startsWith("optifine:");
+                    } catch (NullPointerException | ClassCastException | IllegalStateException ignored) {
+                        return false;
+                    }
+                })
+                .map(JsonElement::getAsJsonObject)
+                .forEach(lib -> lib.addProperty("MMC-hint", "local"));
+
+        object.add("+libraries", libraries);
         return object;
     }
 
