@@ -48,11 +48,21 @@ public class MavenResolver {
     }
 
     public static String getFullURL(String mavenName) {
-        String[] parts = mavenName.split(":");
-        return getURLBase(parts[0]) + partsToPath(parts);
+        return getURLBase(getGroup(mavenName)) + getPath(mavenName);
     }
 
-    public static String partsToPath(String[] parts) {
+    public static String getPath(String mavenName) {
+        String[] parts = mavenName.split(":");
         return parts[0].replace(".", "/") + "/" + parts[1] + "/" + parts[2] + "/" + parts[1] + "-" + parts[2] + ".jar";
+    }
+
+    public static String getFilename(String mavenName) {
+        String[] parts = mavenName.split(":");
+        return parts[1] + "-" + parts[2] + ".jar";
+    }
+
+    private static String getGroup(String mavenName) {
+        int index = mavenName.indexOf(":");
+        return index > -1 ? mavenName.substring(0, index) : "";
     }
 }

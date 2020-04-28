@@ -22,6 +22,8 @@
 
 package io.github.ImpactDevelopment.installer.optifine;
 
+import io.github.ImpactDevelopment.installer.libraries.MavenResolver;
+
 import javax.annotation.Nullable;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -163,14 +165,16 @@ public class OptiFine {
     }
 
     // Install optifine jar and launchwrapper (if required) to the target libraries directory
-    public void install(Path libs, Path vanilla) throws IOException {
+    public void install(Path libs, Path vanilla, boolean fullPath) throws IOException {
         try {
-            installOptiFine(libs.resolve(pathFromID(getOptiFineID())), vanilla);
+            Path path = Paths.get(fullPath ? MavenResolver.getPath(getOptiFineID()) : MavenResolver.getFilename(getOptiFineID()));
+            installOptiFine(libs.resolve(path), vanilla);
         } catch (InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException("Error calling OptiFine patcher method", e);
         }
         if (getLaunchwrapperID() != null) {
-            installLaunchwrapper(libs.resolve(pathFromID(getLaunchwrapperID())));
+            Path path = Paths.get(fullPath ? MavenResolver.getPath(getLaunchwrapperID()) : MavenResolver.getFilename(getLaunchwrapperID()));
+            installLaunchwrapper(libs.resolve(path));
         }
     }
 
