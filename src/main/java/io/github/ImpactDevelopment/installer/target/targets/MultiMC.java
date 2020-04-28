@@ -41,7 +41,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class MultiMC extends Vanilla {
 
-    private static final URL ICON = ClassLoader.getSystemResource("icons/128.png");
+    private static final URL ICON = ClassLoader.getSystemResource("icons/256.png");
     private static final String ICON_KEY = "impact";
 
     private final String instanceName;
