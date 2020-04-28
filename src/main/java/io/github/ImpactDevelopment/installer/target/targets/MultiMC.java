@@ -27,14 +27,27 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
+import io.github.ImpactDevelopment.installer.setting.settings.MultiMCDirectorySetting;
 
 import javax.swing.*;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.stream.StreamSupport;
 
 public class MultiMC extends Vanilla {
 
+    private final String instanceName;
+    private final String instanceID;
+    private final Path mmc;
+    private final Path instance;
+
     public MultiMC(InstallationConfig config) {
         super(config);
+
+        this.instanceName = version.name + " " + getStrippedVersion() + " for " + version.mcVersion + (optifine == null ? "" : " with OptiFine " + optifine.getOptiFineVersion());
+        this.instanceID = version.name + "-" + getStrippedVersion() + "-" + version.mcVersion + (optifine == null ? "" : "-OptiFine-" + optifine.getOptiFineVersion());
+        this.mmc = config.getSettingValue(MultiMCDirectorySetting.INSTANCE);
+        this.instance = mmc.resolve("instances").resolve(instanceID);
     }
 
     @Override
@@ -55,6 +68,16 @@ public class MultiMC extends Vanilla {
             frame.setVisible(true);
         });
         return "Here is the JSON for MultiMC " + toDisplay.get("version");
+    }
+
+    @Override
+    public String installOptifine() throws IOException {
+        if (optifine == null) {
+            throw new IllegalStateException("No optifine specified, cannot install OptiFine");
+        }
+
+        optifine.install(instance.resolve("libraries"), vanillaJar, false);
+        return "Installed OptiFine successfully";
     }
 
     @Override

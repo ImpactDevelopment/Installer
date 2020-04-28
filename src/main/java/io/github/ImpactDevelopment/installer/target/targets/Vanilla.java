@@ -54,8 +54,8 @@ public class Vanilla implements InstallationMode {
     protected final String id;
     protected final ImpactJsonVersion version;
     protected final InstallationConfig config;
-    private final OptiFine optifine;
-    private final Path vanillaJar;
+    protected final OptiFine optifine;
+    protected final Path vanillaJar;
 
     public Vanilla(InstallationConfig config) throws RuntimeException {
         Path mcDir = config.getSettingValue(MinecraftDirectorySetting.INSTANCE);
@@ -218,13 +218,8 @@ public class Vanilla implements InstallationMode {
         VanillaProfiles profiles = new VanillaProfiles(config);
         System.out.println("Injecting impact version...");
 
-        // go from 4.7.0-beta to 4.7-beta
-        String strippedVersion = version.version.split("-")[0];
-        if (strippedVersion.indexOf('.') != strippedVersion.lastIndexOf('.')) {
-            strippedVersion = strippedVersion.substring(0, strippedVersion.lastIndexOf('.'));
-        }
 
-        profiles.addOrMutate(version.name + " " + strippedVersion + " for " + version.mcVersion, getId());
+        profiles.addOrMutate(version.name + " " + getStrippedVersion() + " for " + version.mcVersion, getId());
         System.out.println("Saving vanilla profiles");
         profiles.saveToDisk();
     }
@@ -238,6 +233,15 @@ public class Vanilla implements InstallationMode {
         } catch (Throwable e) {
             return false;
         }
+    }
+
+    public String getStrippedVersion() {
+        // go from 4.7.0-beta to 4.7-beta
+        String strippedVersion = version.version.split("-")[0];
+        if (strippedVersion.indexOf('.') != strippedVersion.lastIndexOf('.')) {
+            strippedVersion = strippedVersion.substring(0, strippedVersion.lastIndexOf('.'));
+        }
+        return strippedVersion;
     }
 
     public String getId() {
