@@ -33,7 +33,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.regex.Matcher;
@@ -167,14 +166,12 @@ public class OptiFine {
     // Install optifine jar and launchwrapper (if required) to the target libraries directory
     public void install(Path libs, Path vanilla, boolean fullPath) throws IOException {
         try {
-            Path path = Paths.get(fullPath ? MavenResolver.getPath(getOptiFineID()) : MavenResolver.getFilename(getOptiFineID()));
-            installOptiFine(libs.resolve(path), vanilla);
+            installOptiFine(libs.resolve(fullPath ? MavenResolver.getPath(getOptiFineID()) : MavenResolver.getFilename(getOptiFineID())), vanilla);
         } catch (InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException("Error calling OptiFine patcher method", e);
         }
         if (getLaunchwrapperID() != null) {
-            Path path = Paths.get(fullPath ? MavenResolver.getPath(getLaunchwrapperID()) : MavenResolver.getFilename(getLaunchwrapperID()));
-            installLaunchwrapper(libs.resolve(path));
+            installLaunchwrapper(libs.resolve(fullPath ? MavenResolver.getPath(getLaunchwrapperID()) : MavenResolver.getFilename(getLaunchwrapperID())));
         }
     }
 
@@ -198,18 +195,5 @@ public class OptiFine {
                 Files.copy(input, destination, REPLACE_EXISTING);
             }
         }
-    }
-
-    // Get a maven path based on an artifact id.
-    // Ignores any classifier since (last I checked) so does the Minecraft Launcher
-    private static Path pathFromID(String artifact) throws IllegalArgumentException {
-        String[] parts = artifact.split(":");
-        if (parts.length < 3) {
-            throw new IllegalArgumentException("OptiFine.pathFromID() expected an artifact id with at least three parts, got " + artifact);
-        }
-        String group = parts[0].replace(".", File.separator);
-        String id = parts[1];
-        String version = parts[2];
-        return Paths.get(group).resolve(id).resolve(version).resolve(String.format("%s-%s.jar", id, version));
     }
 }

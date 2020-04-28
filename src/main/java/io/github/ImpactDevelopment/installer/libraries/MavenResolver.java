@@ -27,6 +27,8 @@ import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.utils.Fetcher;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MavenResolver {
     private static Map<String, String> MAVEN_MAP = null;
@@ -47,22 +49,83 @@ public class MavenResolver {
         return ret;
     }
 
-    public static String getFullURL(String mavenName) {
-        return getURLBase(getGroup(mavenName)) + getPath(mavenName);
+    public static String getFullURL(String coords) {
+        Artifact artifact = new Artifact(coords);
+        String base = getURLBase(artifact.getGroupId());
+        if (!base.endsWith("/")) {
+            base += "/";
+        }
+        return base + artifact.getPath();
     }
 
-    public static String getPath(String mavenName) {
-        String[] parts = mavenName.split(":");
-        return parts[0].replace(".", "/") + "/" + parts[1] + "/" + parts[2] + "/" + parts[1] + "-" + parts[2] + ".jar";
+    public static String getPath(String coords) {
+        return new Artifact(coords).getPath();
     }
 
-    public static String getFilename(String mavenName) {
-        String[] parts = mavenName.split(":");
-        return parts[1] + "-" + parts[2] + ".jar";
+    public static String getFilename(String coords) {
+        return new Artifact(coords).getFilename();
     }
 
-    private static String getGroup(String mavenName) {
-        int index = mavenName.indexOf(":");
-        return index > -1 ? mavenName.substring(0, index) : "";
+    private static class Artifact {
+
+        // org.eclipse.aether.artifact.DefaultArtifact uses <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>
+        // however for some reason gradle, mojang, and multimc seem to agree on <group>:<name>:<version>[:classifier][@extension]
+        private static final Pattern PATTERN = Pattern.compile("([^: ]+):([^: ]+):([^: ]+)(?::([^: ]+))?(?:@([^@ ]+))?");
+        private static final String READABLE_PATTERN = "<group>:<name>:<version>[:classifier][@extension]";
+
+        private final String groupId;
+        private final String artifactId;
+        private final String version;
+        private final String extension;
+        private final String classifier;
+
+        public Artifact(String coords) throws IllegalArgumentException {
+            Matcher m = PATTERN.matcher(coords);
+            if (!m.matches()) {
+                throw new IllegalArgumentException("Bad artifact coordinates " + coords + ", expected format is " + READABLE_PATTERN);
+            }
+            groupId = m.group(1);
+            artifactId = m.group(2);
+            version = m.group(3);
+            classifier = get(m.group(4), "");
+            extension = get(m.group(5), "jar");
+        }
+
+        private static String get(String value, String defaultValue) {
+            return (value == null || value.isEmpty()) ? defaultValue : value;
+        }
+
+        public String getGroupId() {
+            return groupId;
+        }
+
+        public String getArtifactId() {
+            return artifactId;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public String getExtension() {
+            return extension;
+        }
+
+        public String getClassifier() {
+            return classifier;
+        }
+
+        public boolean hasClassifier() {
+            return !getClassifier().isEmpty();
+        }
+
+        public String getFilename() {
+            return getArtifactId() + "-" + getVersion() + (hasClassifier() ? "-" + getClassifier() : "") + "." + getExtension();
+        }
+
+        public String getPath() {
+            // Deliberately use "/" not File.separator
+            return getGroupId().replace(".", "/") + "/" + getArtifactId() + "/" + getVersion() + "/" + getFilename();
+        }
     }
 }
