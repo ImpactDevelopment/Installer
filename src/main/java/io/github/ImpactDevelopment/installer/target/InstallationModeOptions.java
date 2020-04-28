@@ -30,7 +30,8 @@ import java.util.function.Function;
 
 public enum InstallationModeOptions {
     VANILLA(Vanilla::new, true),
-    FORGE(Forge::new, true),
+    FORGE(opt -> new Forge(opt, false), true),
+    FORGE_PLUS_LITELOADER(opt -> new Forge(opt, true), true),
     VALIDATE(Validate::new, false),
     MULTIMC(MultiMC::new, true),
     SHOWJSON(ShowJSON::new, true);
@@ -46,6 +47,7 @@ public enum InstallationModeOptions {
     public boolean supports(ImpactVersion impact) {
         switch (this) {
             case FORGE:
+            case FORGE_PLUS_LITELOADER:
                 return impact.mcVersion.equals("1.12.2") && impact.impactVersion.compareTo("4.6") >= 0;
             default:
                 return true;
@@ -65,6 +67,8 @@ public enum InstallationModeOptions {
                 return "MultiMC";
             case FORGE:
                 return "Forge";
+            case FORGE_PLUS_LITELOADER:
+                return "Forge + Liteloader";
             case VALIDATE:
                 return "Validate Vanilla version";
             default:

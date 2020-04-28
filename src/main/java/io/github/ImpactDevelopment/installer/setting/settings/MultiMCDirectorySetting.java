@@ -29,7 +29,6 @@ import io.github.ImpactDevelopment.installer.utils.OperatingSystem;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 public enum MultiMCDirectorySetting implements Setting<Path> {
@@ -37,18 +36,16 @@ public enum MultiMCDirectorySetting implements Setting<Path> {
 
     @Override
     public Path getDefaultValue(InstallationConfig config) {
-        Path home = Paths.get(System.getProperty("user.home"));
+        Path home = OperatingSystem.getHome();
+        Path data = OperatingSystem.getDataDirectory();
+        Path downloads = OperatingSystem.getDownloads();
 
         // MultiMC is a portable app, so we can only guess its location.
         // On linux it can be installed via repos too, where it normally uses XDG_DATA_HOME, which is nice.
-        switch (OperatingSystem.getOS()) {
-            case WINDOWS:
-                return scanForMultiMC(Paths.get("C:"), Paths.get(System.getenv("APPDATA")), home, home.resolve("Downloads"), home.resolve("Games")).orElse(home);
-            case OSX:
-                return scanForMultiMC(Paths.get("/"), home, home.resolve("Library").resolve("Application Support"), home.resolve("Downloads")).orElse(home);
-            default:
-                return scanForMultiMC(linuxDefault(), home, home.resolve("Downloads")).orElse(linuxDefault());
+        if (OperatingSystem.getOS() == OperatingSystem.LINUX) {
+            return scanForMultiMC(data, home, downloads).orElse(data);
         }
+        return scanForMultiMC(home, data, home.resolve("Games"), downloads).orElse(home);
     }
 
     private static Optional<Path> scanForMultiMC(Path... locations) {
@@ -75,14 +72,6 @@ public enum MultiMCDirectorySetting implements Setting<Path> {
         // If multimc has been run in this location, even without completing setup, this file will exist
         Path config = path.resolve("multimc.cfg");
         return Files.isDirectory(path) && Files.isRegularFile(config);
-    }
-
-    private static Path linuxDefault() {
-        String xdg = System.getenv("XDG_DATA_HOME");
-        Path data = xdg.isEmpty()
-                ? Paths.get(System.getProperty("user.home")).resolve(".local").resolve("share")
-                : Paths.get(xdg);
-        return data.resolve("multimc");
     }
 
     @Override

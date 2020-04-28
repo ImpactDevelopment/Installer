@@ -22,6 +22,9 @@
 
 package io.github.ImpactDevelopment.installer.utils;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import static java.util.Locale.ROOT;
 
 /**
@@ -47,5 +50,31 @@ public enum OperatingSystem {
             return LINUX;
         }
         return UNKNOWN;
+    }
+
+    public static Path getHome() {
+        return Paths.get(System.getProperty("user.home"));
+    }
+
+    public static Path getDownloads() {
+        if (getOS() == OperatingSystem.LINUX) {
+            String xdg = System.getenv("XDG_DOWNLOAD_DIR");
+            if (xdg != null && !xdg.isEmpty()) return Paths.get(xdg);
+        }
+        return getHome().resolve("Downloads");
+    }
+
+    public static Path getDataDirectory() {
+        switch (getOS()) {
+            case WINDOWS: return Paths.get(System.getenv("APPDATA"));
+            case OSX: return getHome().resolve("Library").resolve("Application Support");
+            case LINUX: {
+                String xdg = System.getenv("XDG_DATA_HOME");
+                return xdg == null || xdg.isEmpty()
+                        ? getHome().resolve(".local").resolve("share")
+                        : Paths.get(xdg);
+            }
+            default: return getHome();
+        }
     }
 }

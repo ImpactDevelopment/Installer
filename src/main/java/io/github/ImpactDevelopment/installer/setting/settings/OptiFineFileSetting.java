@@ -20,14 +20,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package io.github.ImpactDevelopment.installer.target;
+package io.github.ImpactDevelopment.installer.setting.settings;
 
-import java.io.IOException;
+import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
+import io.github.ImpactDevelopment.installer.setting.Setting;
+import io.github.ImpactDevelopment.installer.utils.OperatingSystem;
 
-public interface InstallationMode {
-    String apply() throws Throwable;  // not gonna lie this is me when i enter sicko mode
+import java.nio.file.Path;
 
-    default String installOptifine() throws Throwable {
-        throw new IOException("Error: this installation mode doesn't support installing OptiFine");
+public enum OptiFineFileSetting implements Setting<Path> {
+    INSTANCE;
+
+    @Override
+    public Path getDefaultValue(InstallationConfig config) {
+        return OperatingSystem.getDownloads();
+    }
+
+    @Override
+    public boolean validSetting(InstallationConfig config, Path value) {
+//        return value.getFileName().toString().toLowerCase().endsWith(".jar");
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 }

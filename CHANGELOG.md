@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Reworked the way OptiFine is supported. Instead of searching for an installed OptiFine instance, the user provides us with an OptiFine installer jar.
+- `--minecraft-directory`'s aliases changed; `--launcher-dir` and `--launcher-directory` were added and `--mc-path` was removed.
+
+## Removed
+- Minecraft Directory setting from the GUI. It is still present as a CLI option.
+
+## [0.8.6] - 2020-04-24
+
+### Added
+- Added a sketchy compatibility mode for Forge + Liteloader for 1.12.2 only
 
 ## [0.8.5] - 2020-03-25
 
@@ -176,7 +187,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.8.5...HEAD
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.8.6...HEAD
+[0.8.6]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.6
 [0.8.5]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.5
 [0.8.4]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.4
 [0.8.3]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.3

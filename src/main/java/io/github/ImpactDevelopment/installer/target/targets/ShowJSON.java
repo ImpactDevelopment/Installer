@@ -55,4 +55,9 @@ public class ShowJSON implements InstallationMode {
         });
         return "Here is the JSON for Vanilla " + toDisplay.get("id");
     }
+
+    @Override
+    public String installOptifine() throws Throwable {
+        return new Vanilla(config).installOptifine();
+    }
 }

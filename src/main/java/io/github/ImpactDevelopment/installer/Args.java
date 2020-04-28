@@ -64,13 +64,13 @@ public class Args {
     @Parameter(names = {"--all"}, description = "Run on all Impact releases")
     public boolean all = false;
 
-    @Parameter(names = {"--mc-dir", "--minecraft-dir", "--minecraft-directory", "--mc-path"}, description = "Path to the Minecraft directory")
+    @Parameter(names = {"--mc-dir", "--minecraft-dir", "--minecraft-directory", "--launcher-dir", "--launcher-directory"}, description = "Path to the Minecraft Launcher directory")
     public String mcPath;
 
     @Parameter(names = {"--mmc-dir", "--multimc-dir", "--multimc-directory", "--mmc-path"}, description = "Path to the MultiMC directory")
     public String multimcPath;
 
-    @Parameter(names = {"--optifine", "--of"}, description = "OptiFine, in the format like 1.12.2_HD_U_E2")
+    @Parameter(names = {"--optifine", "--of"}, description = "Path to an OptiFine installer jar")
     public String optifine;
 
     @Parameter(names = {"--no-ga", "--no-analytics", "--dnt", "--no-tracky"}, description = "Disable Google Analytics")
@@ -130,7 +130,7 @@ public class Args {
                 setImpactVersion(config, true, version);
                 try {
                     System.out.println(config.execute());
-                } catch (IOException e) {
+                } catch (Throwable e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -147,7 +147,8 @@ public class Args {
             setImpactVersion(config, false, new ImpactVersionDisk(Paths.get(file)));
         }
         if (optifine != null) {
-            if (!config.setSettingValue(OptiFineSetting.INSTANCE, optifine)) {
+            config.setSettingValue(OptiFineToggleSetting.INSTANCE, true);
+            if (!config.setSettingValue(OptiFineFileSetting.INSTANCE, Paths.get(optifine))) {
                 throw new IllegalArgumentException(optifine + " is not found");
             }
         }

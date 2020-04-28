@@ -36,6 +36,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+/**
+ * Specify an optifine version that is already installed. Will error if a version is selected that isn't installed in the official launcher
+ *
+ * @deprecated in favour of OptiFineFileSetting and OptiFineToggleSetting
+ */
+@Deprecated
 public enum OptiFineSetting implements ChoiceSetting<String> {
     INSTANCE;
 
@@ -44,7 +50,7 @@ public enum OptiFineSetting implements ChoiceSetting<String> {
 
     @Override
     public List<String> getPossibleValues(InstallationConfig config) {
-        if (config.getSettingValue(InstallationModeSetting.INSTANCE) == InstallationModeOptions.FORGE || config.getSettingValue(MinecraftVersionSetting.INSTANCE).compareTo("1.15.2") > 0) {
+        if (config.getSettingValue(InstallationModeSetting.INSTANCE) == InstallationModeOptions.FORGE || config.getSettingValue(InstallationModeSetting.INSTANCE) == InstallationModeOptions.FORGE_PLUS_LITELOADER || config.getSettingValue(MinecraftVersionSetting.INSTANCE).compareTo("1.15.2") > 0) {
             return Collections.emptyList();
         }
         String minecraftVersion = config.getSettingValue(MinecraftVersionSetting.INSTANCE);
