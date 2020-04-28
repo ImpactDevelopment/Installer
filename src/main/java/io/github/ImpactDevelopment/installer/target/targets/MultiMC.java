@@ -32,11 +32,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.StreamSupport;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class MultiMC extends Vanilla {
@@ -84,13 +84,13 @@ public class MultiMC extends Vanilla {
         Files.createDirectories(patcher.getParent());
 
         System.out.println("Writing to " + instance.resolve("instance.cfg"));
-        Files.write(instance.resolve("instance.cfg"), generateInstanceConfig().getBytes(StandardCharsets.UTF_8));
+        Files.write(instance.resolve("instance.cfg"), generateInstanceConfig().getBytes(UTF_8));
 
         System.out.println("Writing to " + instance.resolve("mmc-pack.json"));
-        Files.write(instance.resolve("mmc-pack.json"), Installer.gson.toJson(generateMMCPack()).getBytes(StandardCharsets.UTF_8));
+        Files.write(instance.resolve("mmc-pack.json"), Installer.gson.toJson(generateMMCPack()).getBytes(UTF_8));
 
         System.out.println("Writing to " + patcher);
-        Files.write(patcher, Installer.gson.toJson(generateJsonVersion()).getBytes(StandardCharsets.UTF_8));
+        Files.write(patcher, Installer.gson.toJson(generateJsonVersion()).getBytes(UTF_8));
 
         if (optifine != null) {
             installOptifine();
@@ -183,6 +183,7 @@ public class MultiMC extends Vanilla {
         }
     }
 
+    // NPath complexity of 288 thanks to GSON's super-friendly API
     public void addToGroup() throws IOException {
         Path instgroups = instance.getParent().resolve("instgroups.json");
         JsonObject json = new JsonObject();
@@ -190,9 +191,8 @@ public class MultiMC extends Vanilla {
         // Read the current file content
         if (Files.isRegularFile(instgroups)) {
             try {
-                byte[] bytes = Files.readAllBytes(instgroups);
-                String string = new String(bytes, StandardCharsets.UTF_8);
-                json = new JsonParser().parse(string).getAsJsonObject();
+                String data = new String(Files.readAllBytes(instgroups), UTF_8);
+                json = new JsonParser().parse(data).getAsJsonObject();
             } catch (IllegalStateException | JsonParseException e) {
                 e.printStackTrace();
             }
@@ -203,8 +203,8 @@ public class MultiMC extends Vanilla {
         // Sanitise the json
         if (json.has("formatVersion")) {
             String v = json.getAsJsonPrimitive("formatVersion").getAsString();
-            if (!v.equals("1")) {
-                System.err.printf("Unexpected jormatVersion in instgroups.json found %s but expected %s%n", v, "1");
+            if (!"1".equals(v)) {
+                System.err.printf("Unexpected formatVersion in %s expected %s but found %s%n", instgroups.getFileName(), "1", v);
             }
         } else {
             json.addProperty("formatVersion", "1");
@@ -239,13 +239,14 @@ public class MultiMC extends Vanilla {
         if (StreamSupport.stream(instances.spliterator(), false)
                 .map(element -> element.getAsJsonPrimitive().getAsString())
                 .noneMatch(element -> element.equals(getId()))) {
-            instances.add(instanceID);
-        }
 
-        // Write the modified json
-        System.out.println("Saving modified instgroups.json to " + instgroups);
-        byte[] bytes = Installer.gson.toJson(json).getBytes(StandardCharsets.UTF_8);
-        Files.write(instgroups, bytes);
+            // Mutate
+            instances.add(instanceID);
+
+            // Write the modified json
+            System.out.println("Saving modified instgroups.json to " + instgroups);
+            Files.write(instgroups, Installer.gson.toJson(json).getBytes(UTF_8));
+        }
     }
 
     private JsonArray generateTweakers() {

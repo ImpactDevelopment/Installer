@@ -38,7 +38,6 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -211,7 +210,7 @@ public class Vanilla implements InstallationMode {
             }
         }
         System.out.println("Writing to " + directory.resolve(id + ".json"));
-        Files.write(directory.resolve(id + ".json"), Installer.gson.toJson(generateJsonVersion()).getBytes(StandardCharsets.UTF_8));
+        Files.write(directory.resolve(id + ".json"), Installer.gson.toJson(generateJsonVersion()).getBytes(UTF_8));
     }
 
     private void installProfiles() throws IOException {

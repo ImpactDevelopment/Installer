@@ -43,7 +43,7 @@ public enum MultiMCDirectorySetting implements Setting<Path> {
         // MultiMC is a portable app, so we can only guess its location.
         // On linux it can be installed via repos too, where it normally uses XDG_DATA_HOME, which is nice.
         if (OperatingSystem.getOS() == OperatingSystem.LINUX) {
-            return scanForMultiMC(data, home, downloads).orElse(data);
+            return scanForMultiMC(data, home, downloads).orElse(data.resolve("multimc"));
         }
         return scanForMultiMC(home, data, home.resolve("Games"), downloads).orElse(home);
     }
