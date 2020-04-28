@@ -65,7 +65,8 @@ public class MultiMC extends Vanilla {
                 System.err.println("WARNING: vanilla " + version.mcVersion + " jar not present in " + mmc.resolve("libraries") + " falling back to " + vanillaJar);
             } else {
                 if (optifine != null) {
-                    throw new IllegalStateException("OptiFine is required but unable to find a vanilla jar");
+                    // TODO consider just downloading the jar ourselves
+                    throw new IllegalStateException("OptiFine is required but unable to find a vanilla jar. Please run Minecraft " + version.mcVersion + " at least once.");
                 }
                 System.err.println("WARNING: vanilla " + version.mcVersion + " jar not present in MultiMC or the Official Launcher");
                 vanillaJar = null;
@@ -103,6 +104,9 @@ public class MultiMC extends Vanilla {
     public String installOptifine() throws IOException {
         if (optifine == null) {
             throw new IllegalStateException("No optifine specified, cannot install OptiFine");
+        }
+        if (vanillaJar == null) {
+            throw new IllegalStateException("No vanillaJar specified, cannot install OptiFine");
         }
 
         optifine.install(instance.resolve("libraries"), vanillaJar, false);
