@@ -109,6 +109,11 @@ public class MultiMC extends Vanilla {
             throw new IllegalStateException("No vanillaJar specified, cannot install OptiFine");
         }
 
+        // Since MultiMC 0.6.3 "local" libraries must be installed in instance/libraries rather than the main libraries
+        // directory. Unlike global libs, instance libs don't expect a full maven style path, instead MMC expects the
+        // artifact file to be in the root of the instance libraries directory.
+        // See https://github.com/MultiMC/MultiMC5/blob/develop/changelog.md#multimc-063
+        // and https://github.com/MultiMC/MultiMC5/wiki/JSON-Patches#libraries
         optifine.install(instance.resolve("libraries"), vanillaJar, false);
         return "Installed OptiFine successfully";
     }
@@ -125,7 +130,9 @@ public class MultiMC extends Vanilla {
         object.add("+tweakers", generateTweakers());
         JsonArray libraries = generateLibraries();
 
-        // Append "MMC-hint": "local" to any optifine libraries
+        // MultiMC will try to download libraries itself unless they are explicitly tagged as "local".
+        // I haven't checked if `downloads.artifacts.url: ""` works, but IMO just setting `MMC-hint: local` is a simpler
+        // and more idiomatic solution anyway.
         StreamSupport.stream(libraries.spliterator(), false)
                 .filter(lib -> {
                     try {
