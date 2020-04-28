@@ -117,9 +117,11 @@ public class MultiMC extends Vanilla {
         JsonObject vanilla = new JsonObject();
         JsonObject impact = new JsonObject();
 
+        // Setting `important: true` prevents users from "accidentally" editing the patcher json
         impact.addProperty("uid", version.id);
         impact.addProperty("version", getId());
         impact.addProperty("important", true);
+
         vanilla.addProperty("uid", "net.minecraft");
         vanilla.addProperty("version", version.mcVersion);
         vanilla.addProperty("important", true);
