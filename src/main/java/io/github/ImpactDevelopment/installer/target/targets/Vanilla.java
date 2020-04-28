@@ -159,7 +159,7 @@ public class Vanilla implements InstallationMode {
             {
                 JsonObject artifact = new JsonObject();
                 downloads.add("artifact", artifact);
-                artifact.addProperty("path", MavenResolver.partsToPath(lib.getName().split(":")));
+                artifact.addProperty("path", MavenResolver.getPath(lib.getName()));
                 artifact.addProperty("sha1", lib.getSHA1());
                 artifact.addProperty("size", lib.getSize());
                 artifact.addProperty("url", lib.getURL());
