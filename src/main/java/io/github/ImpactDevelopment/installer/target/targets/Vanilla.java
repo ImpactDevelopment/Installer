@@ -163,7 +163,7 @@ public class Vanilla implements InstallationMode {
         }
 
         Path libs = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("libraries");
-        optifine.install(libs, vanillaJar, false);
+        optifine.install(libs, vanillaJar, true);
 
         return "Installed OptiFine successfully";
     }
