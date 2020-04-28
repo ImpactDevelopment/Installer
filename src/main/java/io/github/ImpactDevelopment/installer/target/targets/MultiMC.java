@@ -24,19 +24,25 @@ package io.github.ImpactDevelopment.installer.target.targets;
 
 import com.google.gson.*;
 import io.github.ImpactDevelopment.installer.Installer;
+import io.github.ImpactDevelopment.installer.libraries.MavenResolver;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.settings.MultiMCDirectorySetting;
 
-import javax.swing.*;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.StreamSupport;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 public class MultiMC extends Vanilla {
 
-    private static final String ICON_KEY = "impact_512";
+    private static final URL ICON = ClassLoader.getSystemResource("icons/128.png");
+    private static final String ICON_KEY = "impact";
 
     private final String instanceName;
     private final String instanceID;
@@ -50,26 +56,47 @@ public class MultiMC extends Vanilla {
         this.instanceID = version.name + "-" + getStrippedVersion() + "-" + version.mcVersion + (optifine == null ? "" : "-OptiFine-" + optifine.getOptiFineVersion());
         this.mmc = config.getSettingValue(MultiMCDirectorySetting.INSTANCE);
         this.instance = mmc.resolve("instances").resolve(instanceID);
+
+        Path mmcVanillaJar = mmc.resolve("libraries").resolve(MavenResolver.getPath("com.mojang:minecraft:" + version.mcVersion + ":client"));
+        if (Files.exists(mmcVanillaJar)) {
+            vanillaJar = mmcVanillaJar;
+        } else {
+            if (Files.exists(vanillaJar)) {
+                System.err.println("WARNING: vanilla " + version.mcVersion + " jar not present in " + mmc.resolve("libraries") + " falling back to " + vanillaJar);
+            } else {
+                if (optifine != null) {
+                    throw new IllegalStateException("OptiFine is required but unable to find a vanilla jar");
+                }
+                System.err.println("WARNING: vanilla " + version.mcVersion + " jar not present in MultiMC or the Official Launcher");
+                vanillaJar = null;
+            }
+        }
     }
 
     @Override
-    public String apply() {
-        JsonObject toDisplay = generateJsonVersion();
-        String data = Installer.gson.toJson(toDisplay);
-        if (Installer.args.noGUI) {
-            return data;
+    public void install(boolean allowMCToBeOpen) throws IOException {
+        Path patcher = instance.resolve("patches").resolve(version.id + ".json");
+
+        // creates both instance and instance/patches
+        if (Files.notExists(instance)) System.out.println("Creating a new instance at " + instance);
+        else System.err.println("WARNING: instance already exists at " + instance);
+        Files.createDirectories(patcher.getParent());
+
+        System.out.println("Writing to " + instance.resolve("instance.cfg"));
+        Files.write(instance.resolve("instance.cfg"), generateInstanceConfig().getBytes(StandardCharsets.UTF_8));
+
+        System.out.println("Writing to " + instance.resolve("mmc-pack.json"));
+        Files.write(instance.resolve("mmc-pack.json"), Installer.gson.toJson(generateMMCPack()).getBytes(StandardCharsets.UTF_8));
+
+        System.out.println("Writing to " + patcher);
+        Files.write(patcher, Installer.gson.toJson(generateJsonVersion()).getBytes(StandardCharsets.UTF_8));
+
+        if (optifine != null) {
+            installOptifine();
         }
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame(toDisplay.get("version").getAsString());
-            JTextArea area = new JTextArea();
-            area.setEditable(true);
-            area.append(data);
-            area.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            frame.getContentPane().add(new JScrollPane(area));
-            frame.setSize(690, 420);
-            frame.setVisible(true);
-        });
-        return "Here is the JSON for MultiMC " + toDisplay.get("version");
+
+        addToGroup();
+        installIcon();
     }
 
     @Override
@@ -142,8 +169,18 @@ public class MultiMC extends Vanilla {
         return cfg.toString();
     }
 
+    public void installIcon() throws IOException {
+        if (ICON == null) throw new FileNotFoundException("Unable to load ICON with ClassLoader");
+
+        Path dest = mmc.resolve("icons").resolve(ICON_KEY + ".png");
+        Files.createDirectories(dest.getParent());
+        try (InputStream input = ICON.openStream()) {
+            Files.copy(input, dest, REPLACE_EXISTING);
+        }
+    }
+
     public void addToGroup() throws IOException {
-        Path instgroups = instance.getParent().resolve("insgroups.json");
+        Path instgroups = instance.getParent().resolve("instgroups.json");
         JsonObject json = new JsonObject();
 
         // Read the current file content
@@ -155,6 +192,8 @@ public class MultiMC extends Vanilla {
             } catch (IllegalStateException | JsonParseException e) {
                 e.printStackTrace();
             }
+        } else {
+            Files.createDirectories(instgroups.getParent());
         }
 
         // Sanitise the json
@@ -196,7 +235,7 @@ public class MultiMC extends Vanilla {
         if (StreamSupport.stream(instances.spliterator(), false)
                 .map(element -> element.getAsJsonPrimitive().getAsString())
                 .noneMatch(element -> element.equals(getId()))) {
-            instances.add(getId());
+            instances.add(instanceID);
         }
 
         // Write the modified json

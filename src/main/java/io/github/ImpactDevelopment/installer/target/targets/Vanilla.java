@@ -55,7 +55,8 @@ public class Vanilla implements InstallationMode {
     protected final ImpactJsonVersion version;
     protected final InstallationConfig config;
     protected final OptiFine optifine;
-    protected final Path vanillaJar;
+
+    protected Path vanillaJar;
 
     public Vanilla(InstallationConfig config) throws RuntimeException {
         Path mcDir = config.getSettingValue(MinecraftDirectorySetting.INSTANCE);
