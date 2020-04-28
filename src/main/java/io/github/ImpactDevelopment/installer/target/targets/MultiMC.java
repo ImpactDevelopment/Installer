@@ -131,8 +131,8 @@ public class MultiMC extends Vanilla {
         JsonArray libraries = generateLibraries();
 
         // MultiMC will try to download libraries itself unless they are explicitly tagged as "local".
-        // I haven't checked if `downloads.artifacts.url: ""` works, but IMO just setting `MMC-hint: local` is a simpler
-        // and more idiomatic solution anyway.
+        // I haven't checked if `downloads.artifacts.url: ""` works, but IMO just setting `MMC-hint: local` is simpler
+        // and more idiomatic anyway.
         StreamSupport.stream(libraries.spliterator(), false)
                 .filter(lib -> {
                     try {
