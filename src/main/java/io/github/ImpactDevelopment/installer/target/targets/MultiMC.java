@@ -85,7 +85,7 @@ public class MultiMC extends Vanilla {
     @Override
     public JsonObject generateJsonVersion() {
         JsonObject object = new JsonObject();
-        object.addProperty("fileID", "net.impactclient.Impact");
+        object.addProperty("fileID", version.id);
         object.addProperty("mainClass", version.mainClass);
         object.addProperty("mcVersion", version.mcVersion);
         object.addProperty("name", "Impact " + version.version);
@@ -117,8 +117,8 @@ public class MultiMC extends Vanilla {
         JsonObject vanilla = new JsonObject();
         JsonObject impact = new JsonObject();
 
-        impact.addProperty("uid", getId());
-        impact.addProperty("version", id);
+        impact.addProperty("uid", version.id);
+        impact.addProperty("version", getId());
         impact.addProperty("important", true);
         vanilla.addProperty("uid", "net.minecraft");
         vanilla.addProperty("version", version.mcVersion);
