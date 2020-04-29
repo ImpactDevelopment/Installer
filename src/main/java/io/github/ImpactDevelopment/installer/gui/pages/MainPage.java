@@ -103,7 +103,7 @@ public class MainPage extends JPanel {
         if (val.equals(InstallationModeOptions.MULTIMC)) {
             String label = "MultiMC installation directory";
             if (OperatingSystem.getOS() == OSX) {
-                label = "The MultiMC .app bundle";
+                label = "MultiMC application";
             }
             add(buildPathSetting(MultiMCDirectorySetting.INSTANCE,  label, JFileChooser.DIRECTORIES_ONLY, app));
         }
