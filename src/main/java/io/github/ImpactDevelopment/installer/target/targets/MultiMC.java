@@ -27,6 +27,7 @@ import io.github.ImpactDevelopment.installer.Installer;
 import io.github.ImpactDevelopment.installer.libraries.MavenResolver;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.settings.MultiMCDirectorySetting;
+import io.github.ImpactDevelopment.installer.utils.OperatingSystem;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -36,6 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.StreamSupport;
 
+import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.OSX;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -54,7 +56,9 @@ public class MultiMC extends Vanilla {
 
         this.instanceName = version.name + " " + getStrippedVersion() + " for " + version.mcVersion + (optifine == null ? "" : " with OptiFine " + optifine.getOptiFineVersion());
         this.instanceID = version.name + "-" + getStrippedVersion() + "-" + version.mcVersion + (optifine == null ? "" : "-OptiFine-" + optifine.getOptiFineVersion());
-        this.mmc = config.getSettingValue(MultiMCDirectorySetting.INSTANCE);
+
+        Path mmcDirectory = config.getSettingValue(MultiMCDirectorySetting.INSTANCE);
+        this.mmc = OperatingSystem.getOS() == OSX ? mmcDirectory.resolve("Contents").resolve("MacOS") : mmcDirectory;
         this.instance = mmc.resolve("instances").resolve(instanceID);
 
         Path mmcVanillaJar = mmc.resolve("libraries").resolve(MavenResolver.getPath("com.mojang:minecraft:" + version.mcVersion + ":client"));

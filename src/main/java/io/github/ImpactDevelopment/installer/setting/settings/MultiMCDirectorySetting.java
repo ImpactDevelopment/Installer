@@ -29,7 +29,10 @@ import io.github.ImpactDevelopment.installer.utils.OperatingSystem;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
+
+import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.OSX;
 
 public enum MultiMCDirectorySetting implements Setting<Path> {
     INSTANCE;
@@ -42,10 +45,14 @@ public enum MultiMCDirectorySetting implements Setting<Path> {
 
         // MultiMC is a portable app, so we can only guess its location.
         // On linux it can be installed via repos too, where it normally uses XDG_DATA_HOME, which is nice.
-        if (OperatingSystem.getOS() == OperatingSystem.LINUX) {
-            return scanForMultiMC(data, home, downloads).orElse(data.resolve("multimc"));
+        switch (OperatingSystem.getOS()) {
+            case LINUX:
+                return scanForMultiMC(data, home, downloads).orElse(data.resolve("multimc"));
+            case OSX:
+                return scanForMultiMC(home.resolve("Applications"), Paths.get("/Applications")).orElse(downloads);
+            default:
+                return scanForMultiMC(home, data, home.resolve("Games"), downloads).orElse(home);
         }
-        return scanForMultiMC(home, data, home.resolve("Games"), downloads).orElse(home);
     }
 
     private static Optional<Path> scanForMultiMC(Path... locations) {
@@ -69,6 +76,10 @@ public enum MultiMCDirectorySetting implements Setting<Path> {
     }
 
     private static boolean isMultiMC(Path path) {
+        if (OperatingSystem.getOS() == OSX) {
+            // On OSX, MultiMC nests its data within an app bundle
+            path = path.resolve("Contents").resolve("MacOS");
+        }
         // If multimc has been run in this location, even without completing setup, this file will exist
         Path config = path.resolve("multimc.cfg");
         return Files.isDirectory(path) && Files.isRegularFile(config);

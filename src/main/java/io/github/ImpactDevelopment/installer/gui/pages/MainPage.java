@@ -28,6 +28,7 @@ import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.Setting;
 import io.github.ImpactDevelopment.installer.setting.settings.*;
 import io.github.ImpactDevelopment.installer.target.InstallationModeOptions;
+import io.github.ImpactDevelopment.installer.utils.OperatingSystem;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,6 +39,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static io.github.ImpactDevelopment.installer.target.InstallationModeOptions.SHOWJSON;
+import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.OSX;
 import static javax.swing.JOptionPane.*;
 
 public class MainPage extends JPanel {
@@ -99,7 +101,11 @@ public class MainPage extends JPanel {
         add(container);
 
         if (val.equals(InstallationModeOptions.MULTIMC)) {
-            add(buildPathSetting(MultiMCDirectorySetting.INSTANCE, "MultiMC installation directory", JFileChooser.DIRECTORIES_ONLY, app));
+            String label = "MultiMC installation directory";
+            if (OperatingSystem.getOS() == OSX) {
+                label = "The MultiMC .app bundle";
+            }
+            add(buildPathSetting(MultiMCDirectorySetting.INSTANCE,  label, JFileChooser.DIRECTORIES_ONLY, app));
         }
     }
 
