@@ -63,7 +63,7 @@ public class MainPage extends JPanel {
                 // Special case if installing optifine in showJson mode
                 if (app.config.getSettingValue(InstallationModeSetting.INSTANCE).equals(SHOWJSON) && app.config.getSettingValue(OptiFineToggleSetting.INSTANCE)) {
                     msg += "\nDo you want to install OptiFine's libs?";
-                    if (JOptionPane.showConfirmDialog(app, msg, "\uD83D\uDE0E", YES_NO_OPTION, INFORMATION_MESSAGE) == YES_OPTION) {
+                    if (YES_OPTION == JOptionPane.showConfirmDialog(app, msg, "\uD83D\uDE0E", YES_NO_OPTION, INFORMATION_MESSAGE)) {
                         msg = app.config.installOptifine();
                     } else {
                         // Early return if no more msg dialogs needed
