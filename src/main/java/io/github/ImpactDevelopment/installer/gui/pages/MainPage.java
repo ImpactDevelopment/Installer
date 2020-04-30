@@ -38,38 +38,40 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static io.github.ImpactDevelopment.installer.target.InstallationModeOptions.MULTIMC;
 import static io.github.ImpactDevelopment.installer.target.InstallationModeOptions.SHOWJSON;
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.OSX;
 import static javax.swing.JOptionPane.*;
 
 public class MainPage extends JPanel {
     public MainPage(AppWindow app) {
+        InstallationModeOptions mode = app.config.getSettingValue(InstallationModeSetting.INSTANCE);
+
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         addSetting(InstallationModeSetting.INSTANCE, "Install for", app);
+        if (mode == MULTIMC) addMultiMCSetting(app);
         addSetting(MinecraftVersionSetting.INSTANCE, "Minecraft version", app);
         addSetting(ImpactVersionSetting.INSTANCE, "Impact version", app);
-        switch (app.config.getSettingValue(InstallationModeSetting.INSTANCE)) {
-            case FORGE:
-            case FORGE_PLUS_LITELOADER:
-                break;
-            default:
-                addOptifineSetting(app);
+        switch (mode) {
+            case FORGE: case FORGE_PLUS_LITELOADER: break;
+            default: addOptifineSetting(app);
         }
 
         JButton install = new JButton("Install");
         install.addActionListener((ActionEvent) -> {
             try {
                 String msg = app.config.execute();
+
                 // Special case if installing optifine in showJson mode
-                if (app.config.getSettingValue(InstallationModeSetting.INSTANCE).equals(SHOWJSON) && app.config.getSettingValue(OptiFineToggleSetting.INSTANCE)) {
+                if (mode == SHOWJSON && app.config.getSettingValue(OptiFineToggleSetting.INSTANCE)) {
                     msg += "\nDo you want to install OptiFine's libs?";
                     if (YES_OPTION == JOptionPane.showConfirmDialog(app, msg, "\uD83D\uDE0E", YES_NO_OPTION, INFORMATION_MESSAGE)) {
                         msg = app.config.installOptifine();
                     } else {
-                        // Early return if no more msg dialogs needed
-                        return;
+                        return; // Early return if no more msg dialogs needed
                     }
                 }
+
                 JOptionPane.showMessageDialog(app, msg, "\uD83D\uDE0E", INFORMATION_MESSAGE);
             } catch (Throwable e) {
                 app.exception(e);
@@ -99,14 +101,11 @@ public class MainPage extends JPanel {
         });
         container.add(comboBox);
         add(container);
+    }
 
-        if (val.equals(InstallationModeOptions.MULTIMC)) {
-            String label = "MultiMC installation directory";
-            if (OperatingSystem.getOS() == OSX) {
-                label = "MultiMC application";
-            }
-            add(buildPathSetting(MultiMCDirectorySetting.INSTANCE,  label, JFileChooser.DIRECTORIES_ONLY, app));
-        }
+    private void addMultiMCSetting(AppWindow app) {
+        String label = "MultiMC " + (OperatingSystem.getOS() == OSX ? "application" : "directory");
+        add(buildPathSetting(MultiMCDirectorySetting.INSTANCE,  label, JFileChooser.DIRECTORIES_ONLY, app));
     }
 
     private void addOptifineSetting(AppWindow app) {
