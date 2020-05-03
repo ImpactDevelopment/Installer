@@ -164,14 +164,14 @@ public class OptiFine {
     }
 
     // Install optifine jar and launchwrapper (if required) to the target libraries directory
-    public void install(Path libs, Path vanilla) throws IOException {
+    public void install(Path libs, Path vanilla, boolean fullPath) throws IOException {
         try {
-            installOptiFine(libs.resolve(MavenResolver.getPath(getOptiFineID())), vanilla);
+            installOptiFine(libs.resolve(fullPath ? MavenResolver.getPath(getOptiFineID()) : MavenResolver.getFilename(getOptiFineID())), vanilla);
         } catch (InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException("Error calling OptiFine patcher method", e);
         }
         if (getLaunchwrapperID() != null) {
-            installLaunchwrapper(libs.resolve(MavenResolver.getPath(getLaunchwrapperID())));
+            installLaunchwrapper(libs.resolve(fullPath ? MavenResolver.getPath(getLaunchwrapperID()) : MavenResolver.getFilename(getLaunchwrapperID())));
         }
     }
 

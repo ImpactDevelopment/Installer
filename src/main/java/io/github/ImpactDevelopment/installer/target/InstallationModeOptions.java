@@ -64,7 +64,7 @@ public enum InstallationModeOptions {
             case SHOWJSON:
                 return "Show Vanilla JSON";
             case MULTIMC:
-                return "Show MultiMC JSON";
+                return "MultiMC";
             case FORGE:
                 return "Forge";
             case FORGE_PLUS_LITELOADER:

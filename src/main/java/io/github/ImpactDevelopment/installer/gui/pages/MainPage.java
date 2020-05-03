@@ -27,6 +27,8 @@ import io.github.ImpactDevelopment.installer.setting.ChoiceSetting;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.Setting;
 import io.github.ImpactDevelopment.installer.setting.settings.*;
+import io.github.ImpactDevelopment.installer.target.InstallationModeOptions;
+import io.github.ImpactDevelopment.installer.utils.OperatingSystem;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,42 +38,41 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static io.github.ImpactDevelopment.installer.target.InstallationModeOptions.MULTIMC;
+import static io.github.ImpactDevelopment.installer.target.InstallationModeOptions.SHOWJSON;
+import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.OSX;
 import static javax.swing.JOptionPane.*;
 
 public class MainPage extends JPanel {
     public MainPage(AppWindow app) {
+        InstallationModeOptions mode = app.config.getSettingValue(InstallationModeSetting.INSTANCE);
+
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         addSetting(InstallationModeSetting.INSTANCE, "Install for", app);
+        if (mode == MULTIMC) addMultiMCSetting(app);
         addSetting(MinecraftVersionSetting.INSTANCE, "Minecraft version", app);
         addSetting(ImpactVersionSetting.INSTANCE, "Impact version", app);
-        switch (app.config.getSettingValue(InstallationModeSetting.INSTANCE)) {
-            case FORGE:
-            case FORGE_PLUS_LITELOADER:
-                break;
-            default:
-                addOptifineSetting(app);
+        switch (mode) {
+            case FORGE: case FORGE_PLUS_LITELOADER: break;
+            default: addOptifineSetting(app);
         }
 
         JButton install = new JButton("Install");
         install.addActionListener((ActionEvent) -> {
             try {
                 String msg = app.config.execute();
-                switch (app.config.getSettingValue(InstallationModeSetting.INSTANCE)) {
-                    case SHOWJSON:
-                    case MULTIMC:
-                        if (app.config.getSettingValue(OptiFineToggleSetting.INSTANCE)) {
-                            // Special case if installing optifine in showJson mode
-                            msg += "\nDo you want to install OptiFine's libs?";
-                            if (JOptionPane.showConfirmDialog(app, msg, "\uD83D\uDE0E", YES_NO_OPTION, INFORMATION_MESSAGE) == YES_OPTION) {
-                                msg = app.config.installOptifine();
-                            } else {
-                                // Only break the switch if no more msg to show, otherwise fallthrough
-                                break;
-                            }
-                        }
-                    default:
-                        JOptionPane.showMessageDialog(app, msg, "\uD83D\uDE0E", INFORMATION_MESSAGE);
+
+                // Special case if installing optifine in showJson mode
+                if (mode == SHOWJSON && app.config.getSettingValue(OptiFineToggleSetting.INSTANCE)) {
+                    msg += "\nDo you want to install OptiFine's libs?";
+                    if (YES_OPTION == JOptionPane.showConfirmDialog(app, msg, "\uD83D\uDE0E", YES_NO_OPTION, INFORMATION_MESSAGE)) {
+                        msg = app.config.installOptifine();
+                    } else {
+                        return; // Early return if no more msg dialogs needed
+                    }
                 }
+
+                JOptionPane.showMessageDialog(app, msg, "\uD83D\uDE0E", INFORMATION_MESSAGE);
             } catch (Throwable e) {
                 app.exception(e);
             }
@@ -100,6 +101,11 @@ public class MainPage extends JPanel {
         });
         container.add(comboBox);
         add(container);
+    }
+
+    private void addMultiMCSetting(AppWindow app) {
+        String label = "MultiMC " + (OperatingSystem.getOS() == OSX ? "application" : "directory");
+        add(buildPathSetting(MultiMCDirectorySetting.INSTANCE,  label, JFileChooser.DIRECTORIES_ONLY, app));
     }
 
     private void addOptifineSetting(AppWindow app) {

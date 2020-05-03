@@ -37,6 +37,7 @@ import java.util.stream.Stream;
  */
 public class ImpactJsonVersion {
     public String name; // will always be Impact :wink:
+    public String id = "net.impactclient.Impact";
     public String version;
     public String mcVersion;
     public String mainClass = "net.minecraft.launchwrapper.Launch";
@@ -46,6 +47,7 @@ public class ImpactJsonVersion {
 
     public void printInfo() {
         System.out.println(name);
+        System.out.println(id);
         System.out.println(version);
         System.out.println(mcVersion);
         System.out.println(mainClass);

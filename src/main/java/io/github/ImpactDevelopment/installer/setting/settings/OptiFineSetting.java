@@ -55,6 +55,7 @@ public enum OptiFineSetting implements ChoiceSetting<String> {
         }
         String minecraftVersion = config.getSettingValue(MinecraftVersionSetting.INSTANCE);
         Path minecraftDirectory = config.getSettingValue(MinecraftDirectorySetting.INSTANCE);
+        // TODO also look through multimc for installed optifine?
 
         List<String> result = new ArrayList<>();
         try {

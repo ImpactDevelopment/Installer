@@ -38,7 +38,6 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -51,11 +50,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Vanilla implements InstallationMode {
 
-    private final String id;
-    private final ImpactJsonVersion version;
-    private final InstallationConfig config;
-    private final OptiFine optifine;
-    private final Path vanillaJar;
+    protected final String id;
+    protected final ImpactJsonVersion version;
+    protected final InstallationConfig config;
+    protected final OptiFine optifine;
+
+    protected Path vanillaJar;
 
     public Vanilla(InstallationConfig config) throws RuntimeException {
         Path mcDir = config.getSettingValue(MinecraftDirectorySetting.INSTANCE);
@@ -75,7 +75,7 @@ public class Vanilla implements InstallationMode {
         }
     }
 
-    public JsonObject generateVanillaJsonVersion() {
+    public JsonObject generateJsonVersion() {
         JsonObject object = new JsonObject();
         object.addProperty("id", id);
         object.addProperty("type", "release");
@@ -87,22 +87,7 @@ public class Vanilla implements InstallationMode {
         object.addProperty("minimumLauncherVersion", 0);
         object.addProperty("mainClass", version.mainClass);
         populateArguments(object);
-        populateLibraries(object, false);
-        return object;
-    }
-
-    public JsonObject generateMultiMCJsonVersion() {
-        JsonObject object = new JsonObject();
-        JsonArray arrayTweakers = new JsonArray();
-        version.tweakers.forEach(arrayTweakers::add);
-        object.addProperty("fileID", "net.impactclient.Impact");
-        object.addProperty("mainClass", version.mainClass);
-        object.addProperty("mcVersion", version.mcVersion);
-        object.addProperty("name", "Impact " + version.version);
-        object.addProperty("order", 10);
-        object.addProperty("version", id);
-        object.add("+tweakers", arrayTweakers);
-        populateLibraries(object, true);
+        object.add("libraries", generateLibraries());
         return object;
     }
 
@@ -123,22 +108,20 @@ public class Vanilla implements InstallationMode {
         }
     }
 
-    private void populateLibraries(JsonObject object, boolean multimc) {
+    protected JsonArray generateLibraries() {
         JsonArray libraries = new JsonArray();
+
         for (ILibrary lib : version.resolveLibraries(config)) {
             populateLib(lib, libraries);
         }
+
         if (optifine != null) {
             JsonObject lib = new JsonObject();
             lib.addProperty("name", optifine.getOptiFineID());
             libraries.add(lib);
         }
 
-        if (multimc) {
-            object.add("+libraries", libraries);
-        } else {
-            object.add("libraries", libraries);
-        }
+        return libraries;
     }
 
     private void populateLib(ILibrary lib, JsonArray libraries) {
@@ -180,7 +163,7 @@ public class Vanilla implements InstallationMode {
         }
 
         Path libs = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("libraries");
-        optifine.install(libs, vanillaJar);
+        optifine.install(libs, vanillaJar, true);
 
         return "Installed OptiFine successfully";
     }
@@ -227,7 +210,7 @@ public class Vanilla implements InstallationMode {
             }
         }
         System.out.println("Writing to " + directory.resolve(id + ".json"));
-        Files.write(directory.resolve(id + ".json"), Installer.gson.toJson(generateVanillaJsonVersion()).getBytes(StandardCharsets.UTF_8));
+        Files.write(directory.resolve(id + ".json"), Installer.gson.toJson(generateJsonVersion()).getBytes(UTF_8));
     }
 
     private void installProfiles() throws IOException {
@@ -235,13 +218,8 @@ public class Vanilla implements InstallationMode {
         VanillaProfiles profiles = new VanillaProfiles(config);
         System.out.println("Injecting impact version...");
 
-        // go from 4.7.0-beta to 4.7-beta
-        String strippedVersion = version.version.split("-")[0];
-        if (strippedVersion.indexOf('.') != strippedVersion.lastIndexOf('.')) {
-            strippedVersion = strippedVersion.substring(0, strippedVersion.lastIndexOf('.'));
-        }
 
-        profiles.addOrMutate(version.name + " " + strippedVersion + " for " + version.mcVersion, getId());
+        profiles.addOrMutate(version.name + " " + getStrippedVersion() + " for " + version.mcVersion, getId());
         System.out.println("Saving vanilla profiles");
         profiles.saveToDisk();
     }
@@ -255,6 +233,15 @@ public class Vanilla implements InstallationMode {
         } catch (Throwable e) {
             return false;
         }
+    }
+
+    public String getStrippedVersion() {
+        // go from 4.7.0-beta to 4.7-beta
+        String strippedVersion = version.version.split("-")[0];
+        if (strippedVersion.indexOf('.') != strippedVersion.lastIndexOf('.')) {
+            strippedVersion = strippedVersion.substring(0, strippedVersion.lastIndexOf('.'));
+        }
+        return strippedVersion;
     }
 
     public String getId() {

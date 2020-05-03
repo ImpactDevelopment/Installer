@@ -28,6 +28,7 @@ import io.github.ImpactDevelopment.installer.impact.ImpactVersionDisk;
 import io.github.ImpactDevelopment.installer.impact.ImpactVersionReleased;
 import io.github.ImpactDevelopment.installer.impact.ImpactVersions;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
+import io.github.ImpactDevelopment.installer.setting.Setting;
 import io.github.ImpactDevelopment.installer.setting.settings.*;
 import io.github.ImpactDevelopment.installer.target.InstallationModeOptions;
 
@@ -65,6 +66,9 @@ public class Args {
 
     @Parameter(names = {"--mc-dir", "--minecraft-dir", "--minecraft-directory", "--launcher-dir", "--launcher-directory"}, description = "Path to the Minecraft Launcher directory")
     public String mcPath;
+
+    @Parameter(names = {"--mmc-dir", "--multimc-dir", "--multimc-directory", "--mmc-path"}, description = "Path to the MultiMC directory")
+    public String multimcPath;
 
     @Parameter(names = {"--optifine", "--of"}, description = "Path to an OptiFine installer jar")
     public String optifine;
@@ -113,11 +117,10 @@ public class Args {
 
     public void apply(InstallationConfig config) {
         if (mcPath != null) {
-            Path path = Paths.get(mcPath);
-            if (!Files.isDirectory(path)) {
-                throw new IllegalStateException(path + " is not a directory");
-            }
-            config.setSettingValue(MinecraftDirectorySetting.INSTANCE, path);
+            setDirectory(config, MinecraftDirectorySetting.INSTANCE, mcPath);
+        }
+        if (multimcPath != null) {
+            setDirectory(config, MultiMCDirectorySetting.INSTANCE, multimcPath);
         }
         if (mode != null) {
             config.setSettingValue(InstallationModeSetting.INSTANCE, InstallationModeOptions.valueOf(mode.toUpperCase()));
@@ -149,6 +152,14 @@ public class Args {
                 throw new IllegalArgumentException(optifine + " is not found");
             }
         }
+    }
+
+    private void setDirectory(InstallationConfig config, Setting<Path> setting, String value) {
+        Path path = Paths.get(value);
+        if (!Files.isDirectory(path)) {
+            throw new IllegalStateException(path + " is not a directory");
+        }
+        config.setSettingValue(setting, path);
     }
 
     private void setImpactVersion(InstallationConfig config, boolean checkMcVersionValidityAgainstReleases, ImpactVersion version) {

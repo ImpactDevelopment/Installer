@@ -27,7 +27,6 @@ import io.github.ImpactDevelopment.installer.setting.Setting;
 import io.github.ImpactDevelopment.installer.utils.OperatingSystem;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public enum MinecraftDirectorySetting implements Setting<Path> {
     INSTANCE;
@@ -36,11 +35,11 @@ public enum MinecraftDirectorySetting implements Setting<Path> {
     public Path getDefaultValue(InstallationConfig config) {
         switch (OperatingSystem.getOS()) {
             case WINDOWS:
-                return Paths.get(System.getenv("APPDATA")).resolve(".minecraft");
+                return OperatingSystem.getDataDirectory().resolve(".minecraft");
             case OSX:
-                return Paths.get(System.getProperty("user.home")).resolve("Library").resolve("Application Support").resolve("minecraft");
+                return OperatingSystem.getDataDirectory().resolve("minecraft");
             default:
-                return Paths.get(System.getProperty("user.home")).resolve(".minecraft");
+                return OperatingSystem.getHome().resolve(".minecraft");
         }
     }
 
