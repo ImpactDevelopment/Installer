@@ -35,8 +35,10 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import static io.github.ImpactDevelopment.installer.target.InstallationModeOptions.MULTIMC;
 import static io.github.ImpactDevelopment.installer.target.InstallationModeOptions.SHOWJSON;
@@ -57,9 +59,44 @@ public class MainPage extends JPanel {
             default: addOptifineSetting(app);
         }
 
-        JButton install = new JButton("Install");
+        JButton install = new JButton(mode.getButtonText());
         install.addActionListener((ActionEvent) -> {
             try {
+                Optional<Path> destination = Optional.ofNullable(app.config.getSettingValue(DestinationSetting.INSTANCE));
+                if (destination.isPresent()) {
+                    Path dest = destination.get();
+                    // JFileChooser won't open in a directory unless it exists;
+                    // If destination is inside .minecraft and .minecraft exists, create the dest dir
+                    Path defaultLauncher = app.config.getSettingValue(MinecraftDirectorySetting.INSTANCE);
+                    if (Files.isDirectory(defaultLauncher) && dest.toAbsolutePath().startsWith(defaultLauncher.toAbsolutePath())) {
+                        Files.createDirectories(dest.getParent());
+                    }
+                    // Otherwise, find the nearest existing parent.
+                    // (we don't want to create random directories just to open a Save dialog)
+                    Path dir = dest;
+                    while (dir != null && !Files.isDirectory(dir)) {
+                        dir = dir.getParent();
+                    }
+                    // If we couldn't find a directory, set a default
+                    if (dir == null) {
+                        dir = OperatingSystem.getHome();
+                    }
+
+                    JFileChooser dialog = new JFileChooser(dir.toFile());
+                    dialog.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                    dialog.setSelectedFile(dest.toFile());
+                    switch (dialog.showSaveDialog(app)) {
+                        case JFileChooser.APPROVE_OPTION:
+                            // save to destination
+                            app.config.setSettingValue(DestinationSetting.INSTANCE, dialog.getSelectedFile().toPath());
+                            break;
+                        case JFileChooser.ERROR_OPTION:
+                            throw new RuntimeException("Unexpected error in save dialog");
+                        case JFileChooser.CANCEL_OPTION:
+                            return;
+                    }
+                }
+
                 String msg = app.config.execute();
 
                 // Special case if installing optifine in showJson mode

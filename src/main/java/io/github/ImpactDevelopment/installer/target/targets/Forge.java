@@ -25,6 +25,7 @@ package io.github.ImpactDevelopment.installer.target.targets;
 import io.github.ImpactDevelopment.installer.impact.ImpactJsonVersion;
 import io.github.ImpactDevelopment.installer.libraries.ILibrary;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
+import io.github.ImpactDevelopment.installer.setting.settings.DestinationSetting;
 import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
 import io.github.ImpactDevelopment.installer.setting.settings.MinecraftDirectorySetting;
 import io.github.ImpactDevelopment.installer.target.InstallationMode;
@@ -42,8 +43,10 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
+import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -60,22 +63,26 @@ public class Forge implements InstallationMode {
     }
 
     @Override
-    public String apply() {
-        Path out = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("mods").resolve(version.mcVersion).resolve(version.name + "-" + version.version + "-" + version.mcVersion + ".jar");
+    public String apply() throws IOException {
+        Path out = config.getSettingValue(DestinationSetting.INSTANCE);
+
+        if (Files.isDirectory(out)) {
+            out = out.resolve(version.name + "-" + version.version + "-" + version.mcVersion + ".jar");
+        }
 
         if (!Files.exists(out.getParent())) {
-            try {
-                Files.createDirectories(out.getParent());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Files.createDirectories(out.getParent());
         }
 
         if (liteloaderSupport) {
             JOptionPane.showMessageDialog(null, "This Forge jar will ONLY work with Liteloader + Forge, not with either on their own.\nIf you don't have liteloader, use the Forge option instead!\nIf you change your mind and just want Forge (no liteloader), you will need to reinstall Impact with the correct option!", "IMPORTANT", JOptionPane.INFORMATION_MESSAGE);
         }
 
-        Tracky.persist(config.getSettingValue(MinecraftDirectorySetting.INSTANCE));
+        Path defaultLauncher = config.getSettingValue(MinecraftDirectorySetting.INSTANCE);
+        if (Files.isDirectory(defaultLauncher)) {
+            Tracky.persist(defaultLauncher);
+        }
+
         HashSet<String> fileNames = new HashSet<>();
         try (JarOutputStream jarOut = new JarOutputStream(new FileOutputStream(out.toFile()))) {
             for (ILibrary library : version.resolveLibraries(config)) {
@@ -122,21 +129,32 @@ public class Forge implements InstallationMode {
             throw new RuntimeException(e);
         }
 
-        // Remove other Impact forge jars
+        // Look for other Impact forge jars
         try {
-            Files.list(out.getParent())
-                    .filter(f -> !f.equals(out))
+            final Path finalOut = out; //Variable used in lambda expression should be final or effectively final
+            List<Path> conflicts = Files.list(out.getParent())
+                    .filter(f -> !f.equals(finalOut))
                     .filter(f -> f.getFileName().toString().startsWith("Impact-"))
                     .filter(f -> f.getFileName().toString().endsWith(".jar"))
-                    .forEach(f -> {
-                        try {
-                            JOptionPane.showMessageDialog(null, "Replacing " + f, "\uD83D\uDE0E", JOptionPane.INFORMATION_MESSAGE);
-                            Files.delete(f);
-                        } catch (IOException e) {
-                            JOptionPane.showMessageDialog(null, "Failed to remove " + f, "\uD83D\uDE0E", JOptionPane.ERROR_MESSAGE);
-                            e.printStackTrace();
+                    .collect(Collectors.toList());
+
+            // If we find any Impact jars, warn the user and ask to delete them
+            if (!conflicts.isEmpty()) {
+                List<String> names = conflicts.stream().map(Path::getFileName).map(Path::toString).collect(Collectors.toList());
+                JOptionPane.showMessageDialog(null, "Warning: Having multiple Impact mods installed will cause errors:\n" + String.join("\n", names), "\uD83D\uDE0E", JOptionPane.WARNING_MESSAGE);
+
+                conflicts.forEach(conflict -> {
+                        if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(null, "Would you like to remove " + conflict.getFileName() + "?", "\uD83D\uDE0E", JOptionPane.YES_NO_OPTION)) {
+                            try {
+                                Files.delete(conflict);
+                                JOptionPane.showMessageDialog(null, "Removed " + conflict, "\uD83D\uDE0E", JOptionPane.INFORMATION_MESSAGE);
+                            } catch (IOException e) {
+                                JOptionPane.showMessageDialog(null, "Failed to remove " + conflict.getFileName() + ":\n" + e.getMessage(), "\uD83D\uDE0E", JOptionPane.ERROR_MESSAGE);
+                                e.printStackTrace();
+                            }
                         }
-                    });
+                });
+            }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Error while checking for older Impact Forge installations: " + e.getLocalizedMessage(), "\uD83D\uDE0E", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();

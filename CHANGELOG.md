@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Added full support for MultiMC installation. The MultiMC mode now creates an instance just like the Vanilla mode creates a profile.
+- Added a "Save As" dialog to the Forge installation mode and a matching CLI argument `--destination`. This replaces the previous "Install" button, but only for Forge mode.
 
 ### Changed
 - Reworked the way OptiFine is supported. Instead of searching for an installed OptiFine instance, the user provides us with an OptiFine installer jar.
 - `--minecraft-directory`'s aliases changed; `--launcher-dir` and `--launcher-directory` were added and `--mc-path` was removed.
+- In "Show Vanilla JSON" mode the "Install" button now says "Show JSON" instead.
 
 ## Removed
 - Minecraft Directory setting from the GUI. It is still present as a CLI option.
