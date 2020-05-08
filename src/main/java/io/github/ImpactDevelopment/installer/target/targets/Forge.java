@@ -43,8 +43,10 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
+import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -125,6 +127,37 @@ public class Forge implements InstallationMode {
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+
+        // Look for other Impact forge jars
+        try {
+            final Path finalOut = out; //Variable used in lambda expression should be final or effectively final
+            List<Path> conflicts = Files.list(out.getParent())
+                    .filter(f -> !f.equals(finalOut))
+                    .filter(f -> f.getFileName().toString().startsWith("Impact-"))
+                    .filter(f -> f.getFileName().toString().endsWith(".jar"))
+                    .collect(Collectors.toList());
+
+            // If we find any Impact jars, warn the user and ask to delete them
+            if (!conflicts.isEmpty()) {
+                List<String> names = conflicts.stream().map(Path::getFileName).map(Path::toString).collect(Collectors.toList());
+                JOptionPane.showMessageDialog(null, "Warning: Having multiple Impact mods installed will cause errors:\n" + String.join("\n", names), "\uD83D\uDE0E", JOptionPane.WARNING_MESSAGE);
+
+                conflicts.forEach(conflict -> {
+                        if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(null, "Would you like to remove " + conflict.getFileName() + "?", "\uD83D\uDE0E", JOptionPane.YES_NO_OPTION)) {
+                            try {
+                                Files.delete(conflict);
+                                JOptionPane.showMessageDialog(null, "Removed " + conflict, "\uD83D\uDE0E", JOptionPane.INFORMATION_MESSAGE);
+                            } catch (IOException e) {
+                                JOptionPane.showMessageDialog(null, "Failed to remove " + conflict.getFileName() + ":\n" + e.getMessage(), "\uD83D\uDE0E", JOptionPane.ERROR_MESSAGE);
+                                e.printStackTrace();
+                            }
+                        }
+                });
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error while checking for older Impact Forge installations: " + e.getLocalizedMessage(), "\uD83D\uDE0E", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
 
         return "Impact Forge has been successfully installed at " + out;
