@@ -64,6 +64,9 @@ public class Args {
     @Parameter(names = {"--all"}, description = "Run on all Impact releases")
     public boolean all = false;
 
+    @Parameter(names = {"--out", "--destination", "--dest"}, description = "Where to output \"Save As\" style modes like \"Forge\".")
+    public String dest;
+
     @Parameter(names = {"--mc-dir", "--minecraft-dir", "--minecraft-directory", "--launcher-dir", "--launcher-directory"}, description = "Path to the Minecraft Launcher directory")
     public String mcPath;
 
@@ -116,12 +119,6 @@ public class Args {
     }
 
     public void apply(InstallationConfig config) {
-        if (mcPath != null) {
-            setDirectory(config, MinecraftDirectorySetting.INSTANCE, mcPath);
-        }
-        if (multimcPath != null) {
-            setDirectory(config, MultiMCDirectorySetting.INSTANCE, multimcPath);
-        }
         if (mode != null) {
             config.setSettingValue(InstallationModeSetting.INSTANCE, InstallationModeOptions.valueOf(mode.toUpperCase()));
         }
@@ -152,11 +149,20 @@ public class Args {
                 throw new IllegalArgumentException(optifine + " is not found");
             }
         }
+        if (mcPath != null) {
+            setPath(config, MinecraftDirectorySetting.INSTANCE, mcPath, true);
+        }
+        if (multimcPath != null) {
+            setPath(config, MultiMCDirectorySetting.INSTANCE, multimcPath, true);
+        }
+        if (dest != null) {
+            setPath(config, DestinationSetting.INSTANCE, dest, false);
+        }
     }
 
-    private void setDirectory(InstallationConfig config, Setting<Path> setting, String value) {
+    private void setPath(InstallationConfig config, Setting<Path> setting, String value, boolean mustBeDirectory) {
         Path path = Paths.get(value);
-        if (!Files.isDirectory(path)) {
+        if (mustBeDirectory && !Files.isDirectory(path)) {
             throw new IllegalStateException(path + " is not a directory");
         }
         config.setSettingValue(setting, path);

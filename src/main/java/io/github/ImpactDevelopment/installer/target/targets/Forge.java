@@ -25,6 +25,7 @@ package io.github.ImpactDevelopment.installer.target.targets;
 import io.github.ImpactDevelopment.installer.impact.ImpactJsonVersion;
 import io.github.ImpactDevelopment.installer.libraries.ILibrary;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
+import io.github.ImpactDevelopment.installer.setting.settings.DestinationSetting;
 import io.github.ImpactDevelopment.installer.setting.settings.ImpactVersionSetting;
 import io.github.ImpactDevelopment.installer.setting.settings.MinecraftDirectorySetting;
 import io.github.ImpactDevelopment.installer.target.InstallationMode;
@@ -60,22 +61,26 @@ public class Forge implements InstallationMode {
     }
 
     @Override
-    public String apply() {
-        Path out = config.getSettingValue(MinecraftDirectorySetting.INSTANCE).resolve("mods").resolve(version.mcVersion).resolve(version.name + "-" + version.version + "-" + version.mcVersion + ".jar");
+    public String apply() throws IOException {
+        Path out = config.getSettingValue(DestinationSetting.INSTANCE);
+
+        if (Files.isDirectory(out)) {
+            out = out.resolve(version.name + "-" + version.version + "-" + version.mcVersion + ".jar");
+        }
 
         if (!Files.exists(out.getParent())) {
-            try {
-                Files.createDirectories(out.getParent());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Files.createDirectories(out.getParent());
         }
 
         if (liteloaderSupport) {
             JOptionPane.showMessageDialog(null, "This Forge jar will ONLY work with Liteloader + Forge, not with either on their own.\nIf you don't have liteloader, use the Forge option instead!\nIf you change your mind and just want Forge (no liteloader), you will need to reinstall Impact with the correct option!", "IMPORTANT", JOptionPane.INFORMATION_MESSAGE);
         }
 
-        Tracky.persist(config.getSettingValue(MinecraftDirectorySetting.INSTANCE));
+        Path defaultLauncher = config.getSettingValue(MinecraftDirectorySetting.INSTANCE);
+        if (Files.isDirectory(defaultLauncher)) {
+            Tracky.persist(defaultLauncher);
+        }
+
         HashSet<String> fileNames = new HashSet<>();
         try (JarOutputStream jarOut = new JarOutputStream(new FileOutputStream(out.toFile()))) {
             for (ILibrary library : version.resolveLibraries(config)) {
@@ -120,26 +125,6 @@ public class Forge implements InstallationMode {
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-
-        // Remove other Impact forge jars
-        try {
-            Files.list(out.getParent())
-                    .filter(f -> !f.equals(out))
-                    .filter(f -> f.getFileName().toString().startsWith("Impact-"))
-                    .filter(f -> f.getFileName().toString().endsWith(".jar"))
-                    .forEach(f -> {
-                        try {
-                            JOptionPane.showMessageDialog(null, "Replacing " + f, "\uD83D\uDE0E", JOptionPane.INFORMATION_MESSAGE);
-                            Files.delete(f);
-                        } catch (IOException e) {
-                            JOptionPane.showMessageDialog(null, "Failed to remove " + f, "\uD83D\uDE0E", JOptionPane.ERROR_MESSAGE);
-                            e.printStackTrace();
-                        }
-                    });
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error while checking for older Impact Forge installations: " + e.getLocalizedMessage(), "\uD83D\uDE0E", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
         }
 
         return "Impact Forge has been successfully installed at " + out;

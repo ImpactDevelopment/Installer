@@ -29,19 +29,23 @@ import io.github.ImpactDevelopment.installer.target.targets.*;
 import java.util.function.Function;
 
 public enum InstallationModeOptions {
-    VANILLA(Vanilla::new, true),
-    FORGE(opt -> new Forge(opt, false), true),
-    FORGE_PLUS_LITELOADER(opt -> new Forge(opt, true), true),
-    VALIDATE(Validate::new, false),
-    MULTIMC(MultiMC::new, true),
-    SHOWJSON(ShowJSON::new, true);
+    VANILLA("Vanilla", "Install", true, Vanilla::new),
+    FORGE("Forge", "Save As", true, opt -> new Forge(opt, false)),
+    FORGE_PLUS_LITELOADER("Forge + Liteloader", "Save As", true, opt -> new Forge(opt, true)),
+    VALIDATE("Validate Vanilla version", "Validate", false, Validate::new),
+    MULTIMC("MultiMC", "Install", true, MultiMC::new),
+    SHOWJSON("Show Vanilla JSON", "Show JSON", true, ShowJSON::new);
 
-    InstallationModeOptions(Function<InstallationConfig, InstallationMode> mode, boolean showInGUI) {
+    InstallationModeOptions(String name, String buttonText, boolean showInGUI, Function<InstallationConfig, InstallationMode> mode) {
         this.mode = mode;
+        this.name = name;
+        this.buttonText = buttonText;
         this.showInGUI = showInGUI;
     }
 
     public final Function<InstallationConfig, InstallationMode> mode;
+    private final String name;
+    private final String buttonText;
     public final boolean showInGUI;
 
     public boolean supports(ImpactVersion impact) {
@@ -54,25 +58,12 @@ public enum InstallationModeOptions {
         }
     }
 
+    public String getButtonText() {
+        return buttonText;
+    }
+
     @Override
     public String toString() {
-        // incredibly based code
-        // this is oof NGL :eyes:
-        switch (this) {
-            case VANILLA:
-                return "Vanilla";
-            case SHOWJSON:
-                return "Show Vanilla JSON";
-            case MULTIMC:
-                return "MultiMC";
-            case FORGE:
-                return "Forge";
-            case FORGE_PLUS_LITELOADER:
-                return "Forge + Liteloader";
-            case VALIDATE:
-                return "Validate Vanilla version";
-            default:
-                return "Unknown";
-        }
+        return name;
     }
 }
