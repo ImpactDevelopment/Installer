@@ -29,5 +29,5 @@ You can now run or debug the installer with `Shift`+`F10` and `Shift`+`F9`.
 Please see [Contributing]
 
 [Impact]: https://impactdevelopment.github.io/
-[releases]: /../../releases
+[releases]: https://github.com/ImpactDevelopment/Installer/releases
 [Contributing]: CONTRIBUTING.md

@@ -45,10 +45,10 @@ You'll want to add your change in the `## [Upcoming]` section, since it will mos
 
 Finally, remember that Changelogs are for humans, not machines. You should be describing what changed, from a user's perspective, not how it was changed from a technical perspective (that is what commit messages are for).  
 
-[issues list]: /../../issues
-[new issue]: /../../issues/new
-[fork]: /../../fork
-[devenv]: /../..#setting-up-a-development-environment
+[issues list]: https://github.com/ImpactDevelopment/Installer/issues
+[new issue]: https://github.com/ImpactDevelopment/Installer/issues/new
+[fork]: https://github.com/ImpactDevelopment/Installer/fork
+[devenv]: README.md#setting-up-a-development-environment
 [contrib]: CONTRIBUTORS.md
 [documenting your changes]: #documenting-your-changes
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
