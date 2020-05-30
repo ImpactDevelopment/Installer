@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- Already installed OptiFine versions installed in the Official Launcher can be used again, without requiring an OptiFine installer jar. 
 - Improved the GUI spacing and layout.
 - Improved the OptiFine download link using `JHyperlink` from the [SwingSet3 demo](https://mvnrepository.com/artifact/org.webswing/webswing-demo-swingset3).
 
