@@ -37,11 +37,12 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * Specify an optifine version that is already installed. Will error if a version is selected that isn't installed in the official launcher
+ * Specify an OptiFine version that is already installed.
+ * Will error if a version is selected that isn't installed in the official launcher
  *
- * @deprecated in favour of OptiFineFileSetting and OptiFineToggleSetting
+ * @see OptiFineToggleSetting
+ * @see OptiFineFileSetting
  */
-@Deprecated
 public enum OptiFineSetting implements ChoiceSetting<String> {
     INSTANCE;
 

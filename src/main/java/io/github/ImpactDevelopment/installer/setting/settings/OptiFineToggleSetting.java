@@ -24,6 +24,11 @@ package io.github.ImpactDevelopment.installer.setting.settings;
 
 import io.github.ImpactDevelopment.installer.setting.BooleanSetting;
 
+/**
+ * Controls whether OptiFine will be installed or not.
+ *
+ * The actual installer or version should be set in {@link OptiFineFileSetting} or {@link OptiFineSetting} respectively.
+ */
 public enum OptiFineToggleSetting implements BooleanSetting {
     INSTANCE;
 

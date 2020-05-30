@@ -36,11 +36,11 @@ import io.github.ImpactDevelopment.installer.target.InstallationMode;
 import io.github.ImpactDevelopment.installer.utils.Tracky;
 import org.apache.commons.io.IOUtils;
 
+import javax.annotation.Nullable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
 
 import static io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting.MISSING;
 import static io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting.NONE;
@@ -62,13 +62,7 @@ public class Vanilla implements InstallationMode {
         this.config = config;
         this.version = config.getSettingValue(ImpactVersionSetting.INSTANCE).fetchContents();
         this.vanillaJar = mcDir.resolve("versions").resolve(version.mcVersion).resolve(version.mcVersion + ".jar");
-        this.optifine = config.getSettingValue(OptiFineToggleSetting.INSTANCE)
-                ? new OptiFine(config.getSettingValue(OptiFineFileSetting.INSTANCE))
-                : Optional.ofNullable(config.getSettingValue(OptiFineSetting.INSTANCE))
-                .filter(of -> !of.equals(NONE))
-                .filter(of -> !of.equals(MISSING))
-                .map(of -> new OptiFineExisting(mcDir.resolve("libraries"), of))
-                .orElse(null);
+        this.optifine = getOptiFine(config);
         this.id = String.format("%s-%s_%s%s", version.mcVersion, version.name, version.version, optifine == null ? "" : "-OptiFine_" + optifine.getOptiFineVersion());
         if (optifine != null && !optifine.getMinecraftVersion().equals(version.mcVersion)) {
             throw new IllegalStateException(String.format("OptiFine %s is not compatible with Minecraft %s", optifine.getVersion(), version.mcVersion));
@@ -242,6 +236,25 @@ public class Vanilla implements InstallationMode {
             strippedVersion = strippedVersion.substring(0, strippedVersion.lastIndexOf('.'));
         }
         return strippedVersion;
+    }
+
+    @Nullable
+    private static OptiFine getOptiFine(InstallationConfig config) {
+        if (config.getSettingValue(OptiFineToggleSetting.INSTANCE)) {
+            switch (config.getSettingValue(OptiFineSetting.INSTANCE)) {
+                case MISSING:
+                case NONE:
+                    Path installer = config.getSettingValue(OptiFineFileSetting.INSTANCE);
+                    if (Files.isRegularFile(installer) && Files.isReadable(installer)) {
+                        return new OptiFine(installer);
+                    }
+                default:
+                    Path launcher = config.getSettingValue(MinecraftDirectorySetting.INSTANCE);
+                    String version = config.getSettingValue(OptiFineSetting.INSTANCE);
+                    return new OptiFineExisting(launcher.resolve("libraries"), version);
+            }
+        }
+        return null;
     }
 
     public String getId() {
