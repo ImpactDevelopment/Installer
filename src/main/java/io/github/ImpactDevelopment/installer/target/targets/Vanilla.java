@@ -42,8 +42,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting.CUSTOM;
 import static io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting.MISSING;
-import static io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting.NONE;
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.WINDOWS;
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.getOS;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -243,7 +243,7 @@ public class Vanilla implements InstallationMode {
         if (config.getSettingValue(OptiFineToggleSetting.INSTANCE)) {
             switch (config.getSettingValue(OptiFineSetting.INSTANCE)) {
                 case MISSING:
-                case NONE:
+                case CUSTOM:
                     Path installer = config.getSettingValue(OptiFineFileSetting.INSTANCE);
                     if (Files.isRegularFile(installer) && Files.isReadable(installer)) {
                         return new OptiFine(installer);

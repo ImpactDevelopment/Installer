@@ -35,12 +35,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import static io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting.CUSTOM;
+import static io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting.MISSING;
 import static io.github.ImpactDevelopment.installer.target.InstallationModeOptions.MULTIMC;
 import static io.github.ImpactDevelopment.installer.target.InstallationModeOptions.SHOWJSON;
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.OSX;
@@ -203,7 +206,15 @@ public class MainPage extends JPanel {
             warning.add(new JLabel("<html><center>OptiFine can sometimes cause visual issues in Impact;<br>only include it if you need it!</center></html>"));
             grid.add(warning);
 
-            grid.add(buildPathSetting(OptiFineFileSetting.INSTANCE, "OptiFine jar", JFileChooser.FILES_ONLY, app));
+            String version = config.getSettingValue(OptiFineSetting.INSTANCE);
+            if (!version.equals(MISSING)) {
+                grid.add(buildSetting(OptiFineSetting.INSTANCE, "OptiFine version", app));
+            }
+            switch (version) {
+                case MISSING:
+                case CUSTOM:
+                    grid.add(buildPathSetting(OptiFineFileSetting.INSTANCE, "OptiFine installer", JFileChooser.FILES_ONLY, app));
+            }
 
             try {
                 FlowLayout layout = new FlowLayout();

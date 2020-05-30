@@ -46,8 +46,8 @@ import java.util.stream.StreamSupport;
 public enum OptiFineSetting implements ChoiceSetting<String> {
     INSTANCE;
 
-    public static final String NONE = "None";
     public static final String MISSING = "Missing";
+    public static final String CUSTOM = "Custom";
 
     @Override
     public List<String> getPossibleValues(InstallationConfig config) {
@@ -72,7 +72,7 @@ public enum OptiFineSetting implements ChoiceSetting<String> {
         if (result.isEmpty()) {
             result.add(MISSING);
         } else {
-            result.add(0, NONE);
+            result.add(CUSTOM);
         }
         return result;
     }
