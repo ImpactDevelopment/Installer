@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Improved the GUI spacing and layout.
+- Improved the OptiFine download link using `JHyperlink` from the [SwingSet3 demo](https://mvnrepository.com/artifact/org.webswing/webswing-demo-swingset3).
+
 ## [0.9.0] - 2020-05-08
 
 ### Added

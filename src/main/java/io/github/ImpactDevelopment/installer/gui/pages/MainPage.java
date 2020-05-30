@@ -23,6 +23,7 @@
 package io.github.ImpactDevelopment.installer.gui.pages;
 
 import io.github.ImpactDevelopment.installer.gui.AppWindow;
+import io.github.ImpactDevelopment.installer.gui.JHyperlink;
 import io.github.ImpactDevelopment.installer.setting.ChoiceSetting;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.Setting;
@@ -34,7 +35,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,15 +50,21 @@ public class MainPage extends JPanel {
     public MainPage(AppWindow app) {
         InstallationModeOptions mode = app.config.getSettingValue(InstallationModeSetting.INSTANCE);
 
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        addSetting(InstallationModeSetting.INSTANCE, "Install for", app);
-        if (mode == MULTIMC) addMultiMCSetting(app);
-        addSetting(MinecraftVersionSetting.INSTANCE, "Minecraft version", app);
-        addSetting(ImpactVersionSetting.INSTANCE, "Impact version", app);
+        this.setLayout(new BorderLayout());
+        JPanel settings = new JPanel();
+        settings.setLayout(new BoxLayout(settings, BoxLayout.Y_AXIS));
+
+        settings.add(buildSetting(InstallationModeSetting.INSTANCE, "Install for", app));
+        if (mode == MULTIMC) settings.add(buildMultiMCSetting(app));
+        settings.add(buildSetting(MinecraftVersionSetting.INSTANCE, "Minecraft version", app));
+        settings.add(buildSetting(ImpactVersionSetting.INSTANCE, "Impact version", app));
         switch (mode) {
             case FORGE: case FORGE_PLUS_LITELOADER: break;
-            default: addOptifineSetting(app);
+            default: settings.add(buildOptiFineSetting(app));
         }
+
+        // Add the settings to the top of the window
+        this.add(settings, BorderLayout.PAGE_START);
 
         JButton install = new JButton(mode.getButtonText());
         install.addActionListener((ActionEvent) -> {
@@ -114,14 +121,19 @@ public class MainPage extends JPanel {
                 app.exception(e);
             }
         });
-        add(install);
+
+        // Add the button to the bottom of the window
+        JPanel installPanel = new JPanel(new FlowLayout());
+        installPanel.add(install);
+        this.add(installPanel, BorderLayout.PAGE_END);
     }
 
-    private <T> void addSetting(ChoiceSetting<T> setting, String text, AppWindow app) {
+    private <T> JPanel buildSetting(ChoiceSetting<T> setting, String text, AppWindow app) {
         T val = app.config.getSettingValue(setting);
         if (val == null) {
-            return;
+            throw new IllegalStateException("Cannot build setting for null value of " + setting.getClass().getSimpleName());
         }
+
         InstallationConfig config = app.config;
         JPanel container = new JPanel(new FlowLayout());
         container.add(new JLabel(text + ": "));
@@ -137,23 +149,25 @@ public class MainPage extends JPanel {
             app.recreate();
         });
         container.add(comboBox);
-        add(container);
+
+        return container;
     }
 
-    private void addMultiMCSetting(AppWindow app) {
+    private JPanel buildMultiMCSetting(AppWindow app) {
         String label = "MultiMC " + (OperatingSystem.getOS() == OSX ? "application" : "directory");
-        add(buildPathSetting(MultiMCDirectorySetting.INSTANCE,  label, JFileChooser.DIRECTORIES_ONLY, app));
+        return buildPathSetting(MultiMCDirectorySetting.INSTANCE,  label, JFileChooser.DIRECTORIES_ONLY, app);
     }
 
-    private void addOptifineSetting(AppWindow app) {
+    private JPanel buildOptiFineSetting(AppWindow app) {
         OptiFineToggleSetting setting = OptiFineToggleSetting.INSTANCE;
         InstallationConfig config = app.config;
-        Boolean val = config.getSettingValue(setting);
-        if (val == null) {
-            return;
+        Boolean usingOptiFine = config.getSettingValue(setting);
+        if (usingOptiFine == null) {
+            throw new IllegalStateException("Cannot build setting for null value of " + setting.getClass().getSimpleName());
         }
 
-        JPanel grid = new JPanel(new GridLayout(4, 1, 0, 0));
+        JPanel grid = new JPanel();
+        grid.setLayout(new BoxLayout(grid, BoxLayout.Y_AXIS));
 
         JPanel radial = new JPanel(new FlowLayout());
 
@@ -164,7 +178,7 @@ public class MainPage extends JPanel {
                 config.setSettingValue(setting, event.getActionCommand().equalsIgnoreCase("yes"));
             } catch (Throwable e) {
                 app.exception(e);
-                config.setSettingValue(setting, val);
+                config.setSettingValue(setting, usingOptiFine);
             }
             app.recreate();
         };
@@ -172,10 +186,10 @@ public class MainPage extends JPanel {
         JRadioButton no = new JRadioButton("No");
         yes.setMnemonic(KeyEvent.VK_Y);
         yes.addActionListener(listener);
-        yes.setSelected(val);
+        yes.setSelected(usingOptiFine);
         no.setMnemonic(KeyEvent.VK_N);
         no.addActionListener(listener);
-        no.setSelected(!val);
+        no.setSelected(!usingOptiFine);
         ButtonGroup group = new ButtonGroup();
         group.add(yes);
         group.add(no);
@@ -184,29 +198,30 @@ public class MainPage extends JPanel {
 
         grid.add(radial);
 
-        if (val) {
+        if (usingOptiFine) {
+            JPanel warning = new JPanel(new FlowLayout());
+            warning.add(new JLabel("<html><center>OptiFine can sometimes cause visual issues in Impact;<br>only include it if you need it!</center></html>"));
+            grid.add(warning);
+
             grid.add(buildPathSetting(OptiFineFileSetting.INSTANCE, "OptiFine jar", JFileChooser.FILES_ONLY, app));
 
+            try {
+                FlowLayout layout = new FlowLayout();
+                layout.setHgap(0);
+                JPanel download = new JPanel(layout);
+                JLabel text = new JLabel("<html>You can download OptiFine from their website: </html>");
+                download.add(text);
 
-            grid.add(new JLabel("OptiFine can sometimes cause visual glitches in Impact; only include it if you need it!"));
+                JHyperlink link = new JHyperlink("optifine.net", "https://optifine.net/downloads");
+                download.add(link);
 
-            JButton link = new JButton();
-            link.setText("<html>You can download OptiFine from their website: <font color=\"#0000CC\"><u>https://optifine.net/downloads</u></font></html>");
-            link.setBackground(Color.WHITE);
-            link.setBorderPainted(false);
-            link.setHorizontalAlignment(SwingConstants.LEFT);
-            link.setOpaque(false);
-            link.addActionListener((ActionEvent) -> {
-                try {
-                    Desktop.getDesktop().browse(new URI("https://optifine.net/downloads"));
-                } catch (Exception ex) {
-                    app.exception(ex);
-                }
-            });
-            grid.add(link);
+                grid.add(download);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException("", e);
+            }
         }
 
-        add(grid);
+        return grid;
     }
 
     private JPanel buildPathSetting(Setting<Path> setting, String text, int selectionMode, AppWindow app) {
