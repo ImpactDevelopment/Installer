@@ -35,7 +35,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -70,6 +69,7 @@ public class MainPage extends JPanel {
         this.add(settings, BorderLayout.PAGE_START);
 
         JButton install = new JButton(mode.getButtonText());
+        install.setEnabled(shouldInstallButtonBeEnabled(app.config));
         install.addActionListener((ActionEvent) -> {
             try {
                 Optional<Path> destination = Optional.ofNullable(app.config.getSettingValue(DestinationSetting.INSTANCE));
@@ -129,6 +129,17 @@ public class MainPage extends JPanel {
         JPanel installPanel = new JPanel(new FlowLayout());
         installPanel.add(install);
         this.add(installPanel, BorderLayout.PAGE_END);
+    }
+
+    private boolean shouldInstallButtonBeEnabled(InstallationConfig config) {
+        if (config.getSettingValue(OptiFineToggleSetting.INSTANCE)) {
+            switch (config.getSettingValue(OptiFineSetting.INSTANCE)) {
+                case MISSING:
+                case CUSTOM:
+                    return Files.isRegularFile(config.getSettingValue(OptiFineFileSetting.INSTANCE));
+            }
+        }
+        return true;
     }
 
     private <T> JPanel buildSetting(ChoiceSetting<T> setting, String text, AppWindow app) {
