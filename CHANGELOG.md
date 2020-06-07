@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1] - 2020-06-07
+
 ### Changed
 - Already installed OptiFine versions installed in the Official Launcher can be used again, without requiring an OptiFine installer jar. 
 - Improved the GUI spacing and layout.
@@ -203,8 +205,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.9.0...HEAD
-[0.9.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.0
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.9.1...HEAD
+[0.9.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.1
 [0.8.6]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.6
 [0.8.5]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.5
 [0.8.4]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.4
