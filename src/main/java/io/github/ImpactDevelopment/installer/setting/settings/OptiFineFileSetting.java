@@ -28,6 +28,12 @@ import io.github.ImpactDevelopment.installer.utils.OperatingSystem;
 
 import java.nio.file.Path;
 
+/**
+ * The OptiFine installer to use for installing Impact with Optifine
+ *
+ * @see OptiFineToggleSetting
+ * @see OptiFineSetting
+ */
 public enum OptiFineFileSetting implements Setting<Path> {
     INSTANCE;
 

@@ -73,7 +73,7 @@ public class Args {
     @Parameter(names = {"--mmc-dir", "--multimc-dir", "--multimc-directory", "--mmc-path"}, description = "Path to the MultiMC directory")
     public String multimcPath;
 
-    @Parameter(names = {"--optifine", "--of"}, description = "Path to an OptiFine installer jar")
+    @Parameter(names = {"--optifine", "--of"}, description = "Path to an OptiFine installer jar or the version of an already installed OptiFine")
     public String optifine;
 
     @Parameter(names = {"--no-ga", "--no-analytics", "--dnt", "--no-tracky"}, description = "Disable Google Analytics")
@@ -145,7 +145,13 @@ public class Args {
         }
         if (optifine != null) {
             config.setSettingValue(OptiFineToggleSetting.INSTANCE, true);
-            if (!config.setSettingValue(OptiFineFileSetting.INSTANCE, Paths.get(optifine))) {
+
+            // Use OptiFineSetting before falling back to OptiFineFileSetting
+            if (config.setSettingValue(OptiFineSetting.INSTANCE, optifine)) {
+                System.out.println("Using existing installed OptiFine version " + optifine);
+            } else if (config.setSettingValue(OptiFineFileSetting.INSTANCE, Paths.get(optifine))) {
+                System.out.println("Using OptiFine installer " + Paths.get(optifine).getFileName());
+            } else {
                 throw new IllegalArgumentException(optifine + " is not found");
             }
         }

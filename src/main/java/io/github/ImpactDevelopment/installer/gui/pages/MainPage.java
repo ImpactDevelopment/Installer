@@ -41,6 +41,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import static io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting.CUSTOM;
+import static io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting.MISSING;
 import static io.github.ImpactDevelopment.installer.target.InstallationModeOptions.MULTIMC;
 import static io.github.ImpactDevelopment.installer.target.InstallationModeOptions.SHOWJSON;
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.OSX;
@@ -67,6 +69,7 @@ public class MainPage extends JPanel {
         this.add(settings, BorderLayout.PAGE_START);
 
         JButton install = new JButton(mode.getButtonText());
+        install.setEnabled(shouldInstallButtonBeEnabled(app.config));
         install.addActionListener((ActionEvent) -> {
             try {
                 Optional<Path> destination = Optional.ofNullable(app.config.getSettingValue(DestinationSetting.INSTANCE));
@@ -126,6 +129,17 @@ public class MainPage extends JPanel {
         JPanel installPanel = new JPanel(new FlowLayout());
         installPanel.add(install);
         this.add(installPanel, BorderLayout.PAGE_END);
+    }
+
+    private boolean shouldInstallButtonBeEnabled(InstallationConfig config) {
+        if (config.getSettingValue(OptiFineToggleSetting.INSTANCE)) {
+            switch (config.getSettingValue(OptiFineSetting.INSTANCE)) {
+                case MISSING:
+                case CUSTOM:
+                    return Files.isRegularFile(config.getSettingValue(OptiFineFileSetting.INSTANCE));
+            }
+        }
+        return true;
     }
 
     private <T> JPanel buildSetting(ChoiceSetting<T> setting, String text, AppWindow app) {
@@ -203,7 +217,16 @@ public class MainPage extends JPanel {
             warning.add(new JLabel("<html><center>OptiFine can sometimes cause visual issues in Impact;<br>only include it if you need it!</center></html>"));
             grid.add(warning);
 
-            grid.add(buildPathSetting(OptiFineFileSetting.INSTANCE, "OptiFine jar", JFileChooser.FILES_ONLY, app));
+            String version = config.getSettingValue(OptiFineSetting.INSTANCE);
+            if (!version.equals(MISSING)) {
+                grid.add(buildSetting(OptiFineSetting.INSTANCE, "OptiFine version", app));
+            }
+            switch (version) {
+                case MISSING:
+                case CUSTOM:
+                    grid.add(buildPathSetting(OptiFineFileSetting.INSTANCE, "OptiFine installer", JFileChooser.FILES_ONLY, app));
+                    break;
+            }
 
             try {
                 FlowLayout layout = new FlowLayout();
