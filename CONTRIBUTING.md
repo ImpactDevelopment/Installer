@@ -1,7 +1,7 @@
 # Contributing to the Installer
 
 ## I have a question
-Issues aren't intended for handling questions. You're much better off contacting us through one of these methods [Discord]()
+Issues aren't intended for handling questions. You're much better off contacting us through one of these methods [Discord][discord]
 
 ## I found a bug
 Before reporting a bug, please take the time to check if someone else has already. Search the [issues list] for keywords that might match your issue.
@@ -20,7 +20,7 @@ Please do your best to follow the guidance below regarding [documenting your cha
 
 Once that's done you can checkout a new branch, make your changes to it, publish it and open a Pull Request asking us to merge the changes in your branch.
 
-Please see  [Creating a Pull Request from a Fork](https://help.github.com/en/articles/creating-a-pull-request-from-a-fork). If you're brand new to git checkout [Try Git](http://try.github.io/) or one of these [awesome tutorials](https://gist.github.com/jaseemabid/1321592)
+Please see  [Creating a Pull Request from a Fork](https://help.github.com/en/articles/creating-a-pull-request-from-a-fork). If you're brand new to git checkout [Try Git](https://try.github.io/) or one of these [awesome tutorials](https://gist.github.com/jaseemabid/1321592)
 
 ### Documenting your changes
 
@@ -45,11 +45,12 @@ You'll want to add your change in the `## [Upcoming]` section, since it will mos
 
 Finally, remember that Changelogs are for humans, not machines. You should be describing what changed, from a user's perspective, not how it was changed from a technical perspective (that is what commit messages are for).  
 
-[issues list]: /ImpactDevelopment/Installer/issues
-[new issue]: /ImpactDevelopment/Installer/issues/new
-[fork]: /ImpactDevelopment/Installer/fork
-[devenv]: /ImpactDevelopment/Installer#setting-up-a-development-environment
+[issues list]: https://github.com/ImpactDevelopment/Installer/issues
+[new issue]: https://github.com/ImpactDevelopment/Installer/issues/new
+[fork]: https://github.com/ImpactDevelopment/Installer/fork
+[devenv]: README.md#setting-up-a-development-environment
 [contrib]: CONTRIBUTORS.md
 [documenting your changes]: #documenting-your-changes
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [good commit message]: https://chris.beams.io/posts/git-commit/
+[discord]: https://impactclient.net/discord
