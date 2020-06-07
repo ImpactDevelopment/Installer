@@ -28,6 +28,7 @@ import io.github.ImpactDevelopment.installer.libraries.MavenResolver;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
 import io.github.ImpactDevelopment.installer.setting.settings.MultiMCDirectorySetting;
 import io.github.ImpactDevelopment.installer.utils.OperatingSystem;
+import io.github.ImpactDevelopment.installer.utils.Tracky;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -86,6 +87,11 @@ public class MultiMC extends Vanilla {
         if (Files.notExists(instance)) System.out.println("Creating a new instance at " + instance);
         else System.err.println("WARNING: instance already exists at " + instance);
         Files.createDirectories(patcher.getParent());
+
+        // Create run directory and persist tracking id to it
+        Path runDir = instance.resolve(".minecraft");
+        Files.createDirectories(runDir);
+        Tracky.persist(runDir);
 
         System.out.println("Writing to " + instance.resolve("instance.cfg"));
         Files.write(instance.resolve("instance.cfg"), generateInstanceConfig().getBytes(UTF_8));
