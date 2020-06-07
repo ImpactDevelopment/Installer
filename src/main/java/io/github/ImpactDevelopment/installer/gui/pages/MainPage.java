@@ -225,6 +225,7 @@ public class MainPage extends JPanel {
                 case MISSING:
                 case CUSTOM:
                     grid.add(buildPathSetting(OptiFineFileSetting.INSTANCE, "OptiFine installer", JFileChooser.FILES_ONLY, app));
+                    break;
             }
 
             try {
