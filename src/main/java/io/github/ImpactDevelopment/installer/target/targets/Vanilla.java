@@ -245,9 +245,13 @@ public class Vanilla implements InstallationMode {
                 case MISSING:
                 case CUSTOM:
                     Path installer = config.getSettingValue(OptiFineFileSetting.INSTANCE);
-                    if (Files.isRegularFile(installer) && Files.isReadable(installer)) {
-                        return new OptiFine(installer);
+                    if (!Files.isRegularFile(installer)) {
+                        throw new IllegalArgumentException("Selected installer is not a regular file " + installer.getFileName());
                     }
+                    if (!Files.isReadable(installer)) {
+                        throw new IllegalArgumentException("Cannot read file " + installer.getFileName());
+                    }
+                    return new OptiFine(installer);
                 default:
                     Path launcher = config.getSettingValue(MinecraftDirectorySetting.INSTANCE);
                     String version = config.getSettingValue(OptiFineSetting.INSTANCE);
