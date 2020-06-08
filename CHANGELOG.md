@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Error building setting for null value when changing settings in certain orders
+
 ## [0.9.1] - 2020-06-07
 
 ### Changed

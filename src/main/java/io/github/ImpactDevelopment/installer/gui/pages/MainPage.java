@@ -31,6 +31,7 @@ import io.github.ImpactDevelopment.installer.setting.settings.*;
 import io.github.ImpactDevelopment.installer.target.InstallationModeOptions;
 import io.github.ImpactDevelopment.installer.utils.OperatingSystem;
 
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -56,13 +57,13 @@ public class MainPage extends JPanel {
         JPanel settings = new JPanel();
         settings.setLayout(new BoxLayout(settings, BoxLayout.Y_AXIS));
 
-        settings.add(buildSetting(InstallationModeSetting.INSTANCE, "Install for", app));
+        Optional.ofNullable(buildSetting(InstallationModeSetting.INSTANCE, "Install for", app)).ifPresent(settings::add);
         if (mode == MULTIMC) settings.add(buildMultiMCSetting(app));
-        settings.add(buildSetting(MinecraftVersionSetting.INSTANCE, "Minecraft version", app));
-        settings.add(buildSetting(ImpactVersionSetting.INSTANCE, "Impact version", app));
+        Optional.ofNullable(buildSetting(MinecraftVersionSetting.INSTANCE, "Minecraft version", app)).ifPresent(settings::add);
+        Optional.ofNullable(buildSetting(ImpactVersionSetting.INSTANCE, "Impact version", app)).ifPresent(settings::add);
         switch (mode) {
             case FORGE: case FORGE_PLUS_LITELOADER: break;
-            default: settings.add(buildOptiFineSetting(app));
+            default: Optional.ofNullable(buildOptiFineSetting(app)).ifPresent(settings::add);
         }
 
         // Add the settings to the top of the window
@@ -142,10 +143,12 @@ public class MainPage extends JPanel {
         return true;
     }
 
+    @Nullable
     private <T> JPanel buildSetting(ChoiceSetting<T> setting, String text, AppWindow app) {
         T val = app.config.getSettingValue(setting);
         if (val == null) {
-            throw new IllegalStateException("Cannot build setting for null value of " + setting.getClass().getSimpleName());
+            System.err.println("Cannot build setting for null value of " + setting.getClass().getSimpleName());
+            return null;
         }
 
         InstallationConfig config = app.config;
@@ -172,12 +175,14 @@ public class MainPage extends JPanel {
         return buildPathSetting(MultiMCDirectorySetting.INSTANCE,  label, JFileChooser.DIRECTORIES_ONLY, app);
     }
 
+    @Nullable
     private JPanel buildOptiFineSetting(AppWindow app) {
         OptiFineToggleSetting setting = OptiFineToggleSetting.INSTANCE;
         InstallationConfig config = app.config;
         Boolean usingOptiFine = config.getSettingValue(setting);
         if (usingOptiFine == null) {
-            throw new IllegalStateException("Cannot build setting for null value of " + setting.getClass().getSimpleName());
+            System.err.println("Cannot build setting for null value of " + setting.getClass().getSimpleName());
+            return null;
         }
 
         JPanel grid = new JPanel();
