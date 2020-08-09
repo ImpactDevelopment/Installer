@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.2] - 2020-08-09
+
 ### Fixes
 - Fix error building setting for null value when changing settings in certain orders. This fix reverts a change in [0.5.6] intended to allow installing unreleased Minecraft versions using a custom JSON file.
 
@@ -208,7 +210,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.9.1...HEAD
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.9.2...HEAD
+[0.9.2]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.2
 [0.9.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.1
 [0.9.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.0
 [0.8.6]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.6
