@@ -44,11 +44,6 @@ public enum MinecraftVersionSetting implements ChoiceSetting<String> {
     }
 
     @Override
-    public boolean validSetting(InstallationConfig config, String value) {
-        return true;
-    }
-
-    @Override
     public String toString() {
         return getClass().getSimpleName();
     }

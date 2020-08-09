@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixes
+- Fix error building setting for null value when changing settings in certain orders. This fix reverts a change in [0.5.6] intended to allow installing unreleased Minecraft versions using a custom JSON file.
+
 ## [0.9.1] - 2020-06-07
 
 ### Changed
@@ -206,7 +209,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial documentation including a README and this CHANGELOG
 
 [Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.9.1...HEAD
-[0.9.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.1
+[0.9.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.1
+[0.9.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.0
 [0.8.6]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.6
 [0.8.5]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.5
 [0.8.4]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.8.4
@@ -221,6 +225,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.7.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.1
 [0.7.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.7.0
 [0.6.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.6.0
+[0.5.6]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.6
 [0.5.5]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.5
 [0.5.4]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.4
 [0.5.3]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.5.3
