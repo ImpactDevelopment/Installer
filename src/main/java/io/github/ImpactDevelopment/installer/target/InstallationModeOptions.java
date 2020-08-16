@@ -29,12 +29,12 @@ import io.github.ImpactDevelopment.installer.target.targets.*;
 import java.util.function.Function;
 
 public enum InstallationModeOptions {
-    VANILLA("Vanilla", "Install", true, Vanilla::new),
-    FORGE("Forge", "Save As", true, opt -> new Forge(opt, false)),
+    VANILLA("Official Launcher", "Install", true, Vanilla::new),
+    FORGE("Forge Mod", "Save As", true, opt -> new Forge(opt, false)),
     FORGE_PLUS_LITELOADER("Forge + Liteloader", "Save As", true, opt -> new Forge(opt, true)),
-    VALIDATE("Validate Vanilla version", "Validate", false, Validate::new),
-    MULTIMC("MultiMC", "Install", true, MultiMC::new),
-    SHOWJSON("Show Vanilla JSON", "Show JSON", true, ShowJSON::new);
+    VALIDATE("Validate version", "Validate", false, Validate::new),
+    MULTIMC("MultiMC Instance", "Install", true, MultiMC::new),
+    SHOWJSON("Show Version JSON", "Show JSON", true, ShowJSON::new);
 
     InstallationModeOptions(String name, String buttonText, boolean showInGUI, Function<InstallationConfig, InstallationMode> mode) {
         this.mode = mode;

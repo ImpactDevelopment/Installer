@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - A warning when the installer is run as root on non-Windows systems ([#106](https://github.com/ImpactDevelopment/Installer/issues/106))
 
+## Changed
+- Renamed "Vanilla" mode to "Official Launcher" and "Forge" mode to "Forge Mod"
+
 ### Fixes
 - Fix using an already installed OptiFine version not working correctly for MultiMC instances ([#107](https://github.com/ImpactDevelopment/Installer/issues/107))
 
