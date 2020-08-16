@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A warning when the installer is run as root on non-Windows systems ([#106](https://github.com/ImpactDevelopment/Installer/issues/106))
 - Add back the "Minecraft Directory" setting to the GUI (was removed in 0.9.0). Now renamed to "Launcher Directory" and only shown when installing in "Official Launcher" mode
 
-## Changed
+### Changed
 - Renamed "Vanilla" mode to "Official Launcher" and "Forge" mode to "Forge Mod"
 
 ### Fixes
