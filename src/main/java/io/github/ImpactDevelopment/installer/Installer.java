@@ -23,6 +23,7 @@
 package io.github.ImpactDevelopment.installer;
 
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.ImpactDevelopment.installer.gui.AppIcon;
@@ -138,7 +139,11 @@ public class Installer {
     }
 
     public static String getVersion() {
-        return args.getClass().getPackage().getImplementationVersion();
+        String version = args.getClass().getPackage().getImplementationVersion();
+        if (Strings.isStringEmpty(version)) {
+            return "dev build";
+        }
+        return version;
     }
 
     public static String getTitle() {
