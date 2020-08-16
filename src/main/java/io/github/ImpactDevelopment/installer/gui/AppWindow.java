@@ -39,7 +39,7 @@ public class AppWindow extends JFrame {
 
     public AppWindow(InstallationConfig config) {
         this.config = config;
-        setTitle(Installer.getTitle());
+        setTitle(Installer.getTitle() + " - " + Installer.getVersion());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         if (getOS() == OSX) { // window.setTitle() isn't good enough on OSX
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", getTitle());

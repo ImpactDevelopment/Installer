@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Renamed "Vanilla" mode to "Official Launcher" and "Forge" mode to "Forge Mod"
+- The installer version is now shown in the window title ([#62](https://github.com/ImpactDevelopment/Installer/issues/62))
 
 ### Fixes
 - Fix using an already installed OptiFine version not working correctly for MultiMC instances ([#107](https://github.com/ImpactDevelopment/Installer/issues/107))
