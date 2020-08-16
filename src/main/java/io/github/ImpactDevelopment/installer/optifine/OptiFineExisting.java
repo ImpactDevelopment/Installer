@@ -41,7 +41,11 @@ public class OptiFineExisting extends OptiFine {
 
     @Override
     protected void installOptiFine(Path destination, Path vanilla) throws IOException, InvocationTargetException, IllegalAccessException {
-        // No-op: this class was built from the installed OptiFine, "installing" it over itself is paradoxical
+        // This class was built from the installed OptiFine, so normally the destination _is_ the installer jar, however
+        // that isn't guaranteed, e.g. the installed jar could be used to install optiFine into a new MultiMC instance.
+        if (!Files.exists(destination)) {
+            super.installOptiFine(destination, vanilla);
+        }
     }
 
     @Override

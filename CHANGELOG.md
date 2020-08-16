@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixes
+- Fix using an already installed OptiFine version not working correctly for MultiMC instances ([#107](https://github.com/ImpactDevelopment/Installer/issues/107))
+
 ## [0.9.2] - 2020-08-09
 
 ### Fixes
