@@ -43,7 +43,6 @@ import java.util.Optional;
 
 import static io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting.CUSTOM;
 import static io.github.ImpactDevelopment.installer.setting.settings.OptiFineSetting.MISSING;
-import static io.github.ImpactDevelopment.installer.target.InstallationModeOptions.MULTIMC;
 import static io.github.ImpactDevelopment.installer.target.InstallationModeOptions.SHOWJSON;
 import static io.github.ImpactDevelopment.installer.utils.OperatingSystem.OSX;
 import static javax.swing.JOptionPane.*;
@@ -57,7 +56,14 @@ public class MainPage extends JPanel {
         settings.setLayout(new BoxLayout(settings, BoxLayout.Y_AXIS));
 
         settings.add(buildSetting(InstallationModeSetting.INSTANCE, "Install for", app));
-        if (mode == MULTIMC) settings.add(buildMultiMCSetting(app));
+        switch (mode) {
+            case VANILLA:
+                settings.add(buildPathSetting(MinecraftDirectorySetting.INSTANCE, "Launcher directory", JFileChooser.DIRECTORIES_ONLY, app));
+                break;
+            case MULTIMC:
+                settings.add(buildMultiMCSetting(app));
+                break;
+        }
         settings.add(buildSetting(MinecraftVersionSetting.INSTANCE, "Minecraft version", app));
         settings.add(buildSetting(ImpactVersionSetting.INSTANCE, "Impact version", app));
         switch (mode) {
