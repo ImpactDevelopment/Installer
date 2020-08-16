@@ -28,6 +28,7 @@ import com.google.gson.GsonBuilder;
 import io.github.ImpactDevelopment.installer.gui.AppIcon;
 import io.github.ImpactDevelopment.installer.gui.AppWindow;
 import io.github.ImpactDevelopment.installer.setting.InstallationConfig;
+import io.github.ImpactDevelopment.installer.utils.OperatingSystem;
 import io.github.ImpactDevelopment.installer.utils.Tracky;
 
 import javax.swing.*;
@@ -44,7 +45,15 @@ public class Installer {
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
     public static final Args args = new Args();
 
+    private static final boolean root = OperatingSystem.getOS() != WINDOWS && System.getProperty("user.name").equalsIgnoreCase("root");
+    private static final String rootWarning = "It is not recommended to run this installer as the root user. Doing so can lead to unexpected behaviour and broken file permissions.";
+
     public static void main(String... argv) throws Throwable {
+        // Warn if root, see also setupGUI for the GUI warning
+        if (root) {
+            System.err.println("Warning: " + rootWarning);
+        }
+
         // Parse CLI arguments
         JCommander cmd = JCommander.newBuilder()
                 .programName(getCommand())
@@ -92,6 +101,12 @@ public class Installer {
 
         if (getOS() == OSX) {
             System.setProperty("apple.awt.fileDialogForDirectories", "true");
+        }
+
+        // Warn if root, see also main for the CLI version
+        // showMessageDialog is blocking, so AppWindow won't show until the user clicks OK
+        if (root) {
+            JOptionPane.showMessageDialog(null, rootWarning, "Warning", JOptionPane.WARNING_MESSAGE);
         }
 
         SwingUtilities.invokeLater(() -> new AppWindow(config));
