@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.3] - 2020-08-28
+
 ### Added
 - A warning when the installer is run as root on non-Windows systems ([#106](https://github.com/ImpactDevelopment/Installer/issues/106))
 - Add back the "Minecraft Directory" setting to the GUI (was removed in 0.9.0). Now renamed to "Launcher Directory" and only shown when installing in "Official Launcher" mode
@@ -221,7 +223,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.9.2...HEAD
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.9.3...HEAD
+[0.9.3]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.3
 [0.9.2]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.2
 [0.9.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.1
 [0.9.0]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.0
