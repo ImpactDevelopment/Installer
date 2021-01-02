@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixes
+- Fix an error when attempting to install OptiFine with 1.16+
+
 ## [0.9.4] - 2021-01-02
 
 ### Fixes

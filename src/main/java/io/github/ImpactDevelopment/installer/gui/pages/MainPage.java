@@ -226,34 +226,40 @@ public class MainPage extends JPanel {
         grid.add(radial);
 
         if (usingOptiFine) {
+            String version = config.getSettingValue(OptiFineSetting.INSTANCE);
+            String warningText = version == null ? "OptiFine is not currently supported on this version.<br>A new Installer that supports this combination may be released in the future."
+                    : "OptiFine can sometimes cause visual issues in Impact;<br>only include it if you need it!";
+
             JPanel warning = new JPanel(new FlowLayout());
-            warning.add(new JLabel("<html><center>OptiFine can sometimes cause visual issues in Impact;<br>only include it if you need it!</center></html>"));
+            warning.add(new JLabel("<html><center>" + warningText + "</center></html>"));
             grid.add(warning);
 
-            String version = config.getSettingValue(OptiFineSetting.INSTANCE);
-            if (!version.equals(MISSING)) {
-                grid.add(buildSetting(OptiFineSetting.INSTANCE, "OptiFine version", app));
-            }
-            switch (version) {
-                case MISSING:
-                case CUSTOM:
-                    grid.add(buildPathSetting(OptiFineFileSetting.INSTANCE, "OptiFine installer", JFileChooser.FILES_ONLY, app));
-                    break;
-            }
+            // OptiFine version can be null if it isn't supported
+            if (version != null) {
+                if (!version.equals(MISSING)) {
+                    grid.add(buildSetting(OptiFineSetting.INSTANCE, "OptiFine version", app));
+                }
+                switch (version) {
+                    case MISSING:
+                    case CUSTOM:
+                        grid.add(buildPathSetting(OptiFineFileSetting.INSTANCE, "OptiFine installer", JFileChooser.FILES_ONLY, app));
+                        break;
+                }
 
-            try {
-                FlowLayout layout = new FlowLayout();
-                layout.setHgap(0);
-                JPanel download = new JPanel(layout);
-                JLabel text = new JLabel("<html>You can download OptiFine from their website: </html>");
-                download.add(text);
+                try {
+                    FlowLayout layout = new FlowLayout();
+                    layout.setHgap(0);
+                    JPanel download = new JPanel(layout);
+                    JLabel text = new JLabel("<html>You can download OptiFine from their website: </html>");
+                    download.add(text);
 
-                JHyperlink link = new JHyperlink("optifine.net", "https://optifine.net/downloads");
-                download.add(link);
+                    JHyperlink link = new JHyperlink("optifine.net", "https://optifine.net/downloads");
+                    download.add(link);
 
-                grid.add(download);
-            } catch (URISyntaxException e) {
-                throw new RuntimeException("", e);
+                    grid.add(download);
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException("", e);
+                }
             }
         }
 
