@@ -78,7 +78,10 @@ public class MainPage extends JPanel {
         install.setEnabled(shouldInstallButtonBeEnabled(app.config));
         install.addActionListener((ActionEvent) -> {
             try {
-                Optional<Path> destination = Optional.ofNullable(app.config.getSettingValue(DestinationSetting.INSTANCE));
+                // We want to open JFileChooser at DestinationSetting's _default_ value, not whatever the user most recently configured
+                // This might be unintuitive in edge-cases such as the user setting --destination on the CLI when launching the GUI,
+                // however --destination should still be respected when not running the GUI.
+                Optional<Path> destination = Optional.ofNullable(DestinationSetting.INSTANCE.getDefaultValue(app.config));
                 if (destination.isPresent()) {
                     Path dest = destination.get();
                     // JFileChooser won't open in a directory unless it exists;

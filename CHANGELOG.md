@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixes
 - Fix error checking whether to enable the Install button when OptiFine is enabled but not supported ([#117](https://github.com/ImpactDevelopment/Installer/issues/117))
-- Fix the 0.9.2 & 0,9,3 releases to showing nightly builds by default ([#116](https://github.com/ImpactDevelopment/Installer/issues/116))  
+- Fix the 0.9.2 & 0,9,3 releases to showing nightly builds by default ([#116](https://github.com/ImpactDevelopment/Installer/issues/116))
+- Fix the default destination value not being used on freshly opened Save As dialogs ([#115](https://github.com/ImpactDevelopment/Installer/issues/115))
 
 ## [0.9.3] - 2020-08-28
 
