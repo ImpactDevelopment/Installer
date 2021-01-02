@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.4] - 2021-01-02
+
 ### Fixes
 - Fix error checking whether to enable the Install button when OptiFine is enabled but not supported ([#117](https://github.com/ImpactDevelopment/Installer/issues/117))
 - Fix the 0.9.2 & 0,9,3 releases to showing nightly builds by default ([#116](https://github.com/ImpactDevelopment/Installer/issues/116))
@@ -228,7 +230,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.9.3...HEAD
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.9.4...HEAD
+[0.9.3]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.4
 [0.9.3]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.3
 [0.9.2]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.2
 [0.9.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.1
