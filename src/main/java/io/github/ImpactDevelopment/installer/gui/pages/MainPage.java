@@ -139,10 +139,14 @@ public class MainPage extends JPanel {
 
     private boolean shouldInstallButtonBeEnabled(InstallationConfig config) {
         if (config.getSettingValue(OptiFineToggleSetting.INSTANCE)) {
-            switch (config.getSettingValue(OptiFineSetting.INSTANCE)) {
-                case MISSING:
-                case CUSTOM:
-                    return Files.isRegularFile(config.getSettingValue(OptiFineFileSetting.INSTANCE));
+            // OptiFineSetting's value is null when the installation mode doesn't support optifine
+            String optifine = config.getSettingValue(OptiFineSetting.INSTANCE);
+            if (optifine != null) {
+                switch (optifine) {
+                    case MISSING:
+                    case CUSTOM:
+                        return Files.isRegularFile(config.getSettingValue(OptiFineFileSetting.INSTANCE));
+                }
             }
         }
         return true;

@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixes
+- Fix error checking whether to enable the Install button when OptiFine is enabled but not supported ([#117](https://github.com/ImpactDevelopment/Installer/issues/117))
+
 ## [0.9.3] - 2020-08-28
 
 ### Added
