@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.5] - 2021-06-20
+
 ### Fixes
 - Fix an error when attempting to install OptiFine with 1.16+
 
@@ -233,8 +235,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GPG signature checking of Impact and Baritone release artifacts
 - Initial documentation including a README and this CHANGELOG
 
-[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.9.4...HEAD
-[0.9.3]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.4
+[Unreleased]: https://github.com/ImpactDevelopment/Installer/compare/0.9.5...HEAD
+[0.9.5]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.5
+[0.9.4]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.4
 [0.9.3]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.3
 [0.9.2]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.2
 [0.9.1]: https://github.com/ImpactDevelopment/Installer/releases/tag/0.9.1
